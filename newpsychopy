@@ -1,0 +1,50 @@
+import argparse
+from psychopy import visual, core, event
+
+def affichage_mots(win, text_stim, words, display_time):
+    for word in words:
+        text_stim.setText(word)
+        text_stim.draw()
+        win.flip()
+        core.wait(display_time)
+
+def run_psychopy(words, display_time, boolean):
+    win = visual.Window(fullscr=True, color=[-1, -1, -1], units='pix')
+    if boolean:
+        text_stim = visual.TextStim(win, text='', color=[1, 1, 1], height=150)
+    else:
+        text_stim = visual.TextStim(win, text='', color=[1, 1, 1], height=50)
+    text_stim.setText("")
+    text_stim.draw()
+    win.flip()
+    event.waitKeys()
+    nothinkinglist = [":; $+", " #^=-", ":?$µ", "###"]
+    affichage_mots(win, text_stim, nothinkinglist, display_time)
+    affichage_mots(win, text_stim, words, display_time)
+    affichage_mots(win, text_stim, nothinkinglist, display_time)
+    event.waitKeys()
+    win.close()
+    core.quit()
+def main(duration, words, zoom):
+    print(f"Durée: {duration}")
+    if words=="Non spécifié":
+        print("good")
+    else:
+        split_list = words.split(',')
+        cleaned_list = [item.strip() for item in split_list]
+        if (zoom=="Activé"):
+            run_psychopy(cleaned_list,int(duration),True)
+        else:
+            run_psychopy(cleaned_list,int(duration),False)
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Exécuter le paradigme Psychopy")
+    parser.add_argument("--duration", type=str, required=True, help="Durée en secondes des stimuli")
+    parser.add_argument("--words", type=str, required=True, help="Liste de mots pour le paradigme")
+    parser.add_argument("--zoom", type=str, choices=['Activé', 'Désactivé'], required=True, help="Activer le Zoom")
+
+    print("wtf dude")
+
+    args = parser.parse_args()
+
+    main(args.duration, args.words, args.zoom)

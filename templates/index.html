@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accueil</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <header class="header">
+        <h1 class="header-center">Patient data</h1>
+        <div class="header-right">
+            <a class="additional" href="/about">Home</a>
+            Patient name
+        </div>
+
+    </header>
+    <main>
+
+         <div class="sidenav">
+          <h2>Paradigme</h2>
+          <a href="#about">Mots défilants</a>
+          <a href="#services">Images statiques défilantes </a>
+          <a href="#clients">Images mouvantes défilantes</a>
+        </div>
+        <section class="image-section">
+            <form action = "/mypsycho" >
+                <button>Test</button>
+            </form>
+        </section>
+
+        <!--<p>Ceci est la page d'accueil de votre application Flask.</p>-->
+    </main>
+</body>
+</html>
+
+

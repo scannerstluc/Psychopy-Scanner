@@ -1,0 +1,156 @@
+/* static/style.css */
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+.header {
+    display: flex;
+    color: white;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    background-color: rgba(33, 114, 1, 0.41);
+    height: 12%;
+}
+
+.header-center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 24px;
+    white-space: nowrap;
+}
+
+.header-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    padding: 10px 20px;
+    font-size: 18px;
+}
+
+.newbutt{
+    display: block;
+    margin: 20px 0;
+}
+
+.additional {
+    text-decoration: none;
+    color: #0081ff;
+    font-weight: bold;
+}
+
+.additional:hover {
+    text-decoration: underline;
+}
+
+.sidenav {
+    width: 250px;
+    background-color: rgba(40, 93, 1, 0.58);
+    overflow-x: hidden;
+    padding-top: 20px;
+    position: fixed;
+    top: 12%;
+    left: 0;
+    height: 88%;
+    z-index: 1;
+}
+
+.sidenav a {
+    padding: 15px 8px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #e8e8e8;
+    display: block;
+}
+
+.sidenav a:hover {
+  color: #000000;
+}
+
+.main-content {
+    margin-left: 260px; /* Ajustez la marge pour s'adapter à la largeur de la sidebar */
+    padding: 20px;
+    flex: 1;
+}
+
+.input-group {
+    display: flex;
+    gap: 20px;
+}
+
+.input-container {
+    display: flex;
+    flex-direction: column;
+}
+
+input {
+    height: 35px;
+    padding: 5px 5px;
+    font-size: 16px;
+    margin-top: 5px;
+}
+
+.button-choice {
+    background-color: rgba(40, 93, 1, 0.58);
+    color: #ffffff;
+    border-color: white;
+    margin-top: 5px;
+    height: 45px;
+}
+
+.cache{
+    display: none !important;
+}
+
+.submit {
+    background-color: rgba(40, 93, 1, 0.58);
+    color: white;
+    border-color: white;
+    margin-top: 20px;
+    height: 45px;
+    width: 100px;
+
+}
+
+.color-green{
+    background-color: rgba(40, 93, 1, 0.58);
+}
+
+footer {
+    background-color: #0c0b0b;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+h2 {
+    color: #333;
+}
+
+.h2-sidenav {
+    color: white;
+    padding: 0px 10px;
+}
+
+.image-section {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.main-image {
+    max-width: 100%;
+    height: auto;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}

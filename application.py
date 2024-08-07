@@ -53,5 +53,27 @@ def submit_data():
         return jsonify({'status': 'error', 'message': str(e)})
 
 
+@app.route('/submit-images', methods=['POST'])
+def submit_images():
+    try:
+        print("je capte plus")
+        print("test")
+        data = request.get_json()
+        duration = data.get('duration')
+        file = data.get('filePath')
+        print(data)
+        print(duration)
+        print(file)
+        subprocess.run([
+            sys.executable, 'images_psychopy.py',
+            '--duration', duration,
+            '--file', file
+        ])
+
+        return jsonify({'status': 'success', 'message': 'Données reçues et script exécuté'})
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)})
+
+
 if __name__ == '__main__':
     app.run(debug=True)

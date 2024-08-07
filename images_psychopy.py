@@ -9,7 +9,7 @@ def affichage_mots(win, text_stim, words, display_time):
         core.wait(display_time)
 
 def reading(filename):
-    filename= "Paradigme_mots/" + filename
+    filename= filename
     with open(filename, "r") as fichier:
         ma_liste = [line.strip() for line in fichier]
     print(ma_liste)
@@ -60,7 +60,7 @@ def static_images_psychopy(chemin,duration):
     event.waitKeys()
 
     for image in images:
-        chemin = "Para/stim_static/" + image
+        chemin = "Paradigme_images_statiques/stim_static/" + image
         print(chemin)
         image_stim = visual.ImageStim(
             win=win,
@@ -78,34 +78,16 @@ def static_images_psychopy(chemin,duration):
         core.wait(2 * duration)
     win.close()
 
-def main(duration, words, zoom, file):
+def main(duration,file):
     print(f"Durée: {duration}")
     if file !="":
-        words=reading(file)
-        if (zoom == "Activé"):
-            words_psychopy(words, int(duration), True)
-        else:
-            words_psychopy(words, int(duration), False)
-    else:
-        split_list = words.split(',')
-        cleaned_list = [item.strip() for item in split_list]
-        if (zoom=="Activé"):
-            words_psychopy(cleaned_list,int(duration),True)
-        else:
-            words_psychopy(cleaned_list,int(duration),False)
+        static_images_psychopy(file,duration)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Exécuter le paradigme Psychopy")
     parser.add_argument("--duration", type=str, required=True, help="Durée en secondes des stimuli")
-    parser.add_argument("--words", type=str, required=True, help="Liste de mots pour le paradigme")
-    parser.add_argument("--zoom", type=str, choices=['Activé', 'Désactivé'], required=True, help="Activer le Zoom")
     parser.add_argument("--file",required=False, type=str, help="Liste de mots pour le paradigme")
-
-
-    print("wtf dude")
-
     args = parser.parse_args()
-    print(args.file)
 
-
-    main(args.duration, args.words, args.zoom, args.file)
+    print("on arrive jamais ici")
+    main(int(args.duration), args.file)

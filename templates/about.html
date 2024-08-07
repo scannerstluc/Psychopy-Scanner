@@ -36,7 +36,7 @@
                             <h2>Paradigme pour les mots défilants</h2>
                             <div class="input-group">
                                 <div class="input-container">
-                                    <h3>Durée en secondes des stimulus</h3>
+                                    <h3>Durée en secondes des stimuli</h3>
                                     <input type="text" id="duration" placeholder="par exemple: 4">
                                 </div>
                                 <div class="input-container">
@@ -57,14 +57,23 @@
                         break;
                     case 'about':
                         newContent = `
-                            <h2>Contact</h2>
-                            <p>Contactez-nous à contact@exemple.com</p>
+                            <h2>Paradigme pour les images statiques défilantes</h2>
+                            <div class="input-group">
+                                <div class="input-container">
+                                    <h3>Durée en secondes des stimuli</h3>
+                                    <input type="text" id="duration1" placeholder="par exemple: 4">
+                                </div>
+                                <div class="input-container">
+                                    <h3>Sélectionner un paradigme déjà existant</h3>
+                                    <button class="button-choice" onclick="document.getElementById('fileinput').click()">Choisir un fichier</button>
+                                </div>
+                            </div>
+                            <button class="submit" onclick="Submitimage()">Submit</button>
                         `;
                         break;
                     case 'contact':
                         newContent = `
-                            <h2>Contact</h2>
-                            <p>Contactez-nous à contact@exemple.com</p>
+                            <h2>A faire</h2>
                         `;
                         break;
                     default:
@@ -94,6 +103,32 @@
                     duration: duration,
                     words: words,
                     zoom: zoom,
+                    filePath: fileName // Envoyer la valeur de l'input de fichier comme un simple string
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                alert('Données envoyées avec succès!');
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+
+        function Submitimage(){
+            const duration = document.getElementById('duration1').value || 'Non spécifié';
+            const fileInput = document.getElementById('fileinput');
+            let fileName = fileInput.value.split('\\').pop();  // Cela extraira uniquement le nom du fichier.
+
+            // Envoyer les données au serveur
+            fetch('/submit-images', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    duration: duration,
                     filePath: fileName // Envoyer la valeur de l'input de fichier comme un simple string
                 }),
             })

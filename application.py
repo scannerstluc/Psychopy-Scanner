@@ -29,17 +29,11 @@ def psychopy_utilities():
 @app.route('/submit-data', methods=['POST'])
 def submit_data():
     try:
-        print("je capte plus")
-        print("test")
         data = request.get_json()
         duration = data.get('duration')
         words = data.get('words')
         zoom = data.get('zoom')
         file = data.get('filePath')
-        print("pour être")
-        print(data)
-        print(file)
-        print("sur")
         subprocess.run([
             sys.executable, 'psychopy_runner.py',
             '--duration', duration,
@@ -52,22 +46,23 @@ def submit_data():
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)})
 
-
 @app.route('/submit-images', methods=['POST'])
 def submit_images():
     try:
-        print("je capte plus")
-        print("test")
         data = request.get_json()
+        print(data)
         duration = data.get('duration')
         file = data.get('filePath')
-        print(data)
-        print(duration)
-        print(file)
+        zoom = data.get('zoom')
+        betweenstimuli = data.get('betweenstimuli')
+        print(zoom)
+        print(betweenstimuli)
         subprocess.run([
             sys.executable, 'images_psychopy.py',
             '--duration', duration,
-            '--file', file
+            '--file', file,
+            '--betweenstimuli', betweenstimuli,
+            '--zoom', zoom
         ])
 
         return jsonify({'status': 'success', 'message': 'Données reçues et script exécuté'})

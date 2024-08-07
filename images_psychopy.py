@@ -36,9 +36,13 @@ def words_psychopy(words, display_time, boolean):
     core.quit()
     """
 
-def static_images_psychopy(chemin,duration):
+def static_images_psychopy(chemin,duration, betweenstimuli, zoom):
     chemin = "Paradigme_images_statiques/"+chemin
     images = reading(chemin)
+    if zoom:
+        thezoom=1
+    else:
+        thezoom=0.5
 
     win = visual.Window(
         fullscr=True,
@@ -67,7 +71,7 @@ def static_images_psychopy(chemin,duration):
             image=chemin,  # Remplacez par le chemin de votre image
             pos=(0, 0)  # Position centrale
         )
-        image_stim.size *= 0.5
+        image_stim.size *= thezoom
         # image_stim.ori=45
         # Dessiner l'image
         image_stim.draw()
@@ -75,19 +79,25 @@ def static_images_psychopy(chemin,duration):
         core.wait(duration)
         cross_stim.draw()
         win.flip()
-        core.wait(2 * duration)
+        core.wait(betweenstimuli)
     win.close()
 
-def main(duration,file):
+def main(duration, betweenstimuli, file, zoom):
     print(f"Durée: {duration}")
     if file !="":
-        static_images_psychopy(file,duration)
+        if zoom =="Activé":
+            static_images_psychopy(file, duration, betweenstimuli, True)
+        else:
+            static_images_psychopy(file, duration, betweenstimuli, False)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Exécuter le paradigme Psychopy")
     parser.add_argument("--duration", type=str, required=True, help="Durée en secondes des stimuli")
+    parser.add_argument("--betweenstimuli", type=str, required=True, help="Durée en secondes entre les stimuli")
     parser.add_argument("--file",required=False, type=str, help="Liste de mots pour le paradigme")
+    parser.add_argument("--zoom", type=str, choices=['Activé', 'Désactivé'], required=True, help="Activer le Zoom")
     args = parser.parse_args()
-
+    print(args.zoom)
     print("on arrive jamais ici")
-    main(int(args.duration), args.file)
+    main(int(args.duration), int(args.betweenstimuli), args.file,args.zoom)

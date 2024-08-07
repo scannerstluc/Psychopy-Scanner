@@ -64,8 +64,16 @@
                                     <input type="text" id="duration1" placeholder="par exemple: 4">
                                 </div>
                                 <div class="input-container">
+                                    <h3>Durée entre les stimuli</h3>
+                                    <input type="text" id="betweenstimuli" placeholder="par exemple: 5">
+                                </div>
+                                <div class="input-container">
                                     <h3>Sélectionner un paradigme déjà existant</h3>
                                     <button class="button-choice" onclick="document.getElementById('fileinput').click()">Choisir un fichier</button>
+                                </div>
+                                <div class="input-container">
+                                    <h3>Activer le Zoom</h3>
+                                    <input type="checkbox" id="zoom1" class="color-green">
                                 </div>
                             </div>
                             <button class="submit" onclick="Submitimage()">Submit</button>
@@ -93,6 +101,11 @@
             const fileInput = document.getElementById('fileinput');
             let fileName = fileInput.value.split('\\').pop();  // Cela extraira uniquement le nom du fichier.
 
+            if (!fileName && words=='Non spécifié'){
+                alert('Veuillez sélectionner un fichier ou entrer des mots avant de soumettre.');
+                return;
+            }
+
             // Envoyer les données au serveur
             fetch('/submit-data', {
                 method: 'POST',
@@ -109,7 +122,6 @@
             .then(response => response.json())
             .then(data => {
                 console.log('Success:', data);
-                alert('Données envoyées avec succès!');
             })
             .catch((error) => {
                 console.error('Error:', error);
@@ -118,8 +130,15 @@
 
         function Submitimage(){
             const duration = document.getElementById('duration1').value || 'Non spécifié';
+            const betweenstimuli = document.getElementById('betweenstimuli').value || 'Non spécifié';
             const fileInput = document.getElementById('fileinput');
+            const zoom = document.getElementById('zoom1').checked ? 'Activé' : 'Désactivé';
             let fileName = fileInput.value.split('\\').pop();  // Cela extraira uniquement le nom du fichier.
+
+            if (!fileName) {
+                alert('Veuillez sélectionner un fichier avant de soumettre.');
+                return;  // Arrête l'exécution si aucun fichier n'est sélectionné
+            }
 
             // Envoyer les données au serveur
             fetch('/submit-images', {
@@ -129,6 +148,8 @@
                 },
                 body: JSON.stringify({
                     duration: duration,
+                    betweenstimuli: betweenstimuli,
+                    zoom: zoom,
                     filePath: fileName // Envoyer la valeur de l'input de fichier comme un simple string
                 }),
             })

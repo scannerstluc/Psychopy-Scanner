@@ -17,7 +17,7 @@ def reading(filename):
 
 def words_psychopy(words, display_time, boolean):
     print(words)
-    """
+
     win = visual.Window(fullscr=True, color=[-1, -1, -1], units='pix')
     if boolean:
         text_stim = visual.TextStim(win, text='', color=[1, 1, 1], height=150)
@@ -34,49 +34,7 @@ def words_psychopy(words, display_time, boolean):
     event.waitKeys()
     win.close()
     core.quit()
-    """
 
-def static_images_psychopy(chemin,duration):
-    chemin = "Paradigme_images_statiques/"+chemin
-    images = reading(chemin)
-
-    win = visual.Window(
-        fullscr=True,
-        color=[-0.0118, 0.0039, -0.0196],
-        units="pix"
-    )
-
-    # Créer le stimulus de croix
-    cross_stim = visual.ShapeStim(
-        win=win,
-        vertices=((0, -20), (0, 20), (0, 0), (-20, 0), (20, 0)),
-        lineWidth=3,
-        closeShape=False,
-        lineColor="white"
-    )
-
-    cross_stim.draw()
-    win.flip()
-    event.waitKeys()
-
-    for image in images:
-        chemin = "Para/stim_static/" + image
-        print(chemin)
-        image_stim = visual.ImageStim(
-            win=win,
-            image=chemin,  # Remplacez par le chemin de votre image
-            pos=(0, 0)  # Position centrale
-        )
-        image_stim.size *= 0.5
-        # image_stim.ori=45
-        # Dessiner l'image
-        image_stim.draw()
-        win.flip()
-        core.wait(duration)
-        cross_stim.draw()
-        win.flip()
-        core.wait(2 * duration)
-    win.close()
 
 def main(duration, words, zoom, file):
     print(f"Durée: {duration}")

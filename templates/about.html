@@ -52,8 +52,8 @@
                                     <button class="button-choice" onclick="document.getElementById('fileinput').click()">Choisir un fichier</button>
                                 </div>
                                 <div class="input-container">
-                                    <h3>Activer le Zoom</h3>
-                                    <input type="checkbox" id="zoom" class="color-green">
+                                    <h3>Pourcentage de zoom</h3>
+                                    <input id="zoom" type="text" placeholder="par exemple: 30" style="margin-top: 28px">
                                 </div>
                             </div>
                             <div class="input-group">
@@ -85,8 +85,8 @@
                                     <button class="button-choice" onclick="document.getElementById('fileinput1').click()">Choisir un fichier</button>
                                 </div>
                                 <div class="input-container">
-                                    <h3>Activer le Zoom</h3>
-                                    <input type="checkbox" id="zoom1" class="color-green">
+                                    <h3>Pourcentage de zoom</h3>
+                                    <input id="zoom1" type="text" placeholder="par exemple: 100">
                                 </div>
                             </div>
                             <div class="input-group">
@@ -103,7 +103,7 @@
                         break;
                     case 'contact':
                         newContent = `
-                            <h2>Paradigme pour les images statiques défilantes</h2>
+                            <h2>Paradigme pour les stimuli vidéo</h2>
                             <div class="input-group">
                                 <div class="input-container">
                                     <h3>Durée en secondes des stimuli</h3>
@@ -118,8 +118,8 @@
                                     <button class="button-choice" onclick="document.getElementById('fileinput2').click()">Choisir un fichier</button>
                                 </div>
                                 <div class="input-container">
-                                    <h3>Activer le Zoom</h3>
-                                    <input type="checkbox" id="zoom2" class="color-green">
+                                    <h3>Pourcentage de zoom</h3>
+                                    <input id="zoom2" type="text" placeholder="par exemple: 50">
                                 </div>
                             </div>
                             <div class="input-group">
@@ -147,7 +147,7 @@
         function submitForm() {
             const duration = document.getElementById('duration').value || 'Non spécifié';
             const words = document.getElementById('words').value || 'Non spécifié';
-            const zoom = document.getElementById('zoom').checked ? 'Activé' : 'Désactivé';
+            const zoom = document.getElementById('zoom').value || 'Non spécifié';
             const fileInput = document.getElementById('fileinput');
             const output_file = document.getElementById('output_file').value || 'Non spécifié';
             let fileName = fileInput.value.split('\\').pop();  // Cela extraira uniquement le nom du fichier.
@@ -184,7 +184,7 @@
             const duration = document.getElementById('duration1').value || 'Non spécifié';
             const betweenstimuli = document.getElementById('betweenstimuli').value || 'Non spécifié';
             const fileInput = document.getElementById('fileinput1');
-            const zoom = document.getElementById('zoom1').checked ? 'Activé' : 'Désactivé';
+            const zoom = document.getElementById('zoom1').value || 'Non spécifié';
             const output_file = document.getElementById('output_file1').value || 'Non spécifié';
             let fileName = fileInput.value.split('\\').pop();  // Cela extraira uniquement le nom du fichier.
 
@@ -221,7 +221,7 @@
             const duration = document.getElementById('duration2').value || 'Non spécifié';
             const betweenstimuli = document.getElementById('betweenstimuli1').value || 'Non spécifié';
             const fileInput = document.getElementById('fileinput2');
-            const zoom = document.getElementById('zoom2').checked ? 'Activé' : 'Désactivé';
+            const zoom = document.getElementById('zoom2').value || 'Non spécifié';
             const output_file = document.getElementById('output_file2').value || 'Non spécifié';
             let fileName = fileInput.value.split('\\').pop();  // Cela extraira uniquement le nom du fichier.
 

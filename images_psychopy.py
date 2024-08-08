@@ -39,7 +39,8 @@ def static_images_psychopy(chemin, duration, betweenstimuli, zoom):
         closeShape=False,
         lineColor="white"
     )
-    thezoom = 1 if zoom else 0.5
+    thezoom = 0.8+(0.3*zoom/100)
+    #thezoom = 1 if zoom else 0.5
     timer = core.Clock()  # Horloge pour le timing précis
     stimulus_times = []  # Liste pour enregistrer les moments des stimuli
     stimulus_apparition=[]
@@ -122,9 +123,9 @@ if __name__ == "__main__":
     parser.add_argument("--duration", type=int, required=True, help="Durée en secondes des stimuli")
     parser.add_argument("--betweenstimuli", type=int, required=True, help="Durée en secondes entre les stimuli")
     parser.add_argument("--file", type=str, help="Chemin du fichier contenant les stimuli")
-    parser.add_argument("--zoom", type=str, choices=['Activé', 'Désactivé'], required=True, help="Activer ou désactiver le Zoom")
+    parser.add_argument("--zoom", type=int, required=True, help="Pourcentage Zoom")
     parser.add_argument("--output_file", type=str, required=True, help="Nom du fichier d'output")
 
     args = parser.parse_args()
 
-    main(args.duration, args.betweenstimuli, args.file, args.zoom == 'Activé', "Fichiers_output/"+args.output_file+".tsv")
+    main(args.duration, args.betweenstimuli, args.file, args.zoom, "Fichiers_output/"+args.output_file+".tsv")

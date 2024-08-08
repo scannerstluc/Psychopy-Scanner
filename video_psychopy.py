@@ -45,7 +45,9 @@ def play_video_psychopy(chemin, duration, between_stimuli, zoom):
     )
     wait_for_trigger()
     global_timer = core.Clock()
-    thezoom = 2 if zoom else 1.4
+    thezoom = 1.3+(0.77*zoom/100)
+    #thezoom = 1.4*zoom/100
+    #thezoom = 2 if zoom else 1.4
     for x in range(len(videos)):
         timer = core.Clock()
         video_path = videos[x]
@@ -124,13 +126,13 @@ if __name__ == "__main__":
     parser.add_argument("--duration", type=int, required=True, help="Durée en secondes des stimuli")
     parser.add_argument("--betweenstimuli", type=int, required=True, help="Durée en secondes entre les stimuli")
     parser.add_argument("--file", type=str, help="Chemin du fichier contenant les stimuli")
-    parser.add_argument("--zoom", type=str, choices=['Activé', 'Désactivé'], required=True, help="Activer ou désactiver le Zoom")
+    parser.add_argument("--zoom", type=int, required=True, help="Pourcentage Zoom")
     parser.add_argument("--output_file", type=str, required=True, help="Nom du fichier d'output")
 
 
     args = parser.parse_args()
 
-    main(args.duration, args.betweenstimuli, "Paradigme_video/"+args.file, args.zoom == 'Activé', "Fichiers_output/"+args.output_file+".tsv")
+    main(args.duration, args.betweenstimuli, "Paradigme_video/"+args.file, args.zoom, "Fichiers_output/"+args.output_file+".tsv")
     """
     duration = 1
     betweenstimuli = 1

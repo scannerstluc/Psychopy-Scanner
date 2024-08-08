@@ -7,7 +7,7 @@ class PsychoPyParadigm:
     def __init__(self, duration, words, zoom, file, output):
         self.duration = int(duration)
         self.words = words
-        self.zoom = zoom == "Activé"
+        self.zoom = zoom
         self.file = file
         self.stimuli_times = []
         self.stimuli_apparition = []
@@ -50,7 +50,8 @@ class PsychoPyParadigm:
 
     def words_psychopy(self):
         win = visual.Window(fullscr=True, color=[-1, -1, -1], units='pix')
-        text_stim = visual.TextStim(win, text='', color=[1, 1, 1], height=150 if self.zoom else 50)
+        print(self.zoom)
+        text_stim = visual.TextStim(win, text='', color=[1, 1, 1], height=90+(90*self.zoom/100))
 
         self.wait_for_trigger()
         self.global_timer.reset()
@@ -58,7 +59,7 @@ class PsychoPyParadigm:
         self.affichage_mots(win, text_stim, nothinkinglist, self.duration)
         self.affichage_mots(win, text_stim, self.words, self.duration)
         self.affichage_mots(win, text_stim, nothinkinglist, self.duration)
-        self.pause_for_seconds(5)  # Pause de 5 secondes avant de fermer
+        self.pause_for_seconds(3)  # Pause de 5 secondes avant de fermer
 
         win.close()
 
@@ -94,7 +95,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Exécuter le paradigme Psychopy")
     parser.add_argument("--duration", type=str, required=True, help="Durée en secondes des stimuli")
     parser.add_argument("--words", type=str, required=True, help="Liste de mots pour le paradigme")
-    parser.add_argument("--zoom", type=str, choices=['Activé', 'Désactivé'], required=True, help="Activer le Zoom")
+    parser.add_argument("--zoom", type=int, required=True, help="Pourcentage Zoom")
     parser.add_argument("--file", type=str, help="Chemin vers le fichier de mots", required=False)
     parser.add_argument("--output_file", type=str, required=True, help="Nom du fichier d'output")
 

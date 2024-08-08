@@ -31,7 +31,9 @@ def play_video_psychopy(chemin, duration, between_stimuli, zoom):
     print(videos)
     win = visual.Window(
         fullscr=True,
-        color=[-0.0196, 0.0039, -0.0196],
+        #color = [0, 0, 1],
+        #color = [1,0,0],
+        color= [-0.042607843137254943, 0.0005215686274509665, -0.025607843137254943],
         units="pix"
     )
     cross_stim = visual.ShapeStim(
@@ -50,8 +52,9 @@ def play_video_psychopy(chemin, duration, between_stimuli, zoom):
         movie_stim = visual.MovieStim(
             win=win,
             filename=video_path,
-            size=win.size,
+            size=[1920,1080],
             pos=(0, 0),
+            opacity=1.0,
             flipVert=False,
             flipHoriz=False,
             loop=True,

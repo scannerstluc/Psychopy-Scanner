@@ -59,7 +59,7 @@
                             <div class="input-group">
                                 <div class="input-container">
                                     <h3>Nom de fichier de sorti</h3>
-                                    <input type="text" id="output_file1" placeholder="par exemple: result">
+                                    <input type="text" id="output_file" placeholder="par exemple: result">
                                 </div>
                                 <div class="input-container">
                                     <h3> </h3>
@@ -92,7 +92,7 @@
                             <div class="input-group">
                                 <div class="input-container">
                                     <h3>Nom de fichier de sorti</h3>
-                                    <input type="text" id="output_file" placeholder="par exemple: result">
+                                    <input type="text" id="output_file1" placeholder="par exemple: result">
                                 </div>
                                 <div class="input-container">
                                     <h3> </h3>
@@ -149,7 +149,7 @@
             const words = document.getElementById('words').value || 'Non spécifié';
             const zoom = document.getElementById('zoom').checked ? 'Activé' : 'Désactivé';
             const fileInput = document.getElementById('fileinput');
-            const output_file = document.getElementById('output_file1').value || 'Non spécifié';
+            const output_file = document.getElementById('output_file').value || 'Non spécifié';
             let fileName = fileInput.value.split('\\').pop();  // Cela extraira uniquement le nom du fichier.
 
             if (!fileName && words=='Non spécifié'){
@@ -183,9 +183,9 @@
         function Submitimage(){
             const duration = document.getElementById('duration1').value || 'Non spécifié';
             const betweenstimuli = document.getElementById('betweenstimuli').value || 'Non spécifié';
-            const fileInput = document.getElementById('fileinput');
+            const fileInput = document.getElementById('fileinput1');
             const zoom = document.getElementById('zoom1').checked ? 'Activé' : 'Désactivé';
-            const output_file = document.getElementById('output_file').value || 'Non spécifié';
+            const output_file = document.getElementById('output_file1').value || 'Non spécifié';
             let fileName = fileInput.value.split('\\').pop();  // Cela extraira uniquement le nom du fichier.
 
             if (!fileName) {

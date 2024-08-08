@@ -53,14 +53,11 @@ def submit_data():
 def submit_images():
     try:
         data = request.get_json()
-        print(data)
         duration = data.get('duration')
         file = data.get('filePath')
         zoom = data.get('zoom')
         betweenstimuli = data.get('betweenstimuli')
         output_file = data.get('output_file')
-        print(zoom)
-        print(betweenstimuli)
         subprocess.run([
             sys.executable, 'images_psychopy.py',
             '--duration', duration,

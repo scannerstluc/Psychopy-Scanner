@@ -14,10 +14,15 @@ def wait_for_trigger(port='COM3', baudrate=9600, trigger_char='s'):
 
 
 def reading(filename):
+    filenames = []
+    angles = []
     with open(filename, "r") as fichier:
-        ma_liste = [line.strip() for line in fichier]
-    return ma_liste
-
+        for line in fichier:
+            parts = line.strip().split(',')
+            if len(parts) == 2:
+                filenames.append(parts[0].strip())
+                angles.append(int(parts[1].strip()))
+    return filenames, angles
 
 def static_images_psychopy(chemin, duration, betweenstimuli, zoom):
     win = visual.Window(
@@ -26,7 +31,7 @@ def static_images_psychopy(chemin, duration, betweenstimuli, zoom):
         units="pix"
     )
     chemin = "Paradigme_images_statiques/" + chemin
-    images = reading(chemin)
+    images, orientation = reading(chemin)
     cross_stim = visual.ShapeStim(
         win=win,
         vertices=((0, -20), (0, 20), (0, 0), (-20, 0), (20, 0)),
@@ -43,7 +48,7 @@ def static_images_psychopy(chemin, duration, betweenstimuli, zoom):
     win.flip()
     wait_for_trigger()
     global_timer = core.Clock()
-
+    count = 0
     for image in images:
         image_path = "Paradigme_images_statiques/stim_static/" + image
         image_stim = visual.ImageStim(
@@ -53,13 +58,14 @@ def static_images_psychopy(chemin, duration, betweenstimuli, zoom):
             size=None  # Utilisez None pour conserver la taille originale ou ajustez selon 'thezoom'
         )
         image_stim.size *= thezoom
+        image_stim.ori = orientation[count]
 
         image_stim.draw()
         win.flip()
         stimulus_apparition.append(global_timer.getTime())
         timer.reset()  # Réinitialiser le timer à chaque nouvelle image
         while timer.getTime() < duration:
-            pass  # Attente active jusqu'à la fin de la durée
+            pass
         stimulus_times.append(timer.getTime())
         stimuli_liste.append(image)
 
@@ -69,36 +75,56 @@ def static_images_psychopy(chemin, duration, betweenstimuli, zoom):
         stimulus_apparition.append(global_timer.getTime())
         timer.reset()
         while timer.getTime() < betweenstimuli:
-            pass  # Attente active entre les images
+            pass
         stimulus_times.append(timer.getTime())
         stimuli_liste.append("Fixation")
+        count+=1
 
 
 
 
     win.close()
-    return stimulus_times, stimulus_apparition,stimuli_liste
+    return stimulus_times, stimulus_apparition,stimuli_liste, orientation
 
-def write_tsv(onset, duration, trial_type, filename="output.tsv"):
+def write_tsv(onset, duration, file_stimuli, orientation, trial_type, filename="output.tsv"):
     with open(filename, mode='w', newline='') as file:
         tsv_writer = csv.writer(file, delimiter='\t')
-        tsv_writer.writerow(['onset', 'duration', 'trial_type'])
+        tsv_writer.writerow(['onset', 'duration', 'trial_type','angle', 'stim_file', ])
+        orientation.insert(3,0)
+        for x in range (len(trial_type)):
+            if trial_type[x]=="Fixation":
+                orientation.insert(x,"None")
         for i in range(len(onset)):
-            tsv_writer.writerow([onset[i], duration[i], trial_type[i]])
+            tsv_writer.writerow([onset[i], duration[i], trial_type[i], orientation[i], file_stimuli[i]])
 
 
-def main(duration, betweenstimuli, file, zoom):
-    stimulus_times, stimulus_apparition, stimuli = static_images_psychopy(file, duration, betweenstimuli, zoom)
-    write_tsv(stimulus_apparition, stimulus_times, stimuli)
+def main(duration, betweenstimuli, file, zoom, output_file):
+    stimulus_times, stimulus_apparition, stimuli, orientation = static_images_psychopy(file, duration, betweenstimuli, zoom)
+    liste_trial=[]
+    liste_lm=[]
+    count=0
+    for x in stimuli:
+        if x == "Fixation":
+            liste_lm.append(count)
+            liste_trial.append("Fixation")
+        else:
+            liste_trial.append("Stimuli")
+        count+=1
+    for x in liste_lm:
+        stimuli[x] = "None"
+    write_tsv(stimulus_apparition, stimulus_times, stimuli, orientation, liste_trial, output_file)
 
+
+print(reading("Paradigme_images_statiques/Sequence1.txt"))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Exécuter le paradigme Psychopy")
     parser.add_argument("--duration", type=int, required=True, help="Durée en secondes des stimuli")
     parser.add_argument("--betweenstimuli", type=int, required=True, help="Durée en secondes entre les stimuli")
     parser.add_argument("--file", type=str, help="Chemin du fichier contenant les stimuli")
-    parser.add_argument("--zoom", type=str, choices=['Activé', 'Désactivé'], required=True,
-                        help="Activer ou désactiver le Zoom")
+    parser.add_argument("--zoom", type=str, choices=['Activé', 'Désactivé'], required=True, help="Activer ou désactiver le Zoom")
+    parser.add_argument("--output_file", type=str, required=True, help="Nom du fichier d'output")
+
     args = parser.parse_args()
 
-    main(args.duration, args.betweenstimuli, args.file, args.zoom == 'Activé')
+    main(args.duration, args.betweenstimuli, args.file, args.zoom == 'Activé', "Fichiers_output/"+args.output_file+".tsv")

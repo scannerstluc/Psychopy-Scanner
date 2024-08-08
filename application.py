@@ -29,16 +29,19 @@ def psychopy_utilities():
 @app.route('/submit-data', methods=['POST'])
 def submit_data():
     try:
+        print("working here?")
         data = request.get_json()
         duration = data.get('duration')
         words = data.get('words')
         zoom = data.get('zoom')
         file = data.get('filePath')
+        output_file = data.get('output_file')
         subprocess.run([
             sys.executable, 'psychopy_runner.py',
             '--duration', duration,
             '--words', words,
             '--file', file,
+            '--output_file', output_file,
             '--zoom', zoom
         ])
 
@@ -55,12 +58,14 @@ def submit_images():
         file = data.get('filePath')
         zoom = data.get('zoom')
         betweenstimuli = data.get('betweenstimuli')
+        output_file = data.get('output_file')
         print(zoom)
         print(betweenstimuli)
         subprocess.run([
             sys.executable, 'images_psychopy.py',
             '--duration', duration,
             '--file', file,
+            '--output_file', output_file,
             '--betweenstimuli', betweenstimuli,
             '--zoom', zoom
         ])

@@ -4,7 +4,7 @@ from psychopy import visual, core, event
 import csv
 
 class PsychoPyParadigm:
-    def __init__(self, duration, words, zoom, file):
+    def __init__(self, duration, words, zoom, file, output):
         self.duration = int(duration)
         self.words = words
         self.zoom = zoom == "Activé"
@@ -13,6 +13,7 @@ class PsychoPyParadigm:
         self.stimuli_apparition = []
         self.stimuli = []
         self.global_timer= core.Clock()
+        self.output=output
 
     def wait_for_trigger(self, port='COM3', baudrate=9600, trigger_char='s'):
         with serial.Serial(port, baudrate=baudrate) as ser:
@@ -61,12 +62,25 @@ class PsychoPyParadigm:
 
         win.close()
 
+    def pas_un_stimuli(self, stimuli):
+        alphabet = ";:/.,?#@&|£$[]=~"
+        for char in alphabet:
+            if char in stimuli:
+                return True
+        return False
     def write_tsv(self, filename="output1.tsv"):
+        filename=self.output
         with open(filename, mode='w', newline='') as file:
             tsv_writer = csv.writer(file, delimiter='\t')
-            tsv_writer.writerow(['onset', 'duration', 'trial_type'])
+            tsv_writer.writerow(['onset', 'duration', 'stimuli', 'trial_type'])
+            type_stimuli = []
+            for x in range(len(self.stimuli)):
+                if self.pas_un_stimuli(self.stimuli[x]):
+                    type_stimuli.append("Noise")
+                else:
+                    type_stimuli.append("Stimuli")
             for i in range(len(self.stimuli_apparition)):
-                tsv_writer.writerow([self.stimuli_apparition[i], self.stimuli_times[i], self.stimuli[i]])
+                tsv_writer.writerow([self.stimuli_apparition[i], self.stimuli_times[i], self.stimuli[i], type_stimuli[i]])
 
     def run(self):
         if self.file:
@@ -82,7 +96,9 @@ if __name__ == "__main__":
     parser.add_argument("--words", type=str, required=True, help="Liste de mots pour le paradigme")
     parser.add_argument("--zoom", type=str, choices=['Activé', 'Désactivé'], required=True, help="Activer le Zoom")
     parser.add_argument("--file", type=str, help="Chemin vers le fichier de mots", required=False)
+    parser.add_argument("--output_file", type=str, required=True, help="Nom du fichier d'output")
+
 
     args = parser.parse_args()
-    paradigm = PsychoPyParadigm(args.duration, args.words, args.zoom, args.file)
+    paradigm = PsychoPyParadigm(args.duration, args.words, args.zoom, args.file, "Fichiers_output/"+args.output_file+".tsv")
     paradigm.run()

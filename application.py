@@ -75,5 +75,29 @@ def submit_images():
         return jsonify({'status': 'error', 'message': str(e)})
 
 
+@app.route('/submit-videos', methods=['POST'])
+def submit_videos():
+    try:
+        data = request.get_json()
+        print(data)
+        duration = data.get('duration')
+        file = data.get('filePath')
+        zoom = data.get('zoom')
+        betweenstimuli = data.get('betweenstimuli')
+        output_file = data.get('output_file')
+        print(zoom)
+        print(betweenstimuli)
+        subprocess.run([
+            sys.executable, 'video_psychopy.py',
+            '--duration', duration,
+            '--file', file,
+            '--output_file', output_file,
+            '--betweenstimuli', betweenstimuli,
+            '--zoom', zoom
+        ])
+
+        return jsonify({'status': 'success', 'message': 'Données reçues et script exécuté'})
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)})
 if __name__ == '__main__':
     app.run(debug=True)

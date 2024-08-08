@@ -111,6 +111,7 @@ input {
 
 .submit {
     background-color: rgba(40, 93, 1, 0.58);
+    margin-top: 28px !important;
     color: white;
     border-color: white;
     margin-top: 20px;

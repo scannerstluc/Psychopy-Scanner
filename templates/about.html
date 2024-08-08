@@ -21,6 +21,10 @@
         <a href="#" onclick="changeMainContent('about')">Images statiques défilantes</a>
         <a href="#" onclick="changeMainContent('contact')">Images mouvantes défilantes</a>
         <input type="file" id="fileinput" class="cache" >
+        <input type="file" id="fileinput1" class="cache" >
+        <input type="file" id="fileinput2" class="cache" >
+
+
 
     </div>
 
@@ -78,7 +82,7 @@
                                 </div>
                                 <div class="input-container">
                                     <h3>Sélectionner un paradigme déjà existant</h3>
-                                    <button class="button-choice" onclick="document.getElementById('fileinput').click()">Choisir un fichier</button>
+                                    <button class="button-choice" onclick="document.getElementById('fileinput1').click()">Choisir un fichier</button>
                                 </div>
                                 <div class="input-container">
                                     <h3>Activer le Zoom</h3>
@@ -99,7 +103,35 @@
                         break;
                     case 'contact':
                         newContent = `
-                            <h2>A faire</h2>
+                            <h2>Paradigme pour les images statiques défilantes</h2>
+                            <div class="input-group">
+                                <div class="input-container">
+                                    <h3>Durée en secondes des stimuli</h3>
+                                    <input type="text" id="duration2" placeholder="par exemple: 4">
+                                </div>
+                                <div class="input-container">
+                                    <h3>Durée entre les stimuli</h3>
+                                    <input type="text" id="betweenstimuli1" placeholder="par exemple: 5">
+                                </div>
+                                <div class="input-container">
+                                    <h3>Sélectionner un paradigme déjà existant</h3>
+                                    <button class="button-choice" onclick="document.getElementById('fileinput2').click()">Choisir un fichier</button>
+                                </div>
+                                <div class="input-container">
+                                    <h3>Activer le Zoom</h3>
+                                    <input type="checkbox" id="zoom2" class="color-green">
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <div class="input-container">
+                                    <h3>Nom de fichier de sorti</h3>
+                                    <input type="text" id="output_file2" placeholder="par exemple: result">
+                                </div>
+                                <div class="input-container">
+                                    <h3> </h3>
+                                    <button class="submit" onclick="Submitvideo()">Submit</button>
+                                </div>
+                            </div>
                         `;
                         break;
                     default:
@@ -163,6 +195,43 @@
 
             // Envoyer les données au serveur
             fetch('/submit-images', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    duration: duration,
+                    betweenstimuli: betweenstimuli,
+                    zoom: zoom,
+                    output_file: output_file,
+                    filePath: fileName // Envoyer la valeur de l'input de fichier comme un simple string
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                alert('Données envoyées avec succès!');
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+
+        function Submitvideo(){
+            const duration = document.getElementById('duration2').value || 'Non spécifié';
+            const betweenstimuli = document.getElementById('betweenstimuli1').value || 'Non spécifié';
+            const fileInput = document.getElementById('fileinput2');
+            const zoom = document.getElementById('zoom2').checked ? 'Activé' : 'Désactivé';
+            const output_file = document.getElementById('output_file2').value || 'Non spécifié';
+            let fileName = fileInput.value.split('\\').pop();  // Cela extraira uniquement le nom du fichier.
+
+            if (!fileName) {
+                alert('Veuillez sélectionner un fichier avant de soumettre.');
+                return;  // Arrête l'exécution si aucun fichier n'est sélectionné
+            }
+
+            // Envoyer les données au serveur
+            fetch('/submit-videos', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

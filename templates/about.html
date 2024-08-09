@@ -8,24 +8,29 @@
 </head>
 <body>
     <header class="header">
-        <h1 class="header-center">Patient data</h1>
+        <h1 class="header-center">Ion's Psychopy</h1>
         <div class="header-right">
-            <a class="additional" href="/">Home</a>
-            Patient name
+            <button id="openPopup" class="navbutton">Change of Patient</button>
+            <span id="patientName">Patient ID</span>
         </div>
     </header>
+
+    <div class="overlay" id="popupOverlay" style="display: none;">
+        <div class="popup">
+            <h4 style="color: #0c0b0b">Identifiant du patient</h4>
+            <input type="text" placeholder="Entrez votre texte" id="patientInput">
+            <button onclick="submitPopup()" class="submit">Submit</button>
+        </div>
+    </div>
 
     <div class="sidenav">
         <h2 class="h2-sidenav">Paradigme</h2>
         <a href="#" onclick="changeMainContent('home')">Mots défilants</a>
         <a href="#" onclick="changeMainContent('about')">Images statiques défilantes</a>
         <a href="#" onclick="changeMainContent('contact')">Images mouvantes défilantes</a>
-        <input type="file" id="fileinput" class="cache" >
-        <input type="file" id="fileinput1" class="cache" >
-        <input type="file" id="fileinput2" class="cache" >
-
-
-
+        <input type="file" id="fileinput" class="cache">
+        <input type="file" id="fileinput1" class="cache">
+        <input type="file" id="fileinput2" class="cache">
     </div>
 
     <main id="main-content" class="main-content">
@@ -58,11 +63,6 @@
                             </div>
                             <div class="input-group">
                                 <div class="input-container">
-                                    <h3>Nom de fichier de sorti</h3>
-                                    <input type="text" id="output_file" placeholder="par exemple: result">
-                                </div>
-                                <div class="input-container">
-                                    <h3> </h3>
                                     <button class="submit" onclick="submitForm()">Submit</button>
                                 </div>
                             </div>
@@ -91,11 +91,6 @@
                             </div>
                             <div class="input-group">
                                 <div class="input-container">
-                                    <h3>Nom de fichier de sorti</h3>
-                                    <input type="text" id="output_file1" placeholder="par exemple: result">
-                                </div>
-                                <div class="input-container">
-                                    <h3> </h3>
                                     <button class="submit" onclick="Submitimage()">Submit</button>
                                 </div>
                             </div>
@@ -124,11 +119,6 @@
                             </div>
                             <div class="input-group">
                                 <div class="input-container">
-                                    <h3>Nom de fichier de sorti</h3>
-                                    <input type="text" id="output_file2" placeholder="par exemple: result">
-                                </div>
-                                <div class="input-container">
-                                    <h3> </h3>
                                     <button class="submit" onclick="Submitvideo()">Submit</button>
                                 </div>
                             </div>
@@ -144,48 +134,61 @@
                 mainContent.innerHTML = newContent;
             }
 
-        function submitForm() {
-            const duration = document.getElementById('duration').value || 'Non spécifié';
-            const words = document.getElementById('words').value || 'Non spécifié';
-            const zoom = document.getElementById('zoom').value || 'Non spécifié';
-            const fileInput = document.getElementById('fileinput');
-            const output_file = document.getElementById('output_file').value || 'Non spécifié';
-            let fileName = fileInput.value.split('\\').pop();  // Cela extraira uniquement le nom du fichier.
 
-            if (!fileName && words=='Non spécifié'){
-                alert('Veuillez sélectionner un fichier ou entrer des mots avant de soumettre.');
-                return;
+            function openPopup() {
+                document.getElementById('popupOverlay').style.display = 'flex';
             }
 
-            // Envoyer les données au serveur
-            fetch('/submit-data', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    duration: duration,
-                    words: words,
-                    zoom: zoom,
-                    output_file: output_file,
-                    filePath: fileName // Envoyer la valeur de l'input de fichier comme un simple string
-                }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Success:', data);
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-        }
+            function submitPopup() {
+                var input = document.getElementById('patientInput').value;
+                document.getElementById('patientName').textContent = input; // Met à jour le nom du patient
+                document.getElementById('popupOverlay').style.display = 'none'; // Ferme la pop-up
+            }
+
+            document.getElementById('openPopup').addEventListener('click', openPopup);
+
+            function submitForm() {
+                const duration = document.getElementById('duration').value || 'Non spécifié';
+                const words = document.getElementById('words').value || 'Non spécifié';
+                const zoom = document.getElementById('zoom').value || 'Non spécifié';
+                const fileInput = document.getElementById('fileinput');
+                const output_file = document.getElementById('patientName').textContent;
+                let fileName = fileInput.value.split('\\').pop();  // Cela extraira uniquement le nom du fichier.
+
+                if (!fileName && words=='Non spécifié'){
+                    alert('Veuillez sélectionner un fichier ou entrer des mots avant de soumettre.');
+                    return;
+                }
+
+                // Envoyer les données au serveur
+                fetch('/submit-data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        duration: duration,
+                        words: words,
+                        zoom: zoom,
+                        output_file: output_file,
+                        filePath: fileName // Envoyer la valeur de l'input de fichier comme un simple string
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+            }
 
         function Submitimage(){
             const duration = document.getElementById('duration1').value || 'Non spécifié';
             const betweenstimuli = document.getElementById('betweenstimuli').value || 'Non spécifié';
             const fileInput = document.getElementById('fileinput1');
             const zoom = document.getElementById('zoom1').value || 'Non spécifié';
-            const output_file = document.getElementById('output_file1').value || 'Non spécifié';
+            const output_file = document.getElementById('patientName').textContent;
             let fileName = fileInput.value.split('\\').pop();  // Cela extraira uniquement le nom du fichier.
 
             if (!fileName) {
@@ -222,7 +225,7 @@
             const betweenstimuli = document.getElementById('betweenstimuli1').value || 'Non spécifié';
             const fileInput = document.getElementById('fileinput2');
             const zoom = document.getElementById('zoom2').value || 'Non spécifié';
-            const output_file = document.getElementById('output_file2').value || 'Non spécifié';
+            const output_file = document.getElementById('patientName').textContent;
             let fileName = fileInput.value.split('\\').pop();  // Cela extraira uniquement le nom du fichier.
 
             if (!fileName) {

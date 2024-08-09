@@ -59,7 +59,7 @@ def submit_images():
         betweenstimuli = data.get('betweenstimuli')
         output_file = data.get('output_file')
         subprocess.run([
-            sys.executable, 'images_psychopy.py',
+            sys.executable, 'image_opti.py',
             '--duration', duration,
             '--file', file,
             '--output_file', output_file,

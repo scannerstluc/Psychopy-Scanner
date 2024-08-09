@@ -1,7 +1,5 @@
 import argparse
 import csv
-import os
-from datetime import datetime
 
 from psychopy import visual, core, event
 import serial
@@ -50,8 +48,23 @@ def play_video_psychopy(chemin, duration, between_stimuli, zoom):
     thezoom = 1.3+(0.77*zoom/100)
     #thezoom = 1.4*zoom/100
     #thezoom = 2 if zoom else 1.4
+    for y in range(len(videos)):
+        video_path = videos[x]
+        movie_stim = visual.MovieStim(
+            win=win,
+            filename=video_path,
+            size=[1920, 1080],
+            pos=(0, 0),
+            opacity=1.0,
+            flipVert=False,
+            flipHoriz=False,
+            loop=True,
+            units='norm'
+        )
+
+
+    timer = core.Clock()
     for x in range(len(videos)):
-        timer = core.Clock()
         video_path = videos[x]
         movie_stim = visual.MovieStim(
             win=win,
@@ -93,25 +106,12 @@ def play_video_psychopy(chemin, duration, between_stimuli, zoom):
     return longueur_stimuli, apparition_stimuli, stimuli_liste
 
 def write_tsv(onset, duration, file_stimuli, trial_type, filename="output.tsv"):
-    output_dir = 'Fichiers_output'
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-    current_date = datetime.now().strftime("%Y-%m-%d")
-    run_number = 1
-    filename_prefix = f"{current_date}_{filename.split('.')[0]}"
-    existing_files = [f for f in os.listdir(output_dir) if f.startswith(filename_prefix) and 'run' in f]
-    if existing_files:
-        runs = [int(f.split('run')[-1].split('.')[0]) for f in existing_files if 'run' in f]
-        if runs:
-            run_number = max(runs) + 1
-    filename = os.path.join(output_dir, f"{filename_prefix}_run{run_number}.tsv")
-
-
+    print("ici ????")
     with open(filename, mode='w', newline='') as file:
-            tsv_writer = csv.writer(file, delimiter='\t')
-            tsv_writer.writerow(['onset', 'duration', 'trial_type', 'stim_file'])
-            for i in range(len(onset)):
-                tsv_writer.writerow([onset[i], duration[i], trial_type[i], file_stimuli[i]])
+        tsv_writer = csv.writer(file, delimiter='\t')
+        tsv_writer.writerow(['onset', 'duration', 'trial_type', 'stim_file'])
+        for i in range(len(onset)):
+            tsv_writer.writerow([onset[i], duration[i], trial_type[i], file_stimuli[i]])
 
 
 def main(duration, betweenstimuli, file, zoom, output_file):
@@ -147,7 +147,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    main(args.duration, args.betweenstimuli, "Paradigme_video/"+args.file, args.zoom, args.output_file+".tsv")
+    main(args.duration, args.betweenstimuli, "Paradigme_video/"+args.file, args.zoom, "Fichiers_output/"+args.output_file+".tsv")
     """
     duration = 1
     betweenstimuli = 1

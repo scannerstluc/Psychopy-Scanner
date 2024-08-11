@@ -38,6 +38,8 @@ def play_video_psychopy(chemin, duration, between_stimuli, zoom):
         color= [-0.042607843137254943, 0.0005215686274509665, -0.025607843137254943],
         units="pix"
     )
+    event.globalKeys.add(key='escape', func=win.close)
+
     cross_stim = visual.ShapeStim(
         win=win,
         vertices=((0, -20), (0, 20), (0, 0), (-20, 0), (20, 0)),

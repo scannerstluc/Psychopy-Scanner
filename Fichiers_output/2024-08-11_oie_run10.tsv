@@ -1,0 +1,11 @@
+block_type	word	response	response_time
+syllabe	comique	['1']	0.9176979000039864
+syllabe	ennuyant	['2']	0.5553897000063444
+syllabe	querelleur	['3']	0.3695677999930922
+syllabe	fiable	['4']	0.31623660000332166
+syllabe	pessimiste	['1']	0.3026555999967968
+syllabe	désordonné	['4', '2']	0.00012310000602155924
+syllabe	indépendant	['2']	0.35690309999336023
+syllabe	imaginatif	None	None
+syllabe	poli	['1']	2.5300731000024825
+syllabe	ragoteur	None	None

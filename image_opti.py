@@ -32,6 +32,8 @@ def static_images_psychopy(chemin, duration, betweenstimuli, zoom):
         #color=[-0.0118, 0.0039, -0.0196],
         units="pix"
     )
+    event.globalKeys.add(key='escape', func=win.close)
+
     chemin = "Paradigme_images_statiques/" + chemin
     images, orientation = reading(chemin)
     cross_stim = visual.ShapeStim(

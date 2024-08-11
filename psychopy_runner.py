@@ -53,6 +53,8 @@ class PsychoPyParadigm:
 
     def words_psychopy(self):
         win = visual.Window(fullscr=True, color=[-1, -1, -1], units='pix')
+        event.globalKeys.add(key='escape', func=win.close)
+
         print(self.zoom)
         text_stim = visual.TextStim(win, text='', color=[1, 1, 1], height=90+(90*self.zoom/100))
 

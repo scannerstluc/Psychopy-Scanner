@@ -37,7 +37,7 @@ class list_words:
         self.reaction_time = []
         self.response = []
 
-        self.win = visual.Window(fullscr=False, color=[-1, -1, -1])
+        self.win = visual.Window(fullscr=True)
 
         event.globalKeys.add(key='escape', func=self.win.close)
 
@@ -50,13 +50,13 @@ class list_words:
 
 
         self.Premier_texte = ("Dans l'exercice qui va suivre vous verrez apparaitre des adjectifs. \n" +
-                         "Suivant la consigne, vous devrez juger pour chaque adjectif: \n" +
+                         "Suivant la consigne, vous devrez juger pour chaque adjectif: \n\n" +
                          "-comment il s'applique à vous-même \n" +
                          "-comment il s'applique à votre meilleur(e) ami(e) \n" +
                          "-ou alors donner le nombre de syllabes qui le composent\n\n" +
                          "(appuyer sur une touche pour lire la suite)")
 
-        texte = visual.TextStim(self.win, text=self.Premier_texte, color=[1, 1, 1], alignText="left", wrapWidth=1.5)
+        texte = visual.TextStim(self.win, text=self.Premier_texte, color=[1, 1, 1], alignText="left", wrapWidth=1.5, font='Arial')
         texte.draw()
         self.win.flip()
         event.waitKeys()
@@ -116,10 +116,10 @@ class list_words:
                            + 'Comment l\'adjectif s\'applique-t-il à mon/ma meilleur(e) ami(e) ?')
 
         self.Syllabe_shortcue = ('SYLLABES\n\n' +
-                            'Combien de syllables de comporte cet adjectif?')
+                            'Combien de syllables comporte cet adjectif?')
 
     def debut_me(self):
-        texte_block = visual.TextStim(self.win, text=self.Me_shortcue, color=[1, 1, 1], alignText="left", wrapWidth=1.5)
+        texte_block = visual.TextStim(self.win, text=self.Me_shortcue, color=[1, 1, 1], alignText="left", wrapWidth=1.5, font="Arial")
         clock = core.Clock()
         texte_block.draw()
         self.win.flip()
@@ -127,7 +127,7 @@ class list_words:
             pass
 
     def debut_friend(self):
-        texte_block = visual.TextStim(self.win, text=self.Friend_shortcue, color=[1, 1, 1], alignText="left", wrapWidth=1.5)
+        texte_block = visual.TextStim(self.win, text=self.Friend_shortcue, color=[1, 1, 1], alignText="left", wrapWidth=1.5, font="Arial")
         clock = core.Clock()
         texte_block.draw()
         self.win.flip()
@@ -135,7 +135,7 @@ class list_words:
             pass
 
     def debut_syllabe(self):
-        texte_block = visual.TextStim(self.win, text=self.Syllabe_shortcue, color=[1, 1, 1], alignText="left", wrapWidth=1.5)
+        texte_block = visual.TextStim(self.win, text=self.Syllabe_shortcue, color=[1, 1, 1], alignText="left", wrapWidth=1.5, font="Arial")
         clock = core.Clock()
         texte_block.draw()
         self.win.flip()
@@ -145,7 +145,7 @@ class list_words:
 
 
     def show_1_word(self, mot):
-        texte_5_words = visual.TextStim(self.win, color=[1, 1, 1], wrapWidth=1.5)
+        texte_5_words = visual.TextStim(self.win, color=[1, 1, 1], wrapWidth=1.5, font="Arial")
         texte_5_words.text = mot
         texte_5_words.draw()
         self.win.flip()
@@ -246,31 +246,46 @@ class list_words:
                 count += 1
 
     def blocks(self):
+        cross_stim = visual.ShapeStim(
+            win=self.win,
+            vertices=((0, -0.03), (0, 0.03), (0, 0), (-0.03, 0), (0.03, 0)),  # Utilisation d'unités normalisées
+            lineWidth=3,
+            closeShape=False,
+            lineColor="white",
+            units='height'  # Utilisation d'unités basées sur la hauteur de l'écran
+        )
+
         number_of_blocks = 2
         choice_block = ["me", "friend", "syllabe"]
-        hashmap = {"me":10, "friend":10, "syllabe":10}
+        hashmap = {"me": 10, "friend": 10, "syllabe": 10}
+        clock = core.Clock()
+
         for x in range(number_of_blocks):
             block = random.choice(choice_block)
             self.order_blocks.append(block)
-            hashmap[block]-=1
-            if hashmap[block] ==0:
+            hashmap[block] -= 1
+            if hashmap[block] == 0:
                 choice_block.remove(block)
-            if (block == "me"):
+
+            if block == "me":
                 self.debut_me()
                 self.show_5_words(block)
-            elif (block == "friend"):
+            elif block == "friend":
                 self.debut_friend()
                 self.show_5_words(block)
-            elif (block == "syllabe"):
+            elif block == "syllabe":
                 self.debut_syllabe()
                 self.show_5_words(block)
 
-        print(hashmap["me"])
-        print(hashmap["friend"])
-        print(hashmap["syllabe"])
+            # Affichage de la croix de fixation pendant 100 secondes
+            cross_stim.draw()
+            self.win.flip()
+            fixation_duration = 8  # en secondes
+            clock.reset()
 
-
-        pass
+            while clock.getTime() < fixation_duration:
+                cross_stim.draw()
+                self.win.flip()
 
     def fin(self):
         print(self.shown_words)

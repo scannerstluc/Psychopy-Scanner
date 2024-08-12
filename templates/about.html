@@ -10,13 +10,39 @@
     <header class="header">
         <h1 class="header-center">Ion's Psychopy</h1>
         <div class="header-right">
+            <button id="serialport" class="navbutton">Serial Port</button>
             <button id="openPopup" class="navbutton">Change of Patient</button>
             <span id="patientName">Patient ID</span>
         </div>
     </header>
 
+    <div class="overlay" id="popupSerial" style="display: none;">
+        <span class="close-btn" onclick="closePopup('popupSerial')">&times;</span>
+        <div class="popup">
+            <h4 style="color: #0c0b0b">Configuration du port</h4>
+            <div class="input-overlay">
+                <div class="input-overlay-container">
+                    <span>Nom du port</span>
+                    <input type="text" placeholder="ex: COM4" id="port">
+                </div>
+
+                <div class="input-overlay-container">
+                    <span>Speed(baud)</span>
+                    <input type="text" placeholder="ex: 9600" id="baudrate">
+                </div>
+
+                <div class="input-overlay-container">
+                    <span>Caractère pour lancer</span>
+                    <input type="text" placeholder="ex: s" id="trigger">
+                </div>
+            </div>
+            <button onclick="submitPort()" class="submit">Submit</button>
+        </div>
+    </div>
+
     <div class="overlay" id="popupOverlay" style="display: none;">
         <div class="popup">
+            <span class="close-btn" onclick="closePopup('popupOverlay')">&times;</span>
             <h4 style="color: #0c0b0b">Identifiant du patient</h4>
             <input type="text" placeholder="Entrez votre texte" id="patientInput">
             <button onclick="submitPopup()" class="submit">Submit</button>
@@ -31,6 +57,13 @@
         <input type="file" id="fileinput" class="cache">
         <input type="file" id="fileinput1" class="cache">
         <input type="file" id="fileinput2" class="cache">
+        <span id="resultPort"class="cache">Patient</span>
+        <span id="resultBaudrate"class="cache">Patient</span>
+        <span id="resultTrigger" class="cache">Patient</span>
+
+
+
+
     </div>
 
     <main id="main-content" class="main-content">
@@ -135,8 +168,18 @@
             }
 
 
-            function openPopup() {
-                document.getElementById('popupOverlay').style.display = 'flex';
+            function openPopup(name) {
+                document.getElementById(name).style.display = 'flex';
+            }
+
+            function submitPort(){
+                var baudrate = document.getElementById("baudrate").value;
+                var port = document.getElementById("port").value;
+                var realtrigger = document.getElementById("trigger").value;
+                document.getElementById("resultPort").textContent = port;
+                document.getElementById("resultBaudrate").textContent = baudrate;
+                document.getElementById("resultTrigger").textContent = realtrigger;
+                document.getElementById("popupSerial").style.display = 'none';
             }
 
             function submitPopup() {
@@ -145,7 +188,18 @@
                 document.getElementById('popupOverlay').style.display = 'none'; // Ferme la pop-up
             }
 
-            document.getElementById('openPopup').addEventListener('click', openPopup);
+            document.getElementById('openPopup').addEventListener('click', function() {
+                openPopup('popupOverlay');
+            });
+
+
+            document.getElementById('serialport').addEventListener('click', function() {
+                openPopup('popupSerial');
+            });
+
+            function closePopup(popupId) {
+                document.getElementById(popupId).style.display = 'none';
+            }
 
             function submitForm() {
                 const duration = document.getElementById('duration').value || 'Non spécifié';
@@ -153,6 +207,9 @@
                 const zoom = document.getElementById('zoom').value || 'Non spécifié';
                 const fileInput = document.getElementById('fileinput');
                 const output_file = document.getElementById('patientName').textContent;
+                const port = document.getElementById('resultPort').textContent;
+                const baudrate = document.getElementById('resultBaudrate').textContent;
+                const trigger = document.getElementById('resultTrigger').textContent;
                 let fileName = fileInput.value.split('\\').pop();  // Cela extraira uniquement le nom du fichier.
 
                 if (!fileName && words=='Non spécifié'){
@@ -170,6 +227,9 @@
                         duration: duration,
                         words: words,
                         zoom: zoom,
+                        port: port,
+                        baudrate: baudrate,
+                        trigger: trigger,
                         output_file: output_file,
                         filePath: fileName // Envoyer la valeur de l'input de fichier comme un simple string
                     }),
@@ -189,7 +249,10 @@
             const fileInput = document.getElementById('fileinput1');
             const zoom = document.getElementById('zoom1').value || 'Non spécifié';
             const output_file = document.getElementById('patientName').textContent;
-            let fileName = fileInput.value.split('\\').pop();  // Cela extraira uniquement le nom du fichier.
+            const port = document.getElementById('resultPort').textContent;
+            const baudrate = document.getElementById('resultBaudrate').textContent;
+            const trigger = document.getElementById('resultTrigger').textContent;
+            let fileName = fileInput.value.split('\\').pop();
 
             if (!fileName) {
                 alert('Veuillez sélectionner un fichier avant de soumettre.');
@@ -205,6 +268,9 @@
                 body: JSON.stringify({
                     duration: duration,
                     betweenstimuli: betweenstimuli,
+                    port: port,
+                    baudrate: baudrate,
+                    trigger: trigger,
                     zoom: zoom,
                     output_file: output_file,
                     filePath: fileName // Envoyer la valeur de l'input de fichier comme un simple string
@@ -226,6 +292,9 @@
             const fileInput = document.getElementById('fileinput2');
             const zoom = document.getElementById('zoom2').value || 'Non spécifié';
             const output_file = document.getElementById('patientName').textContent;
+            const port = document.getElementById('resultPort').textContent;
+            const baudrate = document.getElementById('resultBaudrate').textContent;
+            const trigger = document.getElementById('resultTrigger').textContent;
             let fileName = fileInput.value.split('\\').pop();  // Cela extraira uniquement le nom du fichier.
 
             if (!fileName) {
@@ -243,6 +312,9 @@
                     duration: duration,
                     betweenstimuli: betweenstimuli,
                     zoom: zoom,
+                    port: port,
+                    baudrate: baudrate,
+                    trigger: trigger,
                     output_file: output_file,
                     filePath: fileName // Envoyer la valeur de l'input de fichier comme un simple string
                 }),

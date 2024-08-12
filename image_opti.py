@@ -26,7 +26,7 @@ def reading(filename):
                 angles.append(int(parts[1].strip()))
     return filenames, angles
 
-def static_images_psychopy(chemin, duration, betweenstimuli, zoom):
+def static_images_psychopy(chemin, duration, betweenstimuli, zoom, port, baudrate, trigger):
     win = visual.Window(
         fullscr=True,
         #color=[-0.0118, 0.0039, -0.0196],
@@ -69,7 +69,7 @@ def static_images_psychopy(chemin, duration, betweenstimuli, zoom):
         count+=1
 
 
-    wait_for_trigger() #Attente du signal pour commencer l'expérience, en attendant une croix sera affichée au centre
+    wait_for_trigger(port,baudrate,trigger) #Attente du signal pour commencer l'expérience, en attendant une croix sera affichée au centre
     global_timer = core.Clock() #Horloge principale
 
     for image_stim in liste_image_win:
@@ -118,8 +118,8 @@ def write_tsv(onset, duration, file_stimuli, orientation, trial_type, filename="
             tsv_writer.writerow([onset[i], duration[i], trial_type[i], orientation[i], file_stimuli[i]])
 
 
-def main(duration, betweenstimuli, file, zoom, output_file):
-    stimulus_times, stimulus_apparition, stimuli, orientation = static_images_psychopy(file, duration, betweenstimuli, zoom)
+def main(duration, betweenstimuli, file, zoom, port, baudrate, trigger, output_file):
+    stimulus_times, stimulus_apparition, stimuli, orientation = static_images_psychopy(file, duration, betweenstimuli, zoom, port, baudrate, trigger)
     liste_trial=[]
     liste_lm=[]
     count=0
@@ -144,7 +144,10 @@ if __name__ == "__main__":
     parser.add_argument("--file", type=str, help="Chemin du fichier contenant les stimuli")
     parser.add_argument("--zoom", type=int, required=True, help="Pourcentage Zoom")
     parser.add_argument("--output_file", type=str, required=True, help="Nom du fichier d'output")
+    parser.add_argument('--port', type=str, required=True, help="Port")
+    parser.add_argument('--baudrate', type=int, required=True, help="Speed port")
+    parser.add_argument('--trigger', type=str, required=True, help="caractère pour lancer le programme")
 
     args = parser.parse_args()
 
-    main(args.duration, args.betweenstimuli, args.file, args.zoom, args.output_file)
+    main(args.duration, args.betweenstimuli, args.file, args.zoom, args.port, args.baudrate, args.trigger  ,args.output_file)

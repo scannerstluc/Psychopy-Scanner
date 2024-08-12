@@ -23,7 +23,7 @@ def reading(filename):
     return ma_liste
 
 
-def play_video_psychopy(chemin, duration, between_stimuli, zoom):
+def play_video_psychopy(chemin, duration, between_stimuli, zoom, port, baudrate, trigger):
     apparition_stimuli = []
     longueur_stimuli = []
     stimuli_liste = []
@@ -47,7 +47,7 @@ def play_video_psychopy(chemin, duration, between_stimuli, zoom):
         closeShape=False,
         lineColor="white"
     )
-    wait_for_trigger()
+    wait_for_trigger(port, baudrate, trigger)
     global_timer = core.Clock()
     thezoom = 1.3+(0.77*zoom/100)
     #thezoom = 1.4*zoom/100
@@ -116,11 +116,9 @@ def write_tsv(onset, duration, file_stimuli, trial_type, filename="output.tsv"):
                 tsv_writer.writerow([onset[i], duration[i], trial_type[i], file_stimuli[i]])
 
 
-def main(duration, betweenstimuli, file, zoom, output_file):
-    #stimulus_times, stimulus_apparition, stimuli, orientation = static_images_psychopy(file, duration, betweenstimuli, zoom)
-    print("okkkffffffkkkkk")
+def main(duration, betweenstimuli, file, zoom, port, baudrate, trigger, output_file):
 
-    stimulus_times, stimulus_apparition, stimuli = play_video_psychopy(file, duration, betweenstimuli, zoom)
+    stimulus_times, stimulus_apparition, stimuli = play_video_psychopy(file, duration, betweenstimuli, zoom, port, baudrate, trigger)
     liste_trial = []
     liste_lm = []
     count = 0
@@ -145,11 +143,14 @@ if __name__ == "__main__":
     parser.add_argument("--file", type=str, help="Chemin du fichier contenant les stimuli")
     parser.add_argument("--zoom", type=int, required=True, help="Pourcentage Zoom")
     parser.add_argument("--output_file", type=str, required=True, help="Nom du fichier d'output")
+    parser.add_argument('--port', type=str, required=True, help="Port")
+    parser.add_argument('--baudrate', type=int, required=True, help="Speed port")
+    parser.add_argument('--trigger', type=str, required=True, help="caractère pour lancer le programme")
 
 
     args = parser.parse_args()
 
-    main(args.duration, args.betweenstimuli, "Paradigme_video/"+args.file, args.zoom, args.output_file+".tsv")
+    main(args.duration, args.betweenstimuli, "Paradigme_video/"+args.file, args.zoom, args.port, args.baudrate, args.trigger  , args.output_file+".tsv")
     """
     duration = 1
     betweenstimuli = 1

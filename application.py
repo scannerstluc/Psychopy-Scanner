@@ -17,7 +17,7 @@ def about():
 
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return render_template('about.html')
 
 
 @app.route('/mypsycho')
@@ -34,6 +34,9 @@ def submit_data():
         duration = data.get('duration')
         words = data.get('words')
         zoom = data.get('zoom')
+        port = data.get('port')
+        baudrate = data.get('baudrate')
+        trigger = data.get('trigger')
         file = data.get('filePath')
         output_file = data.get('output_file')
         subprocess.run([
@@ -41,6 +44,9 @@ def submit_data():
             '--duration', duration,
             '--words', words,
             '--file', file,
+            '--port', port,
+            '--baudrate', baudrate,
+            '--trigger', trigger,
             '--output_file', output_file,
             '--zoom', zoom
         ])
@@ -56,12 +62,18 @@ def submit_images():
         duration = data.get('duration')
         file = data.get('filePath')
         zoom = data.get('zoom')
+        port = data.get('port')
+        baudrate = data.get('baudrate')
+        trigger = data.get('trigger')
         betweenstimuli = data.get('betweenstimuli')
         output_file = data.get('output_file')
         subprocess.run([
             sys.executable, 'image_opti.py',
             '--duration', duration,
             '--file', file,
+            '--port', port,
+            '--baudrate', baudrate,
+            '--trigger', trigger,
             '--output_file', output_file,
             '--betweenstimuli', betweenstimuli,
             '--zoom', zoom
@@ -80,6 +92,9 @@ def submit_videos():
         duration = data.get('duration')
         file = data.get('filePath')
         zoom = data.get('zoom')
+        port = data.get('port')
+        baudrate = data.get('baudrate')
+        trigger = data.get('trigger')
         betweenstimuli = data.get('betweenstimuli')
         output_file = data.get('output_file')
         print(zoom)
@@ -88,6 +103,9 @@ def submit_videos():
             sys.executable, 'video_psychopy.py',
             '--duration', duration,
             '--file', file,
+            '--port', port,
+            '--baudrate', baudrate,
+            '--trigger', trigger,
             '--output_file', output_file,
             '--betweenstimuli', betweenstimuli,
             '--zoom', zoom

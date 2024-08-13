@@ -10,7 +10,7 @@ import threading
 
 
 
-class list_words:
+class adjectifs:
 
     def __init__(self):
         self.words=  [
@@ -297,7 +297,7 @@ class list_words:
         core.quit()
 
 
-showner = list_words()
+showner = adjectifs()
 showner.lancement()
 showner.blocks()
 showner.fin()

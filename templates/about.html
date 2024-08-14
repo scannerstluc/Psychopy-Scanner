@@ -54,9 +54,14 @@
         <a href="#" onclick="changeMainContent('home')">Mots défilants</a>
         <a href="#" onclick="changeMainContent('about')">Images statiques défilantes</a>
         <a href="#" onclick="changeMainContent('contact')">Images mouvantes défilantes</a>
+        <a href="#" onclick="changeMainContent('long_text')">Adjectifs positifs/négatifs</a>
+        <a href="#" onclick="changeMainContent('emo_faces_nav')">EMO faces</a>
         <input type="file" id="fileinput" class="cache">
         <input type="file" id="fileinput1" class="cache">
         <input type="file" id="fileinput2" class="cache">
+        <input type="file" id="fileinput3" class="cache">
+        <input type="file" id="fileinput4" class="cache">
+
         <span id="resultPort"class="cache">Patient</span>
         <span id="resultBaudrate"class="cache">Patient</span>
         <span id="resultTrigger" class="cache">Patient</span>
@@ -157,6 +162,69 @@
                             </div>
                         `;
                         break;
+
+                    case 'long_text':
+                        newContent = `
+                            <h2>Paradigme pour les adjectifs positifs/négatifs</h2>
+                            <div class="input-group">
+                                <div class="input-container">
+                                    <h3>Durée en secondes des stimuli</h3>
+                                    <input type="text" id="duration3" placeholder="par exemple: 4">
+                                </div>
+                                <div class="input-container">
+                                    <h3>Durée croix de fixation</h3>
+                                    <input type="text" id="betweenstimuli2" placeholder="par exemple: 5">
+                                </div>
+                                <div class="input-container">
+                                    <h3>Sélectionner un paradigme déjà existant</h3>
+                                    <button class="button-choice" onclick="document.getElementById('fileinput3').click()">Choisir un fichier</button>
+                                </div>
+                                <div class="input-container">
+                                    <h3>Pourcentage de zoom</h3>
+                                    <input id="zoom3" type="text" placeholder="par exemple: 50">
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <div class="input-container">
+                                    <h3>Nombre de blocks</h3>
+                                    <input type="text" id="number_of_blocks" placeholder="par exemple: 5">
+                                </div>
+                                <div class="input-container">
+                                    <h3></h3>
+                                    <button class="submit" onclick="submitadjectifs()">Submit</button>
+                                </div>
+                            </div>
+                        `;
+                        break;
+
+
+                    case 'emo_faces_nav':
+                        newContent = `
+                            <h2>Paradigme pour les visages avec des émotions</h2>
+                            <div class="input-group">
+                                <div class="input-container">
+                                    <h3>Durée en secondes des stimuli</h3>
+                                    <input type="text" id="duration4" placeholder="par exemple: 4">
+                                </div>
+                                <div class="input-container">
+                                    <h3>Durée entre les stimuli</h3>
+                                    <input type="text" id="betweenstimuli3" placeholder="par exemple: 5">
+                                </div>
+                                <div class="input-container">
+                                    <h3>Sélectionner un paradigme déjà existant</h3>
+                                    <button class="button-choice" onclick="document.getElementById('fileinput4').click()">Choisir un fichier</button>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <div class="input-container">
+                                    <button class="submit" onclick="submitFormo()">Submit</button>
+                                </div>
+                            </div>
+                        `;
+                        break;
+
+
+
                     default:
                         newContent = `
                             <h2>Bienvenue</h2>
@@ -230,6 +298,85 @@
                         port: port,
                         baudrate: baudrate,
                         trigger: trigger,
+                        output_file: output_file,
+                        filePath: fileName // Envoyer la valeur de l'input de fichier comme un simple string
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+            }
+
+        function submitFormo() {
+                const duration = document.getElementById('duration4').value || 'Non spécifié';
+                const betweenstimuli = document.getElementById('betweenstimuli3').value || 'Non spécifié';
+                const fileInput = document.getElementById('fileinput4');
+                const output_file = document.getElementById('patientName').textContent;
+                let fileName = fileInput.value.split('\\').pop();  // Cela extraira uniquement le nom du fichier.
+                alert("offui ?")
+
+
+
+                if (!fileName){
+                    alert('Veuillez sélectionner un fichier ou entrer des mots avant de soumettre.');
+                    return;
+                }
+
+                // Envoyer les données au serveur
+                fetch('/submit-datass', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        duration: duration,
+                        betweenstimuli: betweenstimuli,
+                        output_file: output_file,
+                        filePath: fileName // Envoyer la valeur de l'input de fichier comme un simple string
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+            }
+
+
+            function submitadjectifs() {
+                const duration = document.getElementById('duration3').value || 'Non spécifié';
+                const betweenstimuli = document.getElementById('betweenstimuli2').value || 'Non spécifié';
+                const fileInput = document.getElementById('fileinput3');
+                const blocks = document.getElementById("number_of_blocks").value || 'Non spécifié';
+                const zoom = document.getElementById('zoom3').value || 'Non spécifié';
+                const output_file = document.getElementById('patientName').textContent;
+                let fileName = fileInput.value.split('\\').pop();  // Cela extraira uniquement le nom du fichier.
+                alert("offui ?")
+
+
+
+                if (!fileName){
+                    alert('Veuillez sélectionner un fichier ou entrer des mots avant de soumettre.');
+                    return;
+                }
+
+                // Envoyer les données au serveur
+                fetch('/submit-adjectifs', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        duration: duration,
+                        betweenstimuli: betweenstimuli,
+                        blocks: blocks,
+                        zoom: zoom,
                         output_file: output_file,
                         filePath: fileName // Envoyer la valeur de l'input de fichier comme un simple string
                     }),

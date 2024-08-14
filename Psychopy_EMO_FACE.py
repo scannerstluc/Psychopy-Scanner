@@ -2,6 +2,7 @@ import csv
 import os
 from datetime import datetime
 
+import argparse
 from psychopy import visual, event, core
 
 
@@ -9,17 +10,24 @@ from psychopy import visual, event, core
 class Emo_Face:
 
 
-    def __init__(self):
+    def __init__(self, duration, betweenstimuli, filepath, output):
         self.onset = []
         self.duration = []
         self.stimuli_file =[]
         self.trial_type = []
         self.click_times = []  # Pour stocker les temps de clic
+        self.stimuli_duration = duration
+        self.betweenstimuli = betweenstimuli
+        self.filepath = filepath
+        self.output= output
 
     def reading(self,filename):
         with open(filename, "r") as fichier:
             ma_liste = [line.strip() for line in fichier]
         return ma_liste
+
+    def wait_for_trigger(self, port='COM3', baudrate=9600, trigger_char='s'):
+        event.waitKeys()
 
     def write_tsv(self, onset, duration, file_stimuli, trial_type, reaction, filename="output.tsv"):
         output_dir = 'Fichiers_output'
@@ -48,20 +56,17 @@ class Emo_Face:
         timer = core.Clock()
         event.globalKeys.add(key='escape', func=self.win.close)
 
-        Premier_texte = ("Dans l'exercice qui va suivre vous verrez apparaitre des adjectifs. \n" +
-                                 "Suivant la consigne, vous devrez juger pour chaque adjectif: \n\n" +
-                                 "-comment il s'applique à vous-même \n" +
-                                 "-comment il s'applique à votre meilleur(e) ami(e) \n" +
-                                 "-ou alors donner le nombre de syllabes qui le composent\n\n" +
-                                 "(appuyer sur une touche pour lire la suite)")
-
-        texte = visual.TextStim(self.win, text=Premier_texte, color=[1, 1, 1], alignText="left", wrapWidth=1.5, font='Arial')
-        texte.draw()
-        self.win.flip()
-        core.wait(3)
+        cross_stim = visual.ShapeStim(
+            win=self.win,
+            vertices=((0, -0.03), (0, 0.03), (0, 0), (-0.03, 0), (0.03, 0)),  # Utilisation d'unités normalisées
+            lineWidth=3,
+            closeShape=False,
+            lineColor="white",
+            units='height'  # Utilisation d'unités basées sur la hauteur de l'écran
+        )
 
         images = []
-        for image in self.reading("Paradigme_EMO_FACE/EMO_FACE_Chemin.txt"):
+        for image in self.reading("Paradigme_EMO_FACE/"+self.filepath):
             image_stim = visual.ImageStim(
                 win=self.win,
                 pos=(0, 0),
@@ -71,22 +76,33 @@ class Emo_Face:
             image_stim.image=image
             images.append(image_stim)
 
+        self.wait_for_trigger()
         for image_stim in images:
+            timer.reset()
+            cross_stim.draw()
+            self.win.flip()
+            self.onset.append(global_timer.getTime())
+
+            while timer.getTime() < self.betweenstimuli:
+                pass
+            self.duration.append(timer.getTime())
+            self.click_times.append("None")
+            self.stimuli_file.append("None")
+            self.trial_type.append("Fixation")
+            clicked = False  # Variable pour vérifier si un clic a été détecté
+            clicked_time = "None"
+            timer.reset()
             image_stim.draw()
             self.win.flip()
             self.onset.append(global_timer.getTime())
-            timer.reset()
-
-            clicked = False  # Variable pour vérifier si un clic a été détecté
-            clicked_time = "None"
-            while timer.getTime() < 3:
+            while timer.getTime() < self.stimuli_duration:
                 button = self.mouse.getPressed()  # Mise à jour de l'état des boutons de la souris
 
                 if any(button):
                     if not clicked:  # Vérifier si c'est le premier clic détecté
                         clicked_time = timer.getTime()
                         print("Clic détecté à :", clicked_time, "secondes")
-                        clicked = True  # Empêcher l'enregistrement de clics multiples
+                        clicked = True  # Empêcher l'enregistrement de clics multiple
 
                 # Vous pouvez ajouter ici d'autres actions à exécuter pendant l'attente
             self.click_times.append(clicked_time)
@@ -100,8 +116,21 @@ class Emo_Face:
         print(self.trial_type)
         print(self.click_times)
 
-        self.write_tsv(self.onset,self.duration,self.stimuli_file,self.trial_type, self.click_times,"montesttttttt")
+        self.write_tsv(self.onset,self.duration,self.stimuli_file,self.trial_type, self.click_times,self.output)
         self.win.close()
         core.quit()
 
-Emo_Face().lancement()
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Exécuter le paradigme Psychopy")
+    parser.add_argument("--duration", type=int, required=True, help="Durée en secondes des stimuli")
+    parser.add_argument("--file", type=str, help="Chemin vers le fichier de mots", required=False)
+    parser.add_argument("--output_file", type=str, required=True, help="Nom du fichier d'output")
+    parser.add_argument("--betweenstimuli", type=int, required=True, help="Temps entre les stimuli")
+
+
+    args = parser.parse_args()
+    paradigm = Emo_Face(args.duration, args.betweenstimuli, args.file, args.output_file)
+    paradigm.lancement()
+
+

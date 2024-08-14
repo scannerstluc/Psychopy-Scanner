@@ -55,6 +55,54 @@ def submit_data():
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)})
 
+@app.route('/submit-datass', methods=['POST'])
+def submit_datass():
+    try:
+        print("working here?")
+        data = request.get_json()
+        duration = data.get('duration')
+        betweenstimuli = data.get('betweenstimuli')
+        file = data.get('filePath')
+        output_file = data.get('output_file')
+        print("working here?")
+        subprocess.run([
+            sys.executable, 'Psychopy_EMO_FACE.py',
+            '--duration', duration,
+            '--file', file,
+            '--betweenstimuli', betweenstimuli,
+            '--output_file', output_file,
+        ])
+
+        return jsonify({'status': 'success', 'message': 'Données reçues et script exécuté'})
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)})
+
+@app.route('/submit-adjectifs', methods=['POST'])
+def submit_adjectifs():
+    try:
+        print("working here?")
+        data = request.get_json()
+        duration = data.get('duration')
+        betweenstimuli = data.get('betweenstimuli')
+        file = data.get('filePath')
+        output_file = data.get('output_file')
+        blocks = data.get('blocks')
+        zoom = data.get('zoom')
+        print("working here?")
+        subprocess.run([
+            sys.executable, 'Psychopy_Adjectifs.py',
+            '--duration', duration,
+            '--file', file,
+            '--blocks', blocks,
+            '--zoom', zoom,
+            '--betweenstimuli', betweenstimuli,
+            '--output_file', output_file,
+        ])
+
+        return jsonify({'status': 'success', 'message': 'Données reçues et script exécuté'})
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)})
+
 @app.route('/submit-images', methods=['POST'])
 def submit_images():
     try:

@@ -50,7 +50,7 @@ class Emo_Face:
                 tsv_writer.writerow([onset[i], duration[i], trial_type[i], reaction[i], file_stimuli[i]])
 
     def lancement(self):
-        self.win = visual.Window(fullscr=False)
+        self.win = visual.Window(fullscr=True)
         self.mouse = event.Mouse(win=self.win)
         global_timer=core.Clock()
         timer = core.Clock()

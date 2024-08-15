@@ -55,6 +55,30 @@ def submit_data():
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)})
 
+
+@app.route('/submit-emo-voice', methods=['POST'])
+def submit_emo_voice():
+    try:
+        print("working here?")
+        data = request.get_json()
+        duration = data.get('duration')
+        betweenstimuli = data.get('betweenstimuli')
+        file = data.get('filePath')
+        output_file = data.get('output_file')
+        print("working here?")
+        subprocess.run([
+            sys.executable, 'Psychopy_EMO_VOICES.py',
+            '--duration', duration,
+            '--file', file,
+            '--betweenstimuli', betweenstimuli,
+            '--output_file', output_file,
+        ])
+
+        return jsonify({'status': 'success', 'message': 'Données reçues et script exécuté'})
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)})
+
+
 @app.route('/submit-datass', methods=['POST'])
 def submit_datass():
     try:
@@ -103,6 +127,64 @@ def submit_adjectifs():
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)})
 
+@app.route('/submit-stroop', methods=['POST'])
+def submit_stroop():
+    try:
+        print("working here?")
+        data = request.get_json()
+        duration = data.get('duration')
+        betweenstimuli = data.get('betweenstimuli')
+        file = data.get('filePath')
+        output_file = data.get('output_file')
+        zoom = data.get('zoom')
+        print(data)
+        subprocess.run([
+            sys.executable, 'Psychopy_colors.py',
+            '--duration', duration,
+            '--file', file,
+            '--zoom', zoom,
+            '--betweenstimuli', betweenstimuli,
+            '--output_file', output_file,
+        ])
+        print("working here?")
+
+        return jsonify({'status': 'success', 'message': 'Données reçues et script exécuté'})
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)})
+
+@app.route('/submit-localizer', methods=['POST'])
+def submit_localizer():
+    try:
+        print("working here?")
+        data = request.get_json()
+        duration = data.get('duration')
+        betweenstimuli = data.get('betweenstimuli')
+        blocks = data.get('blocks')
+        per_block = data.get('per_blocks')
+        port = data.get('port')
+        baudrate = data.get('baudrate')
+        trigger = data.get('trigger')
+        output_file = data.get('output_file')
+
+        print(data)
+        subprocess.run([
+            sys.executable, 'Psychopy_LOCALIZER.py',
+            '--duration', duration,
+            '--blocks', blocks,
+            '--per_block', per_block,
+            '--port', port,
+            '--baudrate', baudrate,
+            '--trigger', trigger,
+            '--betweenstimuli', betweenstimuli,
+            '--output_file', output_file,
+        ])
+        print("working here?")
+
+        return jsonify({'status': 'success', 'message': 'Données reçues et script exécuté'})
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)})
+
+
 @app.route('/submit-images', methods=['POST'])
 def submit_images():
     try:
@@ -145,8 +227,6 @@ def submit_videos():
         trigger = data.get('trigger')
         betweenstimuli = data.get('betweenstimuli')
         output_file = data.get('output_file')
-        print(zoom)
-        print(betweenstimuli)
         subprocess.run([
             sys.executable, 'video_psychopy.py',
             '--duration', duration,

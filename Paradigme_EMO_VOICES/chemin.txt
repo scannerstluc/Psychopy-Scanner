@@ -1,0 +1,5 @@
+norm_10peu115.wav
+norm_10sou123.wav
+norm_10deg119.wav
+norm_09pla111.wav
+norm_09des112.wav

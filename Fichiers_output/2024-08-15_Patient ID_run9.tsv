@@ -1,0 +1,9 @@
+onset	duration	block_type	stim_file	trial_type
+1.010454799994477	2.0000084999992396	None	None	Fixation
+3.013619099998323	2.0000093999988167	face_AMN.jpg1	face_AM01N.jpg	Stimuli
+5.018890799998189	2.0000059000012698	None	None	Fixation
+7.023129399996833	2.000007100003131	face_AMN.jpg1	face_AM07N.jpg	Stimuli
+9.139898699999321	2.0000127000021166	None	None	Fixation
+11.150455599999987	2.0000058000005083	object_scr_static.jpeg	object3_scr_static.jpeg	Stimuli
+13.163607399998	2.000006800000847	None	None	Fixation
+15.170372099993983	2.0000091999972938	object_scr_static.jpeg	object18_scr_static.jpeg	Stimuli

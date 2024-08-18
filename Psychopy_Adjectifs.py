@@ -6,12 +6,13 @@ from datetime import datetime
 import argparse
 from psychopy import visual, core, event
 import threading
+from Paradigme_parent import Parente
 
 
 
 
 
-class Adjectifs:
+class Adjectifs(Parente):
 
     def __init__(self, duration, betweenstimuli, zoom, blocks, filepath, output):
         self.words=  self.reading("Paradigme_Adjectifs/"+filepath)
@@ -218,19 +219,7 @@ class Adjectifs:
         self.shown_words.append(mot5)
 
     def write_tsv(self, filename="output1.tsv"):
-        filename = self.output
-        output_dir = 'Fichiers_output'
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
-        current_date = datetime.now().strftime("%Y-%m-%d")
-        run_number = 1
-        filename_prefix = f"{current_date}_{filename.split('.')[0]}"
-        existing_files = [f for f in os.listdir(output_dir) if f.startswith(filename_prefix) and 'run' in f]
-        if existing_files:
-            runs = [int(f.split('run')[-1].split('.')[0]) for f in existing_files if 'run' in f]
-            if runs:
-                run_number = max(runs) + 1
-        filename = os.path.join(output_dir, f"{filename_prefix}_run{run_number}.tsv")
+        filename = super().preprocessing_tsv(filename)
 
         with open(filename, mode='w', newline='') as file:
             tsv_writer = csv.writer(file, delimiter='\t')
@@ -241,7 +230,6 @@ class Adjectifs:
                 if count == 5:
                     pred += 1
                     count = 0
-                print(pred)
                 tsv_writer.writerow(
                     [self.order_blocks[pred], self.shown_words[i], self.response[i], self.reaction_time[i]])
                 count += 1
@@ -291,10 +279,6 @@ class Adjectifs:
                 self.win.flip()
 
     def fin(self):
-        print(self.shown_words)
-        print(self.order_blocks)
-        print(self.reaction_time)
-        print(self.response)
         self.win.close()
         self.write_tsv()
         core.quit()

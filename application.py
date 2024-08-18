@@ -20,14 +20,11 @@ def home():
     return render_template('about.html')
 
 
-@app.route('/mypsycho')
-def psychopy_utilities():
-    subprocess.run([sys.executable, 'psychopy_runner.py'])
-    return render_template('index.html')
 
 
-@app.route('/submit-data', methods=['POST'])
-def submit_data():
+
+@app.route('/submit-text', methods=['POST'])
+def submit_text():
     try:
         print("working here?")
         data = request.get_json()
@@ -40,7 +37,7 @@ def submit_data():
         file = data.get('filePath')
         output_file = data.get('output_file')
         subprocess.run([
-            sys.executable, 'psychopy_runner.py',
+            sys.executable, 'Psychopy_Text.py',
             '--duration', duration,
             '--words', words,
             '--file', file,
@@ -79,8 +76,8 @@ def submit_emo_voice():
         return jsonify({'status': 'error', 'message': str(e)})
 
 
-@app.route('/submit-datass', methods=['POST'])
-def submit_datass():
+@app.route('/submit-emo-faces', methods=['POST'])
+def submit_emo_faces():
     try:
         print("working here?")
         data = request.get_json()
@@ -198,7 +195,7 @@ def submit_images():
         betweenstimuli = data.get('betweenstimuli')
         output_file = data.get('output_file')
         subprocess.run([
-            sys.executable, 'image_opti.py',
+            sys.executable, 'Psychopy_Image.py',
             '--duration', duration,
             '--file', file,
             '--port', port,
@@ -228,7 +225,7 @@ def submit_videos():
         betweenstimuli = data.get('betweenstimuli')
         output_file = data.get('output_file')
         subprocess.run([
-            sys.executable, 'video_psychopy.py',
+            sys.executable, 'Psychopy_Video.py',
             '--duration', duration,
             '--file', file,
             '--port', port,

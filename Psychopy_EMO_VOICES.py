@@ -4,9 +4,10 @@ from datetime import datetime
 
 import argparse
 from psychopy import visual, event, core, sound
+from Paradigme_parent import Parente
 
 
-class voices:
+class voices(Parente):
 
     def __init__(self, duration, betweenstimuli, file, output):
         self.win = visual.Window(fullscr=True)
@@ -39,23 +40,8 @@ class voices:
         return ma_liste
 
 
-    def wait_for_trigger(self, port='COM3', baudrate=9600, trigger_char='s'):
-        event.waitKeys()
-
     def write_tsv(self, onset, duration, file_stimuli, trial_type, reaction, filename="output.tsv"):
-        output_dir = 'Fichiers_output'
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
-        current_date = datetime.now().strftime("%Y-%m-%d")
-        run_number = 1
-        filename_prefix = f"{current_date}_{filename.split('.')[0]}"
-        existing_files = [f for f in os.listdir(output_dir) if f.startswith(filename_prefix) and 'run' in f]
-        if existing_files:
-            runs = [int(f.split('run')[-1].split('.')[0]) for f in existing_files if 'run' in f]
-            if runs:
-                run_number = max(runs) + 1
-        filename = os.path.join(output_dir, f"{filename_prefix}_run{run_number}.tsv")
-
+        filename = super().preprocessing_tsv(filename)
         with open(filename, mode='w', newline='') as file:
             tsv_writer = csv.writer(file, delimiter='\t')
             tsv_writer.writerow(['onset', 'duration', 'trial_type', 'reaction','stim_file' ])
@@ -64,7 +50,7 @@ class voices:
 
     def lancement(self):
         self.voices = self.reading("Paradigme_EMO_VOICES/"+self.file)
-        self.wait_for_trigger()
+        super().wait_for_trigger(port=None)
         for x in self.voices:
             custom_sound = sound.Sound("Paradigme_EMO_VOICES/emo_voices/"+x)
             clicked = False

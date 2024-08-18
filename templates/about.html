@@ -109,7 +109,7 @@
                             </div>
                             <div class="input-group">
                                 <div class="input-container">
-                                    <button class="submit" onclick="submitForm()">Submit</button>
+                                    <button class="submit" onclick="submitText()">Submit</button>
                                 </div>
                             </div>
                         `;
@@ -137,7 +137,7 @@
                             </div>
                             <div class="input-group">
                                 <div class="input-container">
-                                    <button class="submit" onclick="Submitimage()">Submit</button>
+                                    <button class="submit" onclick="submitImages()">Submit</button>
                                 </div>
                             </div>
                         `;
@@ -165,7 +165,7 @@
                             </div>
                             <div class="input-group">
                                 <div class="input-container">
-                                    <button class="submit" onclick="Submitvideo()">Submit</button>
+                                    <button class="submit" onclick="submitVideos()">Submit</button>
                                 </div>
                             </div>
                         `;
@@ -199,7 +199,7 @@
                                 </div>
                                 <div class="input-container">
                                     <h3></h3>
-                                    <button class="submit" onclick="submitadjectifs()">Submit</button>
+                                    <button class="submit" onclick="submitAdjectifs()">Submit</button>
                                 </div>
                             </div>
                         `;
@@ -225,7 +225,7 @@
                             </div>
                             <div class="input-group">
                                 <div class="input-container">
-                                    <button class="submit" onclick="submitFormo()">Submit</button>
+                                    <button class="submit" onclick="submitFaces()">Submit</button>
                                 </div>
                             </div>
                         `;
@@ -250,7 +250,7 @@
                             </div>
                             <div class="input-group">
                                 <div class="input-container">
-                                    <button class="submit" onclick="submitemovoice()">Submit</button>
+                                    <button class="submit" onclick="submitVoices()">Submit</button>
                                 </div>
                             </div>
                         `;
@@ -279,7 +279,7 @@
                             </div>
                             <div class="input-group">
                                 <div class="input-container">
-                                    <button class="submit" onclick="submitstroop()">Submit</button>
+                                    <button class="submit" onclick="submitStroop()">Submit</button>
                                 </div>
                             </div>
                         `;
@@ -309,7 +309,7 @@
                             <div class="input-group">
 
                                 <div class="input-container">
-                                    <button class="submit" onclick="submitlocalizer()">Submit</button>
+                                    <button class="submit" onclick="submitLocalizer()">Submit</button>
                                 </div>
                             </div>
                         `;
@@ -361,7 +361,7 @@
                 document.getElementById(popupId).style.display = 'none';
             }
 
-            function submitForm() {
+            function submitText() {
                 const duration = document.getElementById('duration').value || 'Non spécifié';
                 const words = document.getElementById('words').value || 'Non spécifié';
                 const zoom = document.getElementById('zoom').value || 'Non spécifié';
@@ -378,7 +378,7 @@
                 }
 
                 // Envoyer les données au serveur
-                fetch('/submit-data', {
+                fetch('/submit-text', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -403,7 +403,7 @@
                 });
             }
 
-        function submitemovoice(){
+        function submitVoices(){
                 const duration = document.getElementById('duration-emo-voice').value || 'Non spécifié';
                 const betweenstimuli = document.getElementById('betweenstimuli-emo-voice').value || 'Non spécifié';
                 const fileInput = document.getElementById('fileinput-emo-voice');
@@ -436,7 +436,7 @@
                     console.error('Error:', error);
                 });
             }
-        function submitFormo() {
+        function submitFaces() {
                 const duration = document.getElementById('duration-emo-face').value || 'Non spécifié';
                 const betweenstimuli = document.getElementById('betweenstimuli-emo-face').value || 'Non spécifié';
                 const fileInput = document.getElementById('fileinput-emo-face');
@@ -449,7 +449,7 @@
                 }
 
                 // Envoyer les données au serveur
-                fetch('/submit-datass', {
+                fetch('/submit-emo-faces', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -470,7 +470,7 @@
                 });
             }
 
-            function submitstroop(){
+            function submitStroop(){
                 const duration = document.getElementById('duration-stroop').value || 'Non spécifié';
                 const betweenstimuli = document.getElementById('betweenstimuli-stroop').value || 'Non spécifié';
                 const fileInput = document.getElementById('fileinput-stroop');
@@ -506,7 +506,7 @@
                 });
             }
 
-            function submitlocalizer(){
+            function submitLocalizer(){
                 const duration = document.getElementById('duration-localizer').value || 'Non spécifié';
                 const betweenstimuli = document.getElementById('betweenstimuli-localizer').value || 'Non spécifié';
                 const output_file = document.getElementById('patientName').textContent;
@@ -543,7 +543,7 @@
             }
 
 
-            function submitadjectifs() {
+            function submitAdjectifs() {
                 const duration = document.getElementById('duration-adjectifs').value || 'Non spécifié';
                 const betweenstimuli = document.getElementById('betweenstimuli-adjectifs').value || 'Non spécifié';
                 const fileInput = document.getElementById('fileinput-adjectifs');
@@ -581,7 +581,7 @@
                 });
             }
 
-        function Submitimage(){
+        function submitImages(){
             const duration = document.getElementById('duration-image').value || 'Non spécifié';
             const betweenstimuli = document.getElementById('betweenstimuli').value || 'Non spécifié';
             const fileInput = document.getElementById('fileinput-image');
@@ -623,7 +623,7 @@
             });
         }
 
-        function Submitvideo(){
+        function submitVideos(){
             const duration = document.getElementById('duration-video').value || 'Non spécifié';
             const betweenstimuli = document.getElementById('betweenstimuli-video').value || 'Non spécifié';
             const fileInput = document.getElementById('fileinput-video');

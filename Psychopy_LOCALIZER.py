@@ -7,9 +7,11 @@ import random
 
 from psychopy import visual, core, event
 import serial
+from Paradigme_parent import Parente
 
 
-class Localizer:
+
+class Localizer(Parente):
     def __init__(self, duration, betweenstimuli, number_of_block, number_per_block, port, baudrate, trigger,  output):
         self.win = visual.Window(fullscr=True)
         self.cross_stim = visual.ShapeStim(
@@ -41,31 +43,14 @@ class Localizer:
         self.block_type = []
         self.get_groups_and_keys()
     def lancement(self):
-        self.wait_for_trigger(self.port, self.baudrate, self.trigger)
+        super().wait_for_trigger(self.port, self.baudrate, self.trigger)
         for x in range (self.number_of_blocks):
             self.show_block(random.choice(self.keys),2)
         self.write_tsv(self.onset,self.duration,self.block_type, self.stim_file, self.trial_type,self.output)
 
-    def wait_for_trigger(self, port='COM3', baudrate=9600, trigger_char='s'):
-        with serial.Serial(port, baudrate=baudrate) as ser:
-            trigger = ser.read().decode('utf-8')
-            while trigger != trigger_char:
-                trigger = ser.read().decode('utf-8')
-            print("Trigger received")
 
     def write_tsv(self, onset, duration, block_type, file_stimuli, trial_type, filename="output.tsv"):
-        output_dir = 'Fichiers_output'
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
-        current_date = datetime.now().strftime("%Y-%m-%d")
-        run_number = 1
-        filename_prefix = f"{current_date}_{filename.split('.')[0]}"
-        existing_files = [f for f in os.listdir(output_dir) if f.startswith(filename_prefix) and 'run' in f]
-        if existing_files:
-            runs = [int(f.split('run')[-1].split('.')[0]) for f in existing_files if 'run' in f]
-            if runs:
-                run_number = max(runs) + 1
-        filename = os.path.join(output_dir, f"{filename_prefix}_run{run_number}.tsv")
+        filename=super().preprocessing_tsv(filename)
 
         with open(filename, mode='w', newline='') as file:
             tsv_writer = csv.writer(file, delimiter='\t')

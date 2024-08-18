@@ -4,10 +4,11 @@ from datetime import datetime
 
 import argparse
 from psychopy import visual, event, core
+from Paradigme_parent import Parente
 
 
 
-class Emo_Face:
+class Emo_Face(Parente):
 
 
     def __init__(self, duration, betweenstimuli, filepath, output):
@@ -26,22 +27,8 @@ class Emo_Face:
             ma_liste = [line.strip() for line in fichier]
         return ma_liste
 
-    def wait_for_trigger(self, port='COM3', baudrate=9600, trigger_char='s'):
-        event.waitKeys()
-
     def write_tsv(self, onset, duration, file_stimuli, trial_type, reaction, filename="output.tsv"):
-        output_dir = 'Fichiers_output'
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
-        current_date = datetime.now().strftime("%Y-%m-%d")
-        run_number = 1
-        filename_prefix = f"{current_date}_{filename.split('.')[0]}"
-        existing_files = [f for f in os.listdir(output_dir) if f.startswith(filename_prefix) and 'run' in f]
-        if existing_files:
-            runs = [int(f.split('run')[-1].split('.')[0]) for f in existing_files if 'run' in f]
-            if runs:
-                run_number = max(runs) + 1
-        filename = os.path.join(output_dir, f"{filename_prefix}_run{run_number}.tsv")
+        filename = super().preprocessing_tsv(filename)
 
         with open(filename, mode='w', newline='') as file:
             tsv_writer = csv.writer(file, delimiter='\t')
@@ -76,7 +63,7 @@ class Emo_Face:
             image_stim.image=image
             images.append(image_stim)
 
-        self.wait_for_trigger()
+        super().wait_for_trigger(port=None)
         for image_stim in images:
             timer.reset()
             cross_stim.draw()
@@ -110,11 +97,6 @@ class Emo_Face:
             self.stimuli_file.append(image_stim.image[34:])
             self.trial_type.append("stimuli")
 
-        print(self.onset)
-        print(self.duration)
-        print(self.stimuli_file)
-        print(self.trial_type)
-        print(self.click_times)
 
         self.write_tsv(self.onset,self.duration,self.stimuli_file,self.trial_type, self.click_times,self.output)
         self.win.close()

@@ -8,9 +8,10 @@ import soundfile as sf
 import numpy as np
 import speech_recognition as sr
 from psychopy import visual, core, event
+from Paradigme_parent import Parente
 
 
-class Colors:
+class Colors(Parente):
     def __init__(self, duration, betweenstimuli, zoom, filepath, output):
         self.win = visual.Window(fullscr=True, color="black")
         event.globalKeys.add(key='escape', func=self.win.close)
@@ -107,6 +108,7 @@ class Colors:
         words, colors, stimuli_names=self.reading("Paradigme_Couleur/"+self.filepath)
         text_stim = visual.TextStim(self.win, wrapWidth=1.5, font="Arial", height=0.1+(0.01*self.zoom))
         count=0
+        super().wait_for_trigger(port=None)
         self.global_timer.reset()
         recordings=[]
         for mot in words:
@@ -124,7 +126,6 @@ class Colors:
             text_stim.color=colors[count]
             text_stim.draw()
             self.win.flip()
-            print("Enregistrement en cours...")
             self.onset.append(self.global_timer.getTime())
             self.timer.reset()
             recording = sd.rec(int(self.stimuli_duration * self.fs), samplerate=self.fs, channels=1, dtype='int16')
@@ -132,7 +133,6 @@ class Colors:
             self.duration.append(self.timer.getTime())
             self.stimuli.append(stimuli_names[count])
             self.trial_type.append("Stimuli")
-            print("Enregistrement terminé.")
             start_time = None
             for i, sample in enumerate(recording):
                 if np.abs(sample) > self.threshold:
@@ -157,7 +157,6 @@ if __name__ == "__main__":
     parser.add_argument("--zoom", type=int, required=True, help="Pourcentage Zoom")
     parser.add_argument("--output_file", type=str, required=True, help="Nom du fichier d'output")
     parser.add_argument("--betweenstimuli", type=int, required=True, help="Temps entre les stimuli")
-    print("ici???")
     args = parser.parse_args()
     colors = Colors(args.duration, args.betweenstimuli, args.zoom, args.file, args.output_file).lancement()
 

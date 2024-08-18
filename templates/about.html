@@ -279,6 +279,15 @@
                             </div>
                             <div class="input-group">
                                 <div class="input-container">
+                                    <h3>Choisir la langue</h3>
+                                    <select id="choice" name="choix">
+                                        <option value="Anglais">Anglais</option>
+                                        <option value="Dannois">Dannois</option>
+                                        <option value="Francais">Français</option>
+                                    </select>
+                                </div>
+                                <div class="input-container">
+                                    <h3></h3>
                                     <button class="submit" onclick="submitStroop()">Submit</button>
                                 </div>
                             </div>
@@ -375,6 +384,10 @@
                 if (!fileName && words=='Non spécifié'){
                     alert('Veuillez sélectionner un fichier ou entrer des mots avant de soumettre.');
                     return;
+                }
+
+                if (baudrate=='Patient' || port == 'Patient' || trigger == 'Patient'){
+                    alert("Veuillez remplir correctement les champs pour le choix du port")
                 }
 
                 // Envoyer les données au serveur
@@ -476,8 +489,10 @@
                 const fileInput = document.getElementById('fileinput-stroop');
                 const zoom = document.getElementById('zoom-stroop').value || 'Non spécifié';
                 const output_file = document.getElementById('patientName').textContent;
+                const choice = document.getElementById('choice').value || 'Non spécifié'
                 let fileName = fileInput.value.split('\\').pop();  // Cela extraira uniquement le nom du fichier.
 
+                alert(choice)
                 if (!fileName){
                     alert('Veuillez sélectionner un fichier ou entrer des mots avant de soumettre.');
                     return;
@@ -493,6 +508,7 @@
                         duration: duration,
                         betweenstimuli: betweenstimuli,
                         zoom: zoom,
+                        choice: choice,
                         output_file: output_file,
                         filePath: fileName // Envoyer la valeur de l'input de fichier comme un simple string
                     }),
@@ -516,6 +532,9 @@
                 const baudrate = document.getElementById('resultBaudrate').textContent;
                 const trigger = document.getElementById('resultTrigger').textContent;
 
+                if (baudrate=='Patient' || port == 'Patient' || trigger == 'Patient'){
+                    alert("Veuillez remplir correctement les champs pour le choix du port")
+                }
                 // Envoyer les données au serveur
                 fetch('/submit-localizer', {
                     method: 'POST',
@@ -592,11 +611,16 @@
             const trigger = document.getElementById('resultTrigger').textContent;
             let fileName = fileInput.value.split('\\').pop();
 
+
+
             if (!fileName) {
                 alert('Veuillez sélectionner un fichier avant de soumettre.');
                 return;  // Arrête l'exécution si aucun fichier n'est sélectionné
             }
 
+            if (baudrate=='Patient' || port == 'Patient' || trigger == 'Patient'){
+                    alert("Veuillez remplir correctement les champs pour le choix du port")
+                }
             // Envoyer les données au serveur
             fetch('/submit-images', {
                 method: 'POST',
@@ -639,6 +663,9 @@
                 return;  // Arrête l'exécution si aucun fichier n'est sélectionné
             }
 
+            if (baudrate=='Patient' || port == 'Patient' || trigger == 'Patient'){
+                    alert("Veuillez remplir correctement les champs pour le choix du port")
+                }
             // Envoyer les données au serveur
             fetch('/submit-videos', {
                 method: 'POST',

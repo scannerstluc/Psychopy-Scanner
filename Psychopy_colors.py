@@ -12,7 +12,7 @@ from Paradigme_parent import Parente
 
 
 class Colors(Parente):
-    def __init__(self, duration, betweenstimuli, zoom, filepath, output):
+    def __init__(self, duration, betweenstimuli, zoom, langage, filepath, output):
         self.win = visual.Window(fullscr=True, color="black")
         event.globalKeys.add(key='escape', func=self.win.close)
         self.fs = 44100  # fréquence d'échantillonnage
@@ -30,6 +30,7 @@ class Colors(Parente):
         self.stimuli = []
         self.trial_type= []
         self.reaction = []
+        self.langue = langage
 
 
         self.cross_stim = visual.ShapeStim(
@@ -65,7 +66,12 @@ class Colors(Parente):
         with sr.AudioFile(audio_file) as source:
             audio_data = recognizer.record(source)
             try:
-                text = recognizer.recognize_google(audio_data, language="fr-FR")
+                if self.langue == "Francais":
+                    text = recognizer.recognize_google(audio_data, language="fr-FR")
+                elif self.langue == "Anglais":
+                    text = recognizer.recognize_google(audio_data, language="en-US")
+                elif self.langue == "Dannois":
+                    text = recognizer.recognize_google(audio_data, language="da-DK")
                 return text
             except sr.UnknownValueError:
                 return "None/pas reconnu"
@@ -157,8 +163,9 @@ if __name__ == "__main__":
     parser.add_argument("--zoom", type=int, required=True, help="Pourcentage Zoom")
     parser.add_argument("--output_file", type=str, required=True, help="Nom du fichier d'output")
     parser.add_argument("--betweenstimuli", type=int, required=True, help="Temps entre les stimuli")
+    parser.add_argument("--choice", type=str, required=True, help="Choix de la langue")
     args = parser.parse_args()
-    colors = Colors(args.duration, args.betweenstimuli, args.zoom, args.file, args.output_file).lancement()
+    colors = Colors(args.duration, args.betweenstimuli, args.zoom, args.choice, args.file, args.output_file).lancement()
 
 
 #Colors(duration=2,betweenstimuli=1,zoom=10,filepath="colors_list.txt", output="wififi").lancement()

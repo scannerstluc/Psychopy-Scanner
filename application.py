@@ -134,12 +134,14 @@ def submit_stroop():
         file = data.get('filePath')
         output_file = data.get('output_file')
         zoom = data.get('zoom')
+        choice = data.get('choice')
         print(data)
         subprocess.run([
             sys.executable, 'Psychopy_colors.py',
             '--duration', duration,
             '--file', file,
             '--zoom', zoom,
+            '--choice', choice,
             '--betweenstimuli', betweenstimuli,
             '--output_file', output_file,
         ])

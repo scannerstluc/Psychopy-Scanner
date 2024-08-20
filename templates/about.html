@@ -59,6 +59,8 @@
         <a href="#" onclick="changeMainContent('emo_voice_nav')">EMO voices</a>
         <a href="#" onclick="changeMainContent('stroop')">Stroop</a>
         <a href="#" onclick="changeMainContent('localizer')">Localizer</a>
+        <a href="#" onclick="changeMainContent('cyberball')">Cyberball</a>
+        <a> </a>
 
 
         <input type="file" id="fileinput" class="cache">
@@ -68,6 +70,8 @@
         <input type="file" id="fileinput-emo-face" class="cache">
         <input type="file" id="fileinput-stroop" class="cache">
         <input type="file" id="fileinput-emo-voice" class="cache">
+        <input type="file" id="fileinput-cyberball" class="cache">
+
 
 
         <span id="resultPort"class="cache">Patient</span>
@@ -319,6 +323,46 @@
 
                                 <div class="input-container">
                                     <button class="submit" onclick="submitLocalizer()">Submit</button>
+                                </div>
+                            </div>
+                        `;
+                        break;
+
+
+                    case 'cyberball':
+                        newContent = `
+                            <h2>Cyberball (paramètre pour l'ordinateur)</h2>
+                            <div class="input-group">
+                                <div class="input-container">
+                                    <h3>Durée de la première phase</h3>
+                                    <input type="text" id="phase1-cyberball" placeholder="par exemple: 120">
+                                </div>
+                                <div class="input-container">
+                                    <h3>Durée phase d'exclusion</h3>
+                                    <input type="text" id="exclusion-cyberball" placeholder="par exemple: 120">
+                                </div>
+                                <div class="input-container">
+                                    <h3>Durée phase de Transition</h3>
+                                    <input type="text" id="transition-cyberball" placeholder="par exemple: 60">
+                                </div>
+                                <div class="input-container">
+                                    <h3>Sélectionner la photo du patient</h3>
+                                    <button class="button-choice" onclick="document.getElementById('fileinput-cyberball').click()">Choisir un fichier</button>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <div class="input-container">
+                                    <h3>Temps de réaction minimum</h3>
+                                    <input type="text" id="minimum-reaction" placeholder="par exemple: 0.8">
+                                </div>
+                                <div class="input-container">
+                                    <h3>Temps de réaction maximum</h3>
+                                    <input type="text" id="maximum-reaction" placeholder="par exemple: 2.5">
+                                </div>
+
+                                <div class="input-container">
+                                    <h3> </h3>
+                                    <button class="submit" onclick="submitCyberball()">Submit</button>
                                 </div>
                             </div>
                         `;
@@ -599,6 +643,56 @@
                     console.error('Error:', error);
                 });
             }
+
+        function submitCyberball(){
+            const premiere_phase = document.getElementById('phase1-cyberball').value || 'Non spécifié';
+            const exclusion = document.getElementById('exclusion-cyberball').value || 'Non spécifié';
+            const transition = document.getElementById('transition-cyberball').value || 'Non spécifié';
+            const fileInput = document.getElementById('fileinput-cyberball');
+            const output_file = document.getElementById('patientName').textContent;
+            const minimum = document.getElementById('minimum-reaction').value || 'Non spécifié';
+            const maximum = document.getElementById('maximum-reaction').value ||'Non spécifié';
+            const port = document.getElementById('resultPort').textContent;
+            const baudrate = document.getElementById('resultBaudrate').textContent;
+            const trigger = document.getElementById('resultTrigger').textContent;
+            let fileName = fileInput.value.split('\\').pop();
+            alert(fileName)
+            if (!fileName) {
+                alert('Veuillez sélectionner un fichier avant de soumettre.');
+                return;  // Arrête l'exécution si aucun fichier n'est sélectionné
+            }
+
+            if (baudrate=='Patient' || port == 'Patient' || trigger == 'Patient'){
+                    alert("Veuillez remplir correctement les champs pour le choix du port")
+                }
+
+            fetch('/submit-cyberball', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    premiere_phase: premiere_phase,
+                    exclusion: exclusion,
+                    transition: transition,
+                    minimum: minimum,
+                    maximum: maximum,
+                    port: port,
+                    baudrate: baudrate,
+                    trigger: trigger,
+                    output_file: output_file,
+                    filePath: fileName // Envoyer la valeur de l'input de fichier comme un simple string
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+
+        }
 
         function submitImages(){
             const duration = document.getElementById('duration-image').value || 'Non spécifié';

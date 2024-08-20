@@ -76,6 +76,45 @@ def submit_emo_voice():
         return jsonify({'status': 'error', 'message': str(e)})
 
 
+@app.route('/submit-cyberball', methods=['POST'])
+def submit_cyberball():
+    print("oooooppo")
+    try:
+        print("okkk?")
+        data = request.get_json()
+        premiere_phase = data.get("premiere_phase")
+        exclusion = data.get("exclusion")
+        transition = data.get("transition")
+        minimum = data.get("minimum")
+        maximum = data.get("maximum")
+        port = data.get("port")
+        print("ooooo")
+        baudrate = data.get("baudrate")
+        trigger = data.get("trigger")
+        output_file = data.get("output_file")
+        filePath = data.get("filePath")
+        print("ça passe")
+        print(data)
+        subprocess.run([
+            sys.executable, 'Psychopy_Cyberball.py',
+            '--premiere_phase', premiere_phase,
+            '--exclusion', exclusion,
+            '--transition', transition,
+            '--minimum', minimum,
+            '--maximum', maximum,
+            '--port', port,
+            '--baudrate', baudrate,
+            '--trigger', trigger,
+            '--output_file', output_file,
+            '--filePath', filePath,
+
+        ])
+
+        return jsonify({'status': 'success', 'message': 'Données reçues et script exécuté'})
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)})
+
+
 @app.route('/submit-emo-faces', methods=['POST'])
 def submit_emo_faces():
     try:

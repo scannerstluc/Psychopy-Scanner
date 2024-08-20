@@ -12,6 +12,7 @@ def index():
 
 @app.route('/about')
 def about():
+    print("")
     return render_template('about.html')
 
 

@@ -12,17 +12,28 @@ class launch_cyberball(Parente) :
         self.win = visual.Window(units="norm", fullscr=True)
 
         # Chargement des self.images
-        self.image1 = visual.ImageStim(win=self.win, image='Cyberball/Banque_personnage/waiting.png', pos=[0, 0.5])
-        self.image2 = visual.ImageStim(win=self.win, image='Cyberball/Banque_personnage/waiting.png', pos=[-0.5, -0.5])
-        self.image3 = visual.ImageStim(win=self.win, image='Cyberball/Banque_personnage/waiting.png', pos=[0.5, -0.5])
+        #self.image1 = visual.ImageStim(win=self.win, image='Cyberball/Banque_personnage/waiting.png', pos=[0, 0.5])
+        #self.image2 = visual.ImageStim(win=self.win, image='Cyberball/Banque_personnage/waiting.png', pos=[-0.5, -0.5])
+        #self.image3 = visual.ImageStim(win=self.win, image='Cyberball/Banque_personnage/waiting.png', pos=[0.5, -0.5])
+        self.image1 = visual.ImageStim(win=self.win, image='Cyberball/Banque_personnage/waiting.png', pos=[0, -0.5])
+        self.image2 = visual.ImageStim(win=self.win, image='Cyberball/Banque_personnage/waiting.png', pos=[-0.5, 0.5])
+        self.image3 = visual.ImageStim(win=self.win, image='Cyberball/Banque_personnage/waiting.png', pos=[0.5, 0.5])
 
-        self.photo1 = visual.ImageStim(win=self.win, image='Cyberball/Homme2.jpg', pos=[0.3, 0.8], size=0.2)
-        self.photo2 = visual.ImageStim(win=self.win, image='Cyberball/Femme2.jpg', pos=[-0.8, -0.8], size=0.2)
-        self.photo3 = visual.ImageStim(win=self.win, image='Cyberball/Homme1.jpg', pos=[0.8, -0.8], size=0.2)
 
-        self.text1 = visual.TextStim(win=self.win, text="Player_1", pos=[0, 0.8], color=(-1, -1, -1))
-        self.text2 = visual.TextStim(win=self.win, text="Jeanne", pos=[-0.5, -0.8], color=(-1, -1, -1))
-        self.text3 = visual.TextStim(win=self.win, text="Paul", pos=[0.5, -0.8], color=(-1, -1, -1))
+        #self.photo1 = visual.ImageStim(win=self.win, image='Cyberball/Homme2.jpg', pos=[0.3, 0.8], size=0.2)
+        #self.photo2 = visual.ImageStim(win=self.win, image='Cyberball/Femme2.jpg', pos=[-0.8, -0.8], size=0.2)
+        #self.photo3 = visual.ImageStim(win=self.win, image='Cyberball/Homme1.jpg', pos=[0.8, -0.8], size=0.2)
+
+        self.photo1 = visual.ImageStim(win=self.win, image='Cyberball/Homme2.jpg', pos=[0.3, -0.8], size=0.2)
+        self.photo2 = visual.ImageStim(win=self.win, image='Cyberball/Femme2.jpg', pos=[-0.8, 0.5], size=0.2)
+        self.photo3 = visual.ImageStim(win=self.win, image='Cyberball/Homme1.jpg', pos=[0.8, 0.5], size=0.2)
+
+        #self.text1 = visual.TextStim(win=self.win, text="Player_1", pos=[0, 0.8], color=(-1, -1, -1))
+        #self.text2 = visual.TextStim(win=self.win, text="Jeanne", pos=[-0.5, -0.8], color=(-1, -1, -1))
+        #self.text3 = visual.TextStim(win=self.win, text="Paul", pos=[0.5, -0.8], color=(-1, -1, -1))
+        self.text1 = visual.TextStim(win=self.win, text="Player_1", pos=[0, -0.8], color=(-1, -1, -1))
+        self.text2 = visual.TextStim(win=self.win, text="Jeanne", pos=[-0.5, 0.8], color=(-1, -1, -1))
+        self.text3 = visual.TextStim(win=self.win, text="Paul", pos=[0.5, 0.8], color=(-1, -1, -1))
 
         # Chargement de l'self.image de la balle
         self.ball = visual.ImageStim(win=self.win, image='Cyberball/Banque_personnage/ball.png', pos=[0, 0], size=0.1)
@@ -140,20 +151,12 @@ class launch_cyberball(Parente) :
         self.game()
 
 
-
-
-
-    def lancer(self,sens, depart, arrive):
-        self.move_ball(self.ball, depart.pos, arrive.pos, duration=0.5)
-        self.ball_receptie(arrive)
-        core.wait(0.3)
-
-
     def game (self):
-        self.move_ball(self.ball, [0, -0.3], [0, -0.3], duration=3)
+        center = [0, 0]
+        self.move_ball(self.ball, center, center, duration=3)
         filtered_list = [x for x in self.players if x != self.player1]
         choice = random.choice(filtered_list)
-        self.move_ball(self.ball, [0, -0.3], choice["image"].pos, duration=0.3)
+        self.move_ball(self.ball, center, choice["image"].pos, duration=0.3)
         self.period_timer.reset()
         self.onset.append(self.global_timer.getTime())
         self.phase.append("Phase Normale")

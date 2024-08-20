@@ -45,7 +45,7 @@ class Localizer(Parente):
     def lancement(self):
         super().wait_for_trigger(self.port, self.baudrate, self.trigger)
         for x in range (self.number_of_blocks):
-            self.show_block(random.choice(self.keys),2)
+            self.show_block(random.choice(self.keys),self.number_per_block)
         self.write_tsv(self.onset,self.duration,self.block_type, self.stim_file, self.trial_type,self.output)
 
 

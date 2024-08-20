@@ -121,7 +121,7 @@ class Adjectifs(Parente):
                             'Combien de syllables comporte cet adjectif?')
 
     def debut_me(self):
-        texte_block = visual.TextStim(self.win, text=self.Me_shortcue, color=[1, 1, 1], alignText="left", wrapWidth=1.5, font="Arial")
+        texte_block = visual.TextStim(self.win, text=self.Me_shortcue, color=[1, 1, 1], alignText="center", wrapWidth=1.5, font="Arial")
         clock = core.Clock()
         texte_block.draw()
         self.win.flip()
@@ -129,7 +129,7 @@ class Adjectifs(Parente):
             pass
 
     def debut_friend(self):
-        texte_block = visual.TextStim(self.win, text=self.Friend_shortcue, color=[1, 1, 1], alignText="left", wrapWidth=1.5, font="Arial")
+        texte_block = visual.TextStim(self.win, text=self.Friend_shortcue, color=[1, 1, 1], alignText="center", wrapWidth=1.5, font="Arial")
         clock = core.Clock()
         texte_block.draw()
         self.win.flip()
@@ -137,7 +137,7 @@ class Adjectifs(Parente):
             pass
 
     def debut_syllabe(self):
-        texte_block = visual.TextStim(self.win, text=self.Syllabe_shortcue, color=[1, 1, 1], alignText="left", wrapWidth=1.5, font="Arial")
+        texte_block = visual.TextStim(self.win, text=self.Syllabe_shortcue, color=[1, 1, 1], alignText="center", wrapWidth=1.5, font="Arial")
         clock = core.Clock()
         texte_block.draw()
         self.win.flip()
@@ -218,7 +218,8 @@ class Adjectifs(Parente):
         self.shown_words.append(mot4)
         self.shown_words.append(mot5)
 
-    def write_tsv(self, filename="output1.tsv"):
+    def write_tsv(self,):
+        filename= self.output
         filename = super().preprocessing_tsv(filename)
 
         with open(filename, mode='w', newline='') as file:

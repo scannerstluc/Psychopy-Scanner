@@ -15,7 +15,7 @@ from Paradigme_parent import Parente
 class Adjectifs(Parente):
 
     def __init__(self, duration, betweenstimuli, zoom, blocks, filepath, output):
-        self.words=  self.reading("Paradigme_Adjectifs/"+filepath)
+        self.words=  self.reading("Input/Paradigme_Adjectifs/"+filepath)
         self.me_blocks = self.words.copy()
         self.friend_blocks = self.words.copy()
         self.syllabe_blocks = self.words.copy()

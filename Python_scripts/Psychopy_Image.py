@@ -47,7 +47,7 @@ class static_image:
         )
         event.globalKeys.add(key='escape', func=win.close)
 
-        chemin = "Paradigme_images_statiques/" + chemin
+        chemin = "Input/Paradigme_images_statiques/" + chemin
         images, orientation = self.reading(chemin)
         cross_stim = visual.ShapeStim(
             win=win,
@@ -67,7 +67,7 @@ class static_image:
         liste_image_win = []
         count = 0
         for image in images:
-            image_path = "Paradigme_images_statiques/stim_static/" + image
+            image_path = "Input/Paradigme_images_statiques/stim_static/" + image
             image_stim = visual.ImageStim(
                 win=win,
                 image=image_path,
@@ -105,7 +105,7 @@ class static_image:
         return stimulus_times, stimulus_apparition,stimuli_liste, orientation
 
     def write_tsv(self, onset, duration, file_stimuli, orientation, trial_type, filename="output.tsv"):
-        output_dir = 'Fichiers_output'
+        output_dir = '../Fichiers_output'
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
         current_date = datetime.now().strftime("%Y-%m-%d")

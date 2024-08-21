@@ -38,7 +38,7 @@ class PsychoPyParadigm(Parente):
             self.stimuli.append(word)
 
     def reading(self, filename):
-        filename = "Paradigme_mots/" + filename
+        filename = "Input/Paradigme_mots/" + filename
         with open(filename, "r") as fichier:
             ma_liste = [line.strip() for line in fichier]
         return ma_liste

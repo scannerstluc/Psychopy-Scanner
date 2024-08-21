@@ -35,6 +35,8 @@ class voices(Parente):
         self.reaction = []
 
     def reading(self,filename):
+        print(os.getcwd())
+        print("non ?")
         with open(filename, "r") as fichier:
             ma_liste = [line.strip() for line in fichier]
         return ma_liste
@@ -49,10 +51,13 @@ class voices(Parente):
                 tsv_writer.writerow([onset[i], duration[i], trial_type[i], reaction[i], file_stimuli[i]])
 
     def lancement(self):
-        self.voices = self.reading("Paradigme_EMO_VOICES/"+self.file)
+        print(os.getcwd())
+        print("oui ?")
+        self.voices = self.reading("Input/Paradigme_EMO_VOICES/"+self.file)
         super().wait_for_trigger(port=None)
         for x in self.voices:
-            custom_sound = sound.Sound("Paradigme_EMO_VOICES/emo_voices/"+x)
+            print(x)
+            custom_sound = sound.Sound("Input/Paradigme_EMO_VOICES/emo_voices/"+x)
             clicked = False
             clicked_time = "None"
             custom_sound.Sound= x

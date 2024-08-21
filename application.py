@@ -38,7 +38,7 @@ def submit_text():
         file = data.get('filePath')
         output_file = data.get('output_file')
         subprocess.run([
-            sys.executable, 'Psychopy_Text.py',
+            sys.executable, 'Python_scripts/Psychopy_Text.py',
             '--duration', duration,
             '--words', words,
             '--file', file,
@@ -65,7 +65,7 @@ def submit_emo_voice():
         output_file = data.get('output_file')
         print("working here?")
         subprocess.run([
-            sys.executable, 'Psychopy_EMO_VOICES.py',
+            sys.executable, 'Python_scripts/Psychopy_EMO_VOICES.py',
             '--duration', duration,
             '--file', file,
             '--betweenstimuli', betweenstimuli,
@@ -97,7 +97,7 @@ def submit_cyberball():
         print("ça passe")
         print(data)
         subprocess.run([
-            sys.executable, 'Psychopy_Cyberball.py',
+            sys.executable, 'Python_scripts/Psychopy_Cyberball.py',
             '--premiere_phase', premiere_phase,
             '--exclusion', exclusion,
             '--transition', transition,
@@ -127,7 +127,7 @@ def submit_emo_faces():
         output_file = data.get('output_file')
         print("working here?")
         subprocess.run([
-            sys.executable, 'Psychopy_EMO_FACE.py',
+            sys.executable, 'Python_scripts/Psychopy_EMO_FACE.py',
             '--duration', duration,
             '--file', file,
             '--betweenstimuli', betweenstimuli,
@@ -151,7 +151,7 @@ def submit_adjectifs():
         zoom = data.get('zoom')
         print("working here?")
         subprocess.run([
-            sys.executable, 'Psychopy_Adjectifs.py',
+            sys.executable, 'Python_scripts/Psychopy_Adjectifs.py',
             '--duration', duration,
             '--file', file,
             '--blocks', blocks,
@@ -177,7 +177,7 @@ def submit_stroop():
         choice = data.get('choice')
         print(data)
         subprocess.run([
-            sys.executable, 'Psychopy_colors.py',
+            sys.executable, 'Python_scripts/Psychopy_colors.py',
             '--duration', duration,
             '--file', file,
             '--zoom', zoom,
@@ -207,7 +207,7 @@ def submit_localizer():
 
         print(data)
         subprocess.run([
-            sys.executable, 'Psychopy_LOCALIZER.py',
+            sys.executable, 'Python_scripts/Psychopy_LOCALIZER.py',
             '--duration', duration,
             '--blocks', blocks,
             '--per_block', per_block,
@@ -237,7 +237,7 @@ def submit_images():
         betweenstimuli = data.get('betweenstimuli')
         output_file = data.get('output_file')
         subprocess.run([
-            sys.executable, 'Psychopy_Image.py',
+            sys.executable, 'Python_scripts/Psychopy_Image.py',
             '--duration', duration,
             '--file', file,
             '--port', port,
@@ -267,7 +267,7 @@ def submit_videos():
         betweenstimuli = data.get('betweenstimuli')
         output_file = data.get('output_file')
         subprocess.run([
-            sys.executable, 'Psychopy_Video.py',
+            sys.executable, 'Python_scripts/Psychopy_Video.py',
             '--duration', duration,
             '--file', file,
             '--port', port,

@@ -12,21 +12,21 @@ class launch_cyberball(Parente) :
         self.win = visual.Window(units="norm", fullscr=True)
 
         # Chargement des self.images
-        #self.image1 = visual.ImageStim(win=self.win, image='Cyberball/Banque_personnage/waiting.png', pos=[0, 0.5])
-        #self.image2 = visual.ImageStim(win=self.win, image='Cyberball/Banque_personnage/waiting.png', pos=[-0.5, -0.5])
-        #self.image3 = visual.ImageStim(win=self.win, image='Cyberball/Banque_personnage/waiting.png', pos=[0.5, -0.5])
-        self.image1 = visual.ImageStim(win=self.win, image='Cyberball/Banque_personnage/waiting.png', pos=[0, -0.5])
-        self.image2 = visual.ImageStim(win=self.win, image='Cyberball/Banque_personnage/waiting.png', pos=[-0.5, 0.5])
-        self.image3 = visual.ImageStim(win=self.win, image='Cyberball/Banque_personnage/waiting.png', pos=[0.5, 0.5])
+        #self.image1 = visual.ImageStim(win=self.win, image='../Input/Cyberball/Banque_personnage/waiting.png', pos=[0, 0.5])
+        #self.image2 = visual.ImageStim(win=self.win, image='../Input/Cyberball/Banque_personnage/waiting.png', pos=[-0.5, -0.5])
+        #self.image3 = visual.ImageStim(win=self.win, image='../Input/Cyberball/Banque_personnage/waiting.png', pos=[0.5, -0.5])
+        self.image1 = visual.ImageStim(win=self.win, image='Input/Cyberball/Banque_personnage/waiting.png', pos=[0, -0.5])
+        self.image2 = visual.ImageStim(win=self.win, image='Input/Cyberball/Banque_personnage/waiting.png', pos=[-0.5, 0.5])
+        self.image3 = visual.ImageStim(win=self.win, image='Input/Cyberball/Banque_personnage/waiting.png', pos=[0.5, 0.5])
 
 
         #self.photo1 = visual.ImageStim(win=self.win, image='Cyberball/Homme2.jpg', pos=[0.3, 0.8], size=0.2)
         #self.photo2 = visual.ImageStim(win=self.win, image='Cyberball/Femme2.jpg', pos=[-0.8, -0.8], size=0.2)
         #self.photo3 = visual.ImageStim(win=self.win, image='Cyberball/Homme1.jpg', pos=[0.8, -0.8], size=0.2)
 
-        self.photo1 = visual.ImageStim(win=self.win, image='Cyberball/Homme2.jpg', pos=[0.3, -0.8], size=0.2)
-        self.photo2 = visual.ImageStim(win=self.win, image='Cyberball/Femme2.jpg', pos=[-0.8, 0.5], size=0.2)
-        self.photo3 = visual.ImageStim(win=self.win, image='Cyberball/Homme1.jpg', pos=[0.8, 0.5], size=0.2)
+        self.photo1 = visual.ImageStim(win=self.win, image='Input/Cyberball/Homme2.jpg', pos=[0.3, -0.8], size=0.2)
+        self.photo2 = visual.ImageStim(win=self.win, image='Input/Cyberball/Femme2.jpg', pos=[-0.8, 0.5], size=0.2)
+        self.photo3 = visual.ImageStim(win=self.win, image='Input/Cyberball/Homme1.jpg', pos=[0.8, 0.5], size=0.2)
 
         #self.text1 = visual.TextStim(win=self.win, text="Player_1", pos=[0, 0.8], color=(-1, -1, -1))
         #self.text2 = visual.TextStim(win=self.win, text="Jeanne", pos=[-0.5, -0.8], color=(-1, -1, -1))
@@ -36,7 +36,7 @@ class launch_cyberball(Parente) :
         self.text3 = visual.TextStim(win=self.win, text="Paul", pos=[0.5, 0.8], color=(-1, -1, -1))
 
         # Chargement de l'self.image de la balle
-        self.ball = visual.ImageStim(win=self.win, image='Cyberball/Banque_personnage/ball.png', pos=[0, 0], size=0.1)
+        self.ball = visual.ImageStim(win=self.win, image='Input/Cyberball/Banque_personnage/ball.png', pos=[0, 0], size=0.1)
 
         self.player1 = {"image" : self.image1, "sens": "gauche", "right": "droite", "left": "gauche"}
         self.player2 = {"image" : self.image2, "sens": "droite"}
@@ -98,7 +98,7 @@ class launch_cyberball(Parente) :
             core.wait(duration / steps)
 
     def ball_receptie(self, player):
-        path = "Cyberball/Banque_personnage/"
+        path = "Input/Cyberball/Banque_personnage/"
         player["image"].image = path+"lancement_"+player["sens"]+".png"
         self.draw_all()
         self.win.flip()
@@ -110,7 +110,7 @@ class launch_cyberball(Parente) :
         player["image"].image = path+"waiting.png"
 
     def reception (self, player):
-        path = "Cyberball/Banque_personnage/"
+        path = "Input/Cyberball/Banque_personnage/"
         player["image"].image = path+"waiting_ball.png"
         self.draw_all()
         self.win.flip()

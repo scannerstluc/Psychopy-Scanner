@@ -59,7 +59,7 @@ class Localizer(Parente):
                 tsv_writer.writerow([onset[i], duration[i], block_type[i], file_stimuli[i], trial_type[i]])
     def get_groups_and_keys(self):
         import os
-        directory_path = 'Paradigme_LOCALIZER/images'
+        directory_path = 'Input/Paradigme_LOCALIZER/images'
         for filename in os.listdir(directory_path):
             if filename.endswith((".jpg", ".jpeg")):
                 prefix = ''.join([char for char in filename if not char.isdigit()]).rstrip('_')
@@ -81,7 +81,7 @@ class Localizer(Parente):
                 toshow.append(stimuli)
         liste_image_win=[]
         for image in toshow:
-            image_path = "Paradigme_LOCALIZER/images/" + image
+            image_path = "Input/Paradigme_LOCALIZER/images/" + image
             image_stim = visual.ImageStim(
                 win=self.win,
                 image=image_path,

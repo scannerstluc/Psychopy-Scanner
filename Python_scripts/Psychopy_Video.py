@@ -32,7 +32,7 @@ class VideoPsycho(Parente):
         stimuli_liste = []
         videos = self.reading(chemin)
         for x in range(len(videos)):
-            videos[x] = "Paradigme_video/Stimuli/" + videos[x]
+            videos[x] = "Input/Paradigme_video/Stimuli/" + videos[x]
         win = visual.Window(
             fullscr=True,
             #color = [0, 0, 1],

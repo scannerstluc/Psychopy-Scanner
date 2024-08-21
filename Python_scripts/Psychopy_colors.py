@@ -81,7 +81,7 @@ class Colors(Parente):
                 print(f"Erreur lors de la demande à Google Speech Recognition; {e}")
 
     def write_tsv(self,onset, duration,stimuli, trial_type, recording, reaction_time, filename="output.tsv"):
-        output_dir = 'Fichiers_output'
+        output_dir = '../Fichiers_output'
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
         current_date = datetime.now().strftime("%Y-%m-%d")
@@ -111,7 +111,7 @@ class Colors(Parente):
 
 
     def lancement(self):
-        words, colors, stimuli_names=self.reading("Paradigme_Couleur/"+self.filepath)
+        words, colors, stimuli_names=self.reading("Input/Paradigme_Couleur/"+self.filepath)
         text_stim = visual.TextStim(self.win, wrapWidth=1.5, font="Arial", height=0.1+(0.01*self.zoom))
         count=0
         super().wait_for_trigger(port=None)

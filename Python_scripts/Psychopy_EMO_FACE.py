@@ -53,13 +53,13 @@ class Emo_Face(Parente):
         )
 
         images = []
-        for image in self.reading("Paradigme_EMO_FACE/"+self.filepath):
+        for image in self.reading("Input/Paradigme_EMO_FACE/"+self.filepath):
             image_stim = visual.ImageStim(
                 win=self.win,
                 pos=(0, 0),
                 size=None
             )
-            image = "Paradigme_EMO_FACE/EMO_faces_list/"+image
+            image = "Input/Paradigme_EMO_FACE/EMO_faces_list/"+image
             image_stim.image=image
             images.append(image_stim)
 

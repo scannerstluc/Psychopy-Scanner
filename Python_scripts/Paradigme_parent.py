@@ -8,7 +8,7 @@ import serial
 
 class Parente(ABC):
     def preprocessing_tsv(self, filename):
-        output_dir = 'Fichiers_output'
+        output_dir = '../Fichiers_output'
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
         current_date = datetime.now().strftime("%Y-%m-%d")

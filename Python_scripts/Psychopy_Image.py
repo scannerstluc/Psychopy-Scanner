@@ -17,6 +17,14 @@ class static_image:
         self.port = port
         self.baudrate = baudrate
         self.trigger = trigger
+        self.click_times = []
+        self.win = win = visual.Window(
+            fullscr=True,
+            #color=[-0.0118, 0.0039, -0.0196],
+            units="pix"
+        )
+        self.mouse = event.Mouse(win=self.win)
+        event.globalKeys.add(key='escape', func=self.win.close)
         self.output = output
 
 
@@ -40,17 +48,10 @@ class static_image:
         return filenames, angles
 
     def static_images_psychopy(self, chemin, duration, betweenstimuli, zoom, port, baudrate, trigger):
-        win = visual.Window(
-            fullscr=True,
-            #color=[-0.0118, 0.0039, -0.0196],
-            units="pix"
-        )
-        event.globalKeys.add(key='escape', func=win.close)
-
         chemin = "Input/Paradigme_images_statiques/" + chemin
         images, orientation = self.reading(chemin)
         cross_stim = visual.ShapeStim(
-            win=win,
+            win=self.win,
             vertices=((0, -20), (0, 20), (0, 0), (-20, 0), (20, 0)),
             lineWidth=3,
             closeShape=False,
@@ -63,13 +64,13 @@ class static_image:
         stimulus_apparition=[] #Liste pour enregistrer le timing d'apparition des stimuli
         stimuli_liste = [] #Liste pour enregistrer les noms des stimuli, si c'est une croix ce sera Fixation sinon le nom du fichier
         cross_stim.draw()
-        win.flip()
+        self.win.flip()
         liste_image_win = []
         count = 0
         for image in images:
             image_path = "Input/Paradigme_images_statiques/stim_static/" + image
             image_stim = visual.ImageStim(
-                win=win,
+                win=self.win,
                 image=image_path,
                 pos=(0, 0),
                 size=None
@@ -87,21 +88,31 @@ class static_image:
 
         for image_stim in liste_image_win:
             image_stim.draw()
-            win.flip()
+            self.win.flip()
             stimulus_apparition.append(global_timer.getTime())
             timer.reset()  # Réinitialiser le timer à chaque nouvelle image
+            clicked = False  # Variable pour vérifier si un clic a été détecté
+            clicked_time = "None"
             while timer.getTime() < duration:
-                pass
+                button = self.mouse.getPressed()  # Mise à jour de l'état des boutons de la souris
+
+                if any(button):
+                    if not clicked:  # Vérifier si c'est le premier clic détecté
+                        clicked_time = timer.getTime()
+                        print("Clic détecté à :", clicked_time, "secondes")
+                        clicked = True  # Empêcher l'enregistrement de clics multiple
             stimulus_times.append(timer.getTime())
 
             cross_stim.draw()
-            win.flip()
+            self.win.flip()
+            self.click_times.append(clicked_time)
             stimulus_apparition.append(global_timer.getTime())
             timer.reset() # Réinitialiser le timer à chaque nouvelle image
             while timer.getTime() < betweenstimuli:
                 pass
             stimulus_times.append(timer.getTime())
-        win.close()
+            self.click_times.append("None")
+        self.win.close()
         return stimulus_times, stimulus_apparition,stimuli_liste, orientation
 
     def write_tsv(self, onset, duration, file_stimuli, orientation, trial_type, filename="output.tsv"):
@@ -122,13 +133,13 @@ class static_image:
 
         with open(filename, mode='w', newline='') as file:
             tsv_writer = csv.writer(file, delimiter='\t')
-            tsv_writer.writerow(['onset', 'duration', 'trial_type','angle', 'stim_file', ])
+            tsv_writer.writerow(['onset', 'duration', 'trial_type','angle','reaction', 'stim_file', ])
             orientation.insert(3,0)
             for x in range (len(trial_type)):
                 if trial_type[x]=="Fixation":
                     orientation.insert(x,"None")
             for i in range(len(onset)):
-                tsv_writer.writerow([onset[i], duration[i], trial_type[i], orientation[i], file_stimuli[i]])
+                tsv_writer.writerow([onset[i], duration[i], trial_type[i], orientation[i], self.click_times[i], file_stimuli[i]])
 
 
     def lancement(self):

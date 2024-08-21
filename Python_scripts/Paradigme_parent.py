@@ -1,4 +1,5 @@
 import os
+import re
 from abc import ABC, abstractmethod
 from datetime import datetime
 from psychopy import event
@@ -22,6 +23,11 @@ class Parente(ABC):
         filename = os.path.join(output_dir, f"{filename_prefix}_run{run_number}.tsv")
         return filename
 
+    def inputs_texts(self,chemin):
+        with open(chemin, 'r', encoding='utf-8') as file:
+            contenu = file.read()
+        texts = re.findall(r'\|(.*?)\|', contenu, re.DOTALL)
+        return texts
 
     def wait_for_trigger(self, port='COM3', baudrate=9600, trigger_char='s'):
         if port == None:

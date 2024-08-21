@@ -149,6 +149,11 @@ def submit_adjectifs():
         output_file = data.get('output_file')
         blocks = data.get('blocks')
         zoom = data.get('zoom')
+        port = data.get('port')
+        entrainement = data.get('entrainement')
+        per_block = data.get('per_block')
+        baudrate = data.get('baudrate')
+        trigger = data.get('trigger')
         print("working here?")
         subprocess.run([
             sys.executable, 'Python_scripts/Psychopy_Adjectifs.py',
@@ -156,8 +161,13 @@ def submit_adjectifs():
             '--file', file,
             '--blocks', blocks,
             '--zoom', zoom,
+            '--entrainement', entrainement,
+            '--per_block', per_block,
             '--betweenstimuli', betweenstimuli,
             '--output_file', output_file,
+            '--port', port,
+            '--baudrate', baudrate,
+            '--trigger', trigger,
         ])
 
         return jsonify({'status': 'success', 'message': 'Données reçues et script exécuté'})

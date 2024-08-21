@@ -198,8 +198,16 @@
                             </div>
                             <div class="input-group">
                                 <div class="input-container">
+                                    <h3>Nombre de blocks d'entrainement</h3>
+                                    <input type="text" id="number_of_blocks-entrainement" placeholder="par exemple: 5">
+                                </div>
+                                <div class="input-container">
                                     <h3>Nombre de blocks</h3>
-                                    <input type="text" id="number_of_blocks" placeholder="par exemple: 5">
+                                    <input type="text" id="number_of_blocks" placeholder="par exemple: 30">
+                                </div>
+                                <div class="input-container">
+                                    <h3>Nombre de stimuli par block</h3>
+                                    <input type="text" id="number_per_blocks-adjectifs" placeholder="par exemple: 5">
                                 </div>
                                 <div class="input-container">
                                     <h3></h3>
@@ -611,9 +619,14 @@
                 const betweenstimuli = document.getElementById('betweenstimuli-adjectifs').value || 'Non spécifié';
                 const fileInput = document.getElementById('fileinput-adjectifs');
                 const blocks = document.getElementById("number_of_blocks").value || 'Non spécifié';
+                const entrainement_blocks = document.getElementById("number_of_blocks-entrainement").value || 'Non spécifié';
+                const per_block = document.getElementById("number_per_blocks-adjectifs").value || 'Non spécifié';
                 const zoom = document.getElementById('zoom-adjectifs').value || 'Non spécifié';
                 const output_file = document.getElementById('patientName').textContent;
                 let fileName = fileInput.value.split('\\').pop();  // Cela extraira uniquement le nom du fichier.
+                const port = document.getElementById('resultPort').textContent;
+                const baudrate = document.getElementById('resultBaudrate').textContent;
+                const trigger = document.getElementById('resultTrigger').textContent;
 
                 if (!fileName){
                     alert('Veuillez sélectionner un fichier ou entrer des mots avant de soumettre.');
@@ -630,7 +643,12 @@
                         duration: duration,
                         betweenstimuli: betweenstimuli,
                         blocks: blocks,
+                        entrainement: entrainement_blocks,
                         zoom: zoom,
+                        port: port,
+                        per_block: per_block,
+                        baudrate: baudrate,
+                        trigger: trigger,
                         output_file: output_file,
                         filePath: fileName // Envoyer la valeur de l'input de fichier comme un simple string
                     }),

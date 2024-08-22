@@ -632,6 +632,9 @@
                     alert('Veuillez sélectionner un fichier ou entrer des mots avant de soumettre.');
                     return;
                 }
+                if (baudrate=='Patient' || port == 'Patient' || trigger == 'Patient'){
+                    alert("Veuillez remplir correctement les champs pour le choix du port")
+                }
 
                 // Envoyer les données au serveur
                 fetch('/submit-adjectifs', {
@@ -674,7 +677,6 @@
             const baudrate = document.getElementById('resultBaudrate').textContent;
             const trigger = document.getElementById('resultTrigger').textContent;
             let fileName = fileInput.value.split('\\').pop();
-            alert(fileName)
             if (!fileName) {
                 alert('Veuillez sélectionner un fichier avant de soumettre.');
                 return;  // Arrête l'exécution si aucun fichier n'est sélectionné
@@ -798,7 +800,6 @@
             .then(response => response.json())
             .then(data => {
                 console.log('Success:', data);
-                alert('Données envoyées avec succès!');
             })
             .catch((error) => {
                 console.error('Error:', error);

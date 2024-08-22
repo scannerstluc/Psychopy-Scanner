@@ -53,13 +53,10 @@ class Adjectifs(Parente):
     def waiting_boitier(self):
         while True:
             if self.ser.in_waiting > 0:
-                trigger = self.ser.read().decode('utf-8')
+                self.ser.read().decode('utf-8')
                 break
 
-    def check_for_esc(self):
-        if 'escape' in event.getKeys():
-            self.win.close()
-            core.quit()
+
 
     def reading(self,filename):
         with open(filename, "r", encoding="utf-8") as fichier:

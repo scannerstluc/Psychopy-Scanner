@@ -1,13 +1,13 @@
 import csv
 import random
-
+import serial
 import argparse
 from psychopy import visual, core, event
 from Paradigme_parent import Parente
 
 
 class launch_cyberball(Parente) :
-    def __init__(self, phase1, transition, exclusion, minimum, maximum) :
+    def __init__(self, phase1, transition, exclusion, minimum, maximum, port, baudrate) :
 
         self.win = visual.Window(units="norm", fullscr=True)
 
@@ -52,6 +52,9 @@ class launch_cyberball(Parente) :
         self.exclusion = exclusion
         self.minimum = minimum
         self.maximum = maximum
+        self.port = port
+        self.baudrate = baudrate
+        self.ser = serial.Serial(self.port, self.baudrate)
         self.onset = []
         self.duration = []
         self.phase = []
@@ -242,19 +245,22 @@ class launch_cyberball(Parente) :
         self.timer.reset()
         d=0
         while self.timer.getTime() < 4:
-            key = event.getKeys()
-            if key == ['right']:
-                self.player1["sens"] = "droite"
-                next = self.player3
-                d=1
-                key = ""
-                break
-            elif key == ['left']:
-                self.player1["sens"] = "gauche"
-                next = self.player2
-                d=1
-                key = ""
-                break
+            if self.ser.in_waiting > 0:
+                print("oui")
+                key = self.ser.read().decode('utf-8')
+                print(key)
+                if key == "z":
+                    self.player1["sens"] = "droite"
+                    next = self.player3
+                    d=1
+                    key = ""
+                    break
+                elif key == "a":
+                    self.player1["sens"] = "gauche"
+                    next = self.player2
+                    d=1
+                    key = ""
+                    break
         self.ball_receptie(self.player1)
         if d==1:
             self.move_ball(self.ball, self.player1["image"].pos, next["image"].pos, duration=0.3)
@@ -304,7 +310,7 @@ if __name__ == "__main__":
     exclusion = 120
     minimum = 0.7
     maximum = 3
-    C=launch_cyberball(args.premiere_phase,args.transition,args.exclusion,args.minimum,args.maximum)
+    C=launch_cyberball(args.premiere_phase,args.transition,args.exclusion,args.minimum,args.maximum, args.port, args.baudrate)
     C.lancement()
 
 random_float_between_bounds = random.uniform(0.3, 2.5)

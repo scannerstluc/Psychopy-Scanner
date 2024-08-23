@@ -3,19 +3,18 @@ import csv
 import os
 from datetime import datetime
 
+from Paradigme_parent import Parente
 from psychopy import visual, core, event
 import serial
 
 
 
-class static_image:
-    def __init__(self, duration, betweenstimuli, file, zoom, port, baudrate, trigger, output):
+class static_image(Parente):
+    def __init__(self, duration, betweenstimuli, file, zoom, trigger, output):
         self.duration = duration #args.duration, args.betweenstimuli, args.file, args.zoom, args.port, args.baudrate, args.trigger  ,args.output_file)
         self.betweenstimuli = betweenstimuli
         self.file = file
         self.zoom = zoom
-        self.port = port
-        self.baudrate = baudrate
         self.trigger = trigger
         self.click_times = []
         self.win = win = visual.Window(
@@ -27,13 +26,6 @@ class static_image:
         event.globalKeys.add(key='escape', func=self.win.close)
         self.output = output
 
-
-    def wait_for_trigger(self, port='COM3', baudrate=9600, trigger_char='s'):
-        with serial.Serial(port, baudrate=baudrate) as ser:
-            trigger = ser.read().decode('utf-8')
-            while trigger != trigger_char:
-                trigger = ser.read().decode('utf-8')
-            print("Trigger received")
 
 
     def reading(self, filename):
@@ -47,7 +39,7 @@ class static_image:
                     angles.append(int(parts[1].strip()))
         return filenames, angles
 
-    def static_images_psychopy(self, chemin, duration, betweenstimuli, zoom, port, baudrate, trigger):
+    def static_images_psychopy(self, chemin, duration, betweenstimuli, zoom, trigger):
         chemin = "Input/Paradigme_images_statiques/" + chemin
         images, orientation = self.reading(chemin)
         cross_stim = visual.ShapeStim(
@@ -83,7 +75,7 @@ class static_image:
             count+=1
 
 
-        self.wait_for_trigger(port,baudrate,trigger) #Attente du signal pour commencer l'expérience, en attendant une croix sera affichée au centre
+        super().wait_for_trigger("s")
         global_timer = core.Clock() #Horloge principale
 
         for image_stim in liste_image_win:
@@ -143,7 +135,7 @@ class static_image:
 
 
     def lancement(self):
-        stimulus_times, stimulus_apparition, stimuli, orientation = self.static_images_psychopy(self.file, self.duration, self.betweenstimuli, self.zoom, self.port, self.baudrate, self.trigger)
+        stimulus_times, stimulus_apparition, stimuli, orientation = self.static_images_psychopy(self.file, self.duration, self.betweenstimuli, self.zoom, self.trigger)
         liste_trial=[]
         liste_lm=[]
         count=0
@@ -162,16 +154,14 @@ class static_image:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Exécuter le paradigme Psychopy")
-    parser.add_argument("--duration", type=int, required=True, help="Durée en secondes des stimuli")
-    parser.add_argument("--betweenstimuli", type=int, required=True, help="Durée en secondes entre les stimuli")
+    parser.add_argument("--duration", type=float, required=True, help="Durée en secondes des stimuli")
+    parser.add_argument("--betweenstimuli", type=float, required=True, help="Durée en secondes entre les stimuli")
     parser.add_argument("--file", type=str, help="Chemin du fichier contenant les stimuli")
     parser.add_argument("--zoom", type=int, required=True, help="Pourcentage Zoom")
     parser.add_argument("--output_file", type=str, required=True, help="Nom du fichier d'output")
-    parser.add_argument('--port', type=str, required=True, help="Port")
-    parser.add_argument('--baudrate', type=int, required=True, help="Speed port")
     parser.add_argument('--trigger', type=str, required=True, help="caractère pour lancer le programme")
 
     args = parser.parse_args()
 
-    images = static_image(args.duration, args.betweenstimuli, args.file, args.zoom, args.port, args.baudrate, args.trigger, args.output_file)
+    images = static_image(args.duration, args.betweenstimuli, args.file, args.zoom, args.trigger, args.output_file)
     images.lancement()

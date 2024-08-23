@@ -114,7 +114,7 @@ class Colors(Parente):
         words, colors, stimuli_names=self.reading("Input/Paradigme_Couleur/"+self.filepath)
         text_stim = visual.TextStim(self.win, wrapWidth=1.5, font="Arial", height=0.1+(0.01*self.zoom))
         count=0
-        super().wait_for_trigger(port=None)
+        super().wait_for_trigger("s")
         self.global_timer.reset()
         recordings=[]
         for mot in words:
@@ -158,12 +158,13 @@ class Colors(Parente):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Exécuter le paradigme Psychopy")
-    parser.add_argument("--duration", type=int, required=True, help="Durée en secondes des stimuli")
+    parser.add_argument("--duration", type=float, required=True, help="Durée en secondes des stimuli")
     parser.add_argument("--file", type=str, help="Chemin vers le fichier de mots", required=False)
     parser.add_argument("--zoom", type=int, required=True, help="Pourcentage Zoom")
     parser.add_argument("--output_file", type=str, required=True, help="Nom du fichier d'output")
-    parser.add_argument("--betweenstimuli", type=int, required=True, help="Temps entre les stimuli")
+    parser.add_argument("--betweenstimuli", type=float, required=True, help="Temps entre les stimuli")
     parser.add_argument("--choice", type=str, required=True, help="Choix de la langue")
+
     args = parser.parse_args()
     colors = Colors(args.duration, args.betweenstimuli, args.zoom, args.choice, args.file, args.output_file).lancement()
 

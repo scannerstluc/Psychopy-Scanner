@@ -428,9 +428,7 @@
                 const zoom = document.getElementById('zoom').value || 'Non spécifié';
                 const fileInput = document.getElementById('fileinput');
                 const output_file = document.getElementById('patientName').textContent;
-                const port = document.getElementById('resultPort').textContent;
-                const baudrate = document.getElementById('resultBaudrate').textContent;
-                const trigger = document.getElementById('resultTrigger').textContent;
+                let trigger = document.getElementById('resultTrigger').textContent;
                 let fileName = fileInput.value.split('\\').pop();  // Cela extraira uniquement le nom du fichier.
 
                 if (!fileName && words=='Non spécifié'){
@@ -438,8 +436,8 @@
                     return;
                 }
 
-                if (baudrate=='Patient' || port == 'Patient' || trigger == 'Patient'){
-                    alert("Veuillez remplir correctement les champs pour le choix du port")
+                if (trigger=="Patient"){
+                    trigger="s"
                 }
 
                 // Envoyer les données au serveur
@@ -452,8 +450,6 @@
                         duration: duration,
                         words: words,
                         zoom: zoom,
-                        port: port,
-                        baudrate: baudrate,
                         trigger: trigger,
                         output_file: output_file,
                         filePath: fileName // Envoyer la valeur de l'input de fichier comme un simple string
@@ -580,12 +576,10 @@
                 const output_file = document.getElementById('patientName').textContent;
                 const blocks = document.getElementById("number_of_blocks-localizer").value || 'Non spécifié';
                 const per_blocks = document.getElementById("number_per_block-localizer").value || 'Non spécifié';
-                const port = document.getElementById('resultPort').textContent;
-                const baudrate = document.getElementById('resultBaudrate').textContent;
-                const trigger = document.getElementById('resultTrigger').textContent;
+                let trigger = document.getElementById('resultTrigger').textContent;
 
-                if (baudrate=='Patient' || port == 'Patient' || trigger == 'Patient'){
-                    alert("Veuillez remplir correctement les champs pour le choix du port")
+                if (trigger=="Patient"){
+                    trigger="s"
                 }
                 // Envoyer les données au serveur
                 fetch('/submit-localizer', {
@@ -596,8 +590,6 @@
                     body: JSON.stringify({
                         duration: duration,
                         betweenstimuli: betweenstimuli,
-                        port: port,
-                        baudrate: baudrate,
                         trigger: trigger,
                         blocks: blocks,
                         per_blocks: per_blocks,
@@ -624,16 +616,10 @@
                 const zoom = document.getElementById('zoom-adjectifs').value || 'Non spécifié';
                 const output_file = document.getElementById('patientName').textContent;
                 let fileName = fileInput.value.split('\\').pop();  // Cela extraira uniquement le nom du fichier.
-                const port = document.getElementById('resultPort').textContent;
-                const baudrate = document.getElementById('resultBaudrate').textContent;
-                const trigger = document.getElementById('resultTrigger').textContent;
 
                 if (!fileName){
                     alert('Veuillez sélectionner un fichier ou entrer des mots avant de soumettre.');
                     return;
-                }
-                if (baudrate=='Patient' || port == 'Patient' || trigger == 'Patient'){
-                    alert("Veuillez remplir correctement les champs pour le choix du port")
                 }
 
                 // Envoyer les données au serveur
@@ -648,10 +634,7 @@
                         blocks: blocks,
                         entrainement: entrainement_blocks,
                         zoom: zoom,
-                        port: port,
                         per_block: per_block,
-                        baudrate: baudrate,
-                        trigger: trigger,
                         output_file: output_file,
                         filePath: fileName // Envoyer la valeur de l'input de fichier comme un simple string
                     }),
@@ -673,18 +656,16 @@
             const output_file = document.getElementById('patientName').textContent;
             const minimum = document.getElementById('minimum-reaction').value || 'Non spécifié';
             const maximum = document.getElementById('maximum-reaction').value ||'Non spécifié';
-            const port = document.getElementById('resultPort').textContent;
-            const baudrate = document.getElementById('resultBaudrate').textContent;
-            const trigger = document.getElementById('resultTrigger').textContent;
+            let trigger = document.getElementById('resultTrigger').textContent;
             let fileName = fileInput.value.split('\\').pop();
             if (!fileName) {
                 alert('Veuillez sélectionner un fichier avant de soumettre.');
                 return;  // Arrête l'exécution si aucun fichier n'est sélectionné
             }
 
-            if (baudrate=='Patient' || port == 'Patient' || trigger == 'Patient'){
-                    alert("Veuillez remplir correctement les champs pour le choix du port")
-                }
+            if (trigger == "Patient"){
+                trigger = "s"
+            }
 
             fetch('/submit-cyberball', {
                 method: 'POST',
@@ -697,8 +678,6 @@
                     transition: transition,
                     minimum: minimum,
                     maximum: maximum,
-                    port: port,
-                    baudrate: baudrate,
                     trigger: trigger,
                     output_file: output_file,
                     filePath: fileName // Envoyer la valeur de l'input de fichier comme un simple string
@@ -722,9 +701,12 @@
             const output_file = document.getElementById('patientName').textContent;
             const port = document.getElementById('resultPort').textContent;
             const baudrate = document.getElementById('resultBaudrate').textContent;
-            const trigger = document.getElementById('resultTrigger').textContent;
+            let trigger = document.getElementById('resultTrigger').textContent;
             let fileName = fileInput.value.split('\\').pop();
 
+            if (trigger=="Patient"){
+                trigger="s"
+            }
 
 
             if (!fileName) {
@@ -732,9 +714,6 @@
                 return;  // Arrête l'exécution si aucun fichier n'est sélectionné
             }
 
-            if (baudrate=='Patient' || port == 'Patient' || trigger == 'Patient'){
-                    alert("Veuillez remplir correctement les champs pour le choix du port")
-                }
             // Envoyer les données au serveur
             fetch('/submit-images', {
                 method: 'POST',
@@ -769,7 +748,7 @@
             const output_file = document.getElementById('patientName').textContent;
             const port = document.getElementById('resultPort').textContent;
             const baudrate = document.getElementById('resultBaudrate').textContent;
-            const trigger = document.getElementById('resultTrigger').textContent;
+            let trigger = document.getElementById('resultTrigger').textContent;
             let fileName = fileInput.value.split('\\').pop();  // Cela extraira uniquement le nom du fichier.
 
             if (!fileName) {
@@ -777,9 +756,9 @@
                 return;  // Arrête l'exécution si aucun fichier n'est sélectionné
             }
 
-            if (baudrate=='Patient' || port == 'Patient' || trigger == 'Patient'){
-                    alert("Veuillez remplir correctement les champs pour le choix du port")
-                }
+            if (trigger=="Patient"){
+                trigger="s"
+            }
             // Envoyer les données au serveur
             fetch('/submit-videos', {
                 method: 'POST',

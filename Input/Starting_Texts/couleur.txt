@@ -1,6 +1,10 @@
 |Vous allez voir une série de mots apparaître.
 
 Ces mots seront dans une certaines couleurs
-qui pourra ne pas correspondre au mot par exemple: le mot jaune écrit en rouge
+qui pourra ne pas correspondre au mot par exemple: le mot jaune écrit en rouge.
 
-Votre but sera de dire le mot indiqué et non la couleur dans laquelle il sera.|
+Votre but sera de dire le mot indiqué et non la couleur dans laquelle il sera.
+
+Veillez à toujours fixer le centre.
+
+(appuyer sur une touche quand vous êtes prêt)|

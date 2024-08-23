@@ -1,4 +1,5 @@
 import argparse
+import copy
 import csv
 import os
 from datetime import datetime
@@ -9,13 +10,11 @@ from Paradigme_parent import Parente
 
 
 class VideoPsycho(Parente):
-    def __init__(self, duration, betweenstimuli, file, zoom, port, baudrate, trigger, output):
+    def __init__(self, duration, betweenstimuli, file, zoom, trigger, output):
         self.duration = duration
         self.betweenstimuli = betweenstimuli
         self.file = file
         self.zoom = zoom
-        self.port = port
-        self.baudrate = baudrate
         self.trigger = trigger
         self.output = output
 
@@ -26,11 +25,12 @@ class VideoPsycho(Parente):
         return ma_liste
 
 
-    def play_video_psychopy(self, chemin, duration, between_stimuli, zoom, port, baudrate, trigger):
+    def play_video_psychopy(self, chemin, duration, between_stimuli, zoom, trigger):
         apparition_stimuli = []
         longueur_stimuli = []
         stimuli_liste = []
         videos = self.reading(chemin)
+        file = copy.copy(videos)
         for x in range(len(videos)):
             videos[x] = "Input/Paradigme_video/Stimuli/" + videos[x]
         win = visual.Window(
@@ -49,7 +49,7 @@ class VideoPsycho(Parente):
             closeShape=False,
             lineColor="white"
         )
-        super().wait_for_trigger(port, baudrate, trigger)
+        super().wait_for_trigger("s")
         global_timer = core.Clock()
         thezoom = 1.3+(0.77*zoom/100)
         for x in range(len(videos)):
@@ -81,7 +81,7 @@ class VideoPsycho(Parente):
                 movie_stim.draw()
                 win.flip()
             longueur_stimuli.append(timer.getTime())
-            stimuli_liste.append(video_path)
+            stimuli_liste.append(file[x])
 
         cross_stim.draw()
         win.flip()
@@ -107,7 +107,7 @@ class VideoPsycho(Parente):
 
     def lancement(self):
 
-        stimulus_times, stimulus_apparition, stimuli = self.play_video_psychopy(self.file, self.duration, self.betweenstimuli, self.zoom, self.port, self.baudrate, self.trigger)
+        stimulus_times, stimulus_apparition, stimuli = self.play_video_psychopy(self.file, self.duration, self.betweenstimuli, self.zoom, self.trigger)
         liste_trial = []
         liste_lm = []
         count = 0
@@ -125,25 +125,14 @@ class VideoPsycho(Parente):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Exécuter le paradigme Psychopy")
-    parser.add_argument("--duration", type=int, required=True, help="Durée en secondes des stimuli")
-    parser.add_argument("--betweenstimuli", type=int, required=True, help="Durée en secondes entre les stimuli")
+    parser.add_argument("--duration", type=float, required=True, help="Durée en secondes des stimuli")
+    parser.add_argument("--betweenstimuli", type=float, required=True, help="Durée en secondes entre les stimuli")
     parser.add_argument("--file", type=str, help="Chemin du fichier contenant les stimuli")
     parser.add_argument("--zoom", type=int, required=True, help="Pourcentage Zoom")
     parser.add_argument("--output_file", type=str, required=True, help="Nom du fichier d'output")
-    parser.add_argument('--port', type=str, required=True, help="Port")
-    parser.add_argument('--baudrate', type=int, required=True, help="Speed port")
     parser.add_argument('--trigger', type=str, required=True, help="caractère pour lancer le programme")
 
 
     args = parser.parse_args()
-    videos= VideoPsycho(args.duration, args.betweenstimuli, "Paradigme_video/"+args.file, args.zoom, args.port, args.baudrate, args.trigger  , args.output_file)
+    videos= VideoPsycho(args.duration, args.betweenstimuli, "Input/Paradigme_video/"+args.file, args.zoom, args.trigger, args.output_file)
     videos.lancement()
-    """
-    duration = 1
-    betweenstimuli = 1
-    file = "Paradigme_video/chemin.txt"
-    zoom = True
-    output_file = "Fichiers_output/videotesddt.tsv"
-
-    main(duration, betweenstimuli, file, zoom, output_file)
-    """

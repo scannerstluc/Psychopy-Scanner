@@ -1,8 +1,9 @@
 import os
 import re
+import time
 from abc import ABC, abstractmethod
 from datetime import datetime
-from psychopy import event
+from psychopy import event, visual
 
 import serial
 
@@ -29,14 +30,20 @@ class Parente(ABC):
         texts = re.findall(r'\|(.*?)\|', contenu, re.DOTALL)
         return texts
 
-    def wait_for_trigger(self, port='COM3', baudrate=9600, trigger_char='s'):
-        if port == None:
-            event.waitKeys()
-        else:
-            with serial.Serial(port, baudrate=baudrate) as ser:
-                trigger = ser.read().decode('utf-8')
-                while trigger != trigger_char:
-                    trigger = ser.read().decode('utf-8')
-                print("Trigger received")
+    def wait_for_trigger(self, trigger='s'):
+        event.waitKeys(keyList=[trigger])
+
+    def send_character(self, port, baud_rate):
+        char = "t"
+        try:
+            # Ouvrir le port série
+            with serial.Serial(port=port, baudrate=baud_rate, timeout=1) as ser:
+                print(f"Connexion ouverte sur {port}. Envoi de '{char}'...")
+                ser.write(b'H')
+                time.sleep(0.5)
+                ser.write(b'L')
+                print("Pin 2 activé puis désactivé")  # Message de confirmation
 
 
+        except serial.SerialException as e:
+            print(f"Erreur d'ouverture ou d'utilisation du port série : {e}")

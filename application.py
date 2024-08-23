@@ -1,6 +1,9 @@
 from flask import Flask, render_template, request, jsonify
 import subprocess
 import sys
+import webbrowser
+from waitress import serve
+
 
 app = Flask(__name__)
 
@@ -32,8 +35,6 @@ def submit_text():
         duration = data.get('duration')
         words = data.get('words')
         zoom = data.get('zoom')
-        port = data.get('port')
-        baudrate = data.get('baudrate')
         trigger = data.get('trigger')
         file = data.get('filePath')
         output_file = data.get('output_file')
@@ -42,8 +43,6 @@ def submit_text():
             '--duration', duration,
             '--words', words,
             '--file', file,
-            '--port', port,
-            '--baudrate', baudrate,
             '--trigger', trigger,
             '--output_file', output_file,
             '--zoom', zoom
@@ -79,18 +78,13 @@ def submit_emo_voice():
 
 @app.route('/submit-cyberball', methods=['POST'])
 def submit_cyberball():
-    print("oooooppo")
     try:
-        print("okkk?")
         data = request.get_json()
         premiere_phase = data.get("premiere_phase")
         exclusion = data.get("exclusion")
         transition = data.get("transition")
         minimum = data.get("minimum")
         maximum = data.get("maximum")
-        port = data.get("port")
-        print("ooooo")
-        baudrate = data.get("baudrate")
         trigger = data.get("trigger")
         output_file = data.get("output_file")
         filePath = data.get("filePath")
@@ -103,8 +97,6 @@ def submit_cyberball():
             '--transition', transition,
             '--minimum', minimum,
             '--maximum', maximum,
-            '--port', port,
-            '--baudrate', baudrate,
             '--trigger', trigger,
             '--output_file', output_file,
             '--filePath', filePath,
@@ -149,11 +141,8 @@ def submit_adjectifs():
         output_file = data.get('output_file')
         blocks = data.get('blocks')
         zoom = data.get('zoom')
-        port = data.get('port')
         entrainement = data.get('entrainement')
         per_block = data.get('per_block')
-        baudrate = data.get('baudrate')
-        trigger = data.get('trigger')
         print("working here?")
         subprocess.run([
             sys.executable, 'Python_scripts/Psychopy_Adjectifs.py',
@@ -165,9 +154,6 @@ def submit_adjectifs():
             '--per_block', per_block,
             '--betweenstimuli', betweenstimuli,
             '--output_file', output_file,
-            '--port', port,
-            '--baudrate', baudrate,
-            '--trigger', trigger,
         ])
 
         return jsonify({'status': 'success', 'message': 'Données reçues et script exécuté'})
@@ -186,7 +172,7 @@ def submit_stroop():
         zoom = data.get('zoom')
         choice = data.get('choice')
         print(data)
-        subprocess.run([
+        subprocess.Popen([
             sys.executable, 'Python_scripts/Psychopy_colors.py',
             '--duration', duration,
             '--file', file,
@@ -210,8 +196,6 @@ def submit_localizer():
         betweenstimuli = data.get('betweenstimuli')
         blocks = data.get('blocks')
         per_block = data.get('per_blocks')
-        port = data.get('port')
-        baudrate = data.get('baudrate')
         trigger = data.get('trigger')
         output_file = data.get('output_file')
 
@@ -221,8 +205,6 @@ def submit_localizer():
             '--duration', duration,
             '--blocks', blocks,
             '--per_block', per_block,
-            '--port', port,
-            '--baudrate', baudrate,
             '--trigger', trigger,
             '--betweenstimuli', betweenstimuli,
             '--output_file', output_file,
@@ -241,8 +223,6 @@ def submit_images():
         duration = data.get('duration')
         file = data.get('filePath')
         zoom = data.get('zoom')
-        port = data.get('port')
-        baudrate = data.get('baudrate')
         trigger = data.get('trigger')
         betweenstimuli = data.get('betweenstimuli')
         output_file = data.get('output_file')
@@ -250,8 +230,6 @@ def submit_images():
             sys.executable, 'Python_scripts/Psychopy_Image.py',
             '--duration', duration,
             '--file', file,
-            '--port', port,
-            '--baudrate', baudrate,
             '--trigger', trigger,
             '--output_file', output_file,
             '--betweenstimuli', betweenstimuli,
@@ -271,8 +249,6 @@ def submit_videos():
         duration = data.get('duration')
         file = data.get('filePath')
         zoom = data.get('zoom')
-        port = data.get('port')
-        baudrate = data.get('baudrate')
         trigger = data.get('trigger')
         betweenstimuli = data.get('betweenstimuli')
         output_file = data.get('output_file')
@@ -280,8 +256,6 @@ def submit_videos():
             sys.executable, 'Python_scripts/Psychopy_Video.py',
             '--duration', duration,
             '--file', file,
-            '--port', port,
-            '--baudrate', baudrate,
             '--trigger', trigger,
             '--output_file', output_file,
             '--betweenstimuli', betweenstimuli,
@@ -291,5 +265,9 @@ def submit_videos():
         return jsonify({'status': 'success', 'message': 'Données reçues et script exécuté'})
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)})
+
+    
 if __name__ == '__main__':
-    app.run(debug=True)
+    webbrowser.open('http://127.0.0.1:5000')
+
+    serve(app, host='0.0.0.0', port=5000)

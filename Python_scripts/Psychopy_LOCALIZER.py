@@ -12,7 +12,7 @@ from Paradigme_parent import Parente
 
 
 class Localizer(Parente):
-    def __init__(self, duration, betweenstimuli, number_of_block, number_per_block, port, baudrate, trigger,  output):
+    def __init__(self, duration, betweenstimuli, number_of_block, number_per_block, trigger,  output):
         self.win = visual.Window(fullscr=True)
         self.cross_stim = visual.ShapeStim(
             win=self.win,
@@ -23,8 +23,6 @@ class Localizer(Parente):
             units='height'
         )
         event.globalKeys.add(key='escape', func=self.win.close)
-        self.port= port
-        self.baudrate = baudrate
         self.trigger = trigger
         self.timer = core.Clock()
         self.global_timer = core.Clock()
@@ -43,7 +41,7 @@ class Localizer(Parente):
         self.block_type = []
         self.get_groups_and_keys()
     def lancement(self):
-        super().wait_for_trigger(self.port, self.baudrate, self.trigger)
+        super().wait_for_trigger("s")
         for x in range (self.number_of_blocks):
             self.show_block(random.choice(self.keys),self.number_per_block)
         self.write_tsv(self.onset,self.duration,self.block_type, self.stim_file, self.trial_type,self.output)
@@ -116,15 +114,13 @@ class Localizer(Parente):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Exécuter le paradigme Psychopy")
-    parser.add_argument("--duration", type=int, required=True, help="Durée en secondes des stimuli")
+    parser.add_argument("--duration", type=float, required=True, help="Durée en secondes des stimuli")
     parser.add_argument("--blocks", type=int, required=True, help="Pourcentage Zoom")
     parser.add_argument("--per_block", type=int, required=True, help="Pourcentage Zoom")
     parser.add_argument("--output_file", type=str, required=True, help="Nom du fichier d'output")
-    parser.add_argument("--betweenstimuli", type=int, required=True, help="Temps entre les stimuli")
-    parser.add_argument('--port', type=str, required=True, help="Port")
-    parser.add_argument('--baudrate', type=int, required=True, help="Speed port")
+    parser.add_argument("--betweenstimuli", type=float, required=True, help="Temps entre les stimuli")
     parser.add_argument('--trigger', type=str, required=True, help="caractère pour lancer le programme")
     args = parser.parse_args()
 
-    localizer = Localizer(args.duration,args.betweenstimuli,args.blocks,args.per_block, args.port, args.baudrate, args.trigger, args.output_file)
+    localizer = Localizer(args.duration,args.betweenstimuli,args.blocks,args.per_block,  args.trigger, args.output_file)
     localizer.lancement()

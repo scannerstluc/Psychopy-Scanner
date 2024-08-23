@@ -9,7 +9,7 @@ from Paradigme_parent import Parente
 
 
 class PsychoPyParadigm(Parente):
-    def __init__(self, duration, words, zoom, file, port, baudrate, trigger, output):
+    def __init__(self, duration, words, zoom, file, trigger, output):
         self.duration = int(duration)
         self.words = words
         self.zoom = zoom
@@ -19,8 +19,6 @@ class PsychoPyParadigm(Parente):
         self.stimuli = []
         self.global_timer= core.Clock()
         self.output=output
-        self.port = port
-        self.baudrate = baudrate
         self.trigger = trigger
 
 
@@ -55,7 +53,7 @@ class PsychoPyParadigm(Parente):
 
         text_stim = visual.TextStim(win, text='', color=[1, 1, 1], height=90+(90*self.zoom/100))
 
-        super().wait_for_trigger(self.port, self.baudrate, self.trigger)
+        super().wait_for_trigger("s")
         self.global_timer.reset()
         nothinkinglist = [":; $+", " #^=-", ":?$µ", "###"]
         self.affichage_mots(win, text_stim, nothinkinglist, self.duration)
@@ -96,16 +94,14 @@ class PsychoPyParadigm(Parente):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Exécuter le paradigme Psychopy")
-    parser.add_argument("--duration", type=str, required=True, help="Durée en secondes des stimuli")
+    parser.add_argument("--duration", type=float, required=True, help="Durée en secondes des stimuli")
     parser.add_argument("--words", type=str, required=True, help="Liste de mots pour le paradigme")
     parser.add_argument("--zoom", type=int, required=True, help="Pourcentage Zoom")
     parser.add_argument("--file", type=str, help="Chemin vers le fichier de mots", required=False)
     parser.add_argument("--output_file", type=str, required=True, help="Nom du fichier d'output")
-    parser.add_argument('--port', type=str, required=True, help="Port")
-    parser.add_argument('--baudrate', type=int, required=True, help="Speed port")
     parser.add_argument('--trigger', type=str, required=True, help="caractère pour lancer le programme")
 
 
     args = parser.parse_args()
-    paradigm = PsychoPyParadigm(args.duration, args.words, args.zoom, args.file, args.port, args.baudrate, args.trigger  ,args.output_file)
+    paradigm = PsychoPyParadigm(args.duration, args.words, args.zoom, args.file, args.trigger  ,args.output_file)
     paradigm.run()

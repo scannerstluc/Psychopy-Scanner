@@ -54,7 +54,7 @@ class voices(Parente):
         print(os.getcwd())
         print("oui ?")
         self.voices = self.reading("Input/Paradigme_EMO_VOICES/"+self.file)
-        super().wait_for_trigger(port=None)
+        super().wait_for_trigger("s")
         for x in self.voices:
             print(x)
             custom_sound = sound.Sound("Input/Paradigme_EMO_VOICES/emo_voices/"+x)
@@ -93,10 +93,10 @@ class voices(Parente):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Exécuter le paradigme Psychopy")
-    parser.add_argument("--duration", type=int, required=True, help="Durée en secondes des stimuli")
+    parser.add_argument("--duration", type=float, required=True, help="Durée en secondes des stimuli")
     parser.add_argument("--file", type=str, help="Chemin vers le fichier de mots", required=False)
     parser.add_argument("--output_file", type=str, required=True, help="Nom du fichier d'output")
-    parser.add_argument("--betweenstimuli", type=int, required=True, help="Temps entre les stimuli")
+    parser.add_argument("--betweenstimuli", type=float, required=True, help="Temps entre les stimuli")
 
     args = parser.parse_args()
     paradigm = voices(args.duration, args.betweenstimuli, args.file, args.output_file)

@@ -342,6 +342,10 @@
                             <h2>Cyberball (paramètre pour l'ordinateur)</h2>
                             <div class="input-group">
                                 <div class="input-container">
+                                    <h3>Nom du patient</h3>
+                                    <input type="text" id="patient_name" placeholder="par exemple: Paul">
+                                </div>
+                                <div class="input-container">
                                     <h3>Durée de la première phase</h3>
                                     <input type="text" id="phase1-cyberball" placeholder="par exemple: 120">
                                 </div>
@@ -350,15 +354,15 @@
                                     <input type="text" id="exclusion-cyberball" placeholder="par exemple: 120">
                                 </div>
                                 <div class="input-container">
-                                    <h3>Durée phase de Transition</h3>
-                                    <input type="text" id="transition-cyberball" placeholder="par exemple: 60">
-                                </div>
-                                <div class="input-container">
                                     <h3>Sélectionner la photo du patient</h3>
                                     <button class="button-choice" onclick="document.getElementById('fileinput-cyberball').click()">Choisir un fichier</button>
                                 </div>
                             </div>
                             <div class="input-group">
+                                <div class="input-container">
+                                    <h3>Durée phase de Transition</h3>
+                                    <input type="text" id="transition-cyberball" placeholder="par exemple: 60">
+                                </div>
                                 <div class="input-container">
                                     <h3>Temps de réaction minimum</h3>
                                     <input type="text" id="minimum-reaction" placeholder="par exemple: 0.8">
@@ -653,6 +657,7 @@
             const exclusion = document.getElementById('exclusion-cyberball').value || 'Non spécifié';
             const transition = document.getElementById('transition-cyberball').value || 'Non spécifié';
             const fileInput = document.getElementById('fileinput-cyberball');
+            const patient_name = document.getElementById('patient_name').value || 'Non spécifié';
             const output_file = document.getElementById('patientName').textContent;
             const minimum = document.getElementById('minimum-reaction').value || 'Non spécifié';
             const maximum = document.getElementById('maximum-reaction').value ||'Non spécifié';
@@ -677,6 +682,7 @@
                     exclusion: exclusion,
                     transition: transition,
                     minimum: minimum,
+                    patient_name: patient_name,
                     maximum: maximum,
                     trigger: trigger,
                     output_file: output_file,

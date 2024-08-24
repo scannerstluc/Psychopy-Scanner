@@ -1,13 +1,16 @@
 import csv
+import os
 import random
 import serial
 import argparse
+
+from PIL import Image
 from psychopy import visual, core, event
 from Paradigme_parent import Parente
 
 
 class launch_cyberball(Parente) :
-    def __init__(self, phase1, transition, exclusion, minimum, maximum) :
+    def __init__(self, phase1, transition, exclusion, minimum, maximum, patient_name, photo) :
 
         self.win = visual.Window(units="norm", fullscr=True)
 
@@ -15,13 +18,25 @@ class launch_cyberball(Parente) :
         self.image2 = visual.ImageStim(win=self.win, image='Input/Cyberball/Banque_personnage/waiting.png', pos=[-0.5, 0.5])
         self.image3 = visual.ImageStim(win=self.win, image='Input/Cyberball/Banque_personnage/waiting.png', pos=[0.5, 0.5])
 
+        image = Image.open('Input/Cyberball/'+photo)
+        largeur_actuelle, hauteur_actuelle = image.size
+        print(largeur_actuelle)
+        print(hauteur_actuelle)
+        print("ici")
+        print(int(hauteur_actuelle*0.1))
+        hauteur, largeur = self.redimension(hauteur_actuelle, largeur_actuelle)
+        image_redimensionnee = image.resize((int(largeur), int(hauteur)), Image.LANCZOS)
 
-        self.photo1 = visual.ImageStim(win=self.win, image='Input/Cyberball/Homme2.jpg', pos=[0.3, -0.8], size=0.2)
+        if os.path.exists('Input/Cyberball/photo'):
+            os.remove('Input/Cyberball/photo')
+        image_redimensionnee.save('Input/Cyberball/photo.jpg')
+
+        self.photo1 = visual.ImageStim(win=self.win, image='Input/Cyberball/photo', pos=[0.3, -0.7])
         self.photo2 = visual.ImageStim(win=self.win, image='Input/Cyberball/Femme2.jpg', pos=[-0.8, 0.5], size=0.2)
         self.photo3 = visual.ImageStim(win=self.win, image='Input/Cyberball/Homme1.jpg', pos=[0.8, 0.5], size=0.2)
 
 
-        self.text1 = visual.TextStim(win=self.win, text="Player_1", pos=[0, -0.8], color=(-1, -1, -1))
+        self.text1 = visual.TextStim(win=self.win, text=patient_name, pos=[0, -0.8], color=(-1, -1, -1))
         self.text2 = visual.TextStim(win=self.win, text="Jeanne", pos=[-0.5, 0.8], color=(-1, -1, -1))
         self.text3 = visual.TextStim(win=self.win, text="Paul", pos=[0.5, 0.8], color=(-1, -1, -1))
 
@@ -45,6 +60,11 @@ class launch_cyberball(Parente) :
         self.duration = []
         self.phase = []
 
+    def redimension(self, hauteur, largeur):
+        multi = 204/hauteur
+        new_hauteur = hauteur*multi
+        new_largeur = largeur*multi
+        return new_hauteur, new_largeur
     def write_tsv(self, filename="output1.tsv"):
         filename = super().preprocessing_tsv(filename)
 
@@ -260,12 +280,13 @@ if __name__ == "__main__":
     parser.add_argument("--transition", type=float, required=True, help="Durée en secondes des transitions")
     parser.add_argument("--minimum", type=float, required=True, help="Durée en secondes du temps de réaction minimum")
     parser.add_argument("--maximum", type=float, required=True, help="Durée en secondes du temps de réaction maximum")
+    parser.add_argument("--patient_name", type=str, required=True, help="Nom du patient")
 
     parser.add_argument("--filePath", type=str, help="Chemin vers le fichier de mots", required=False)
     parser.add_argument("--output_file", type=str, required=True, help="Nom du fichier d'output")
     parser.add_argument('--trigger', type=str, required=True, help="caractère pour lancer le programme")
     args = parser.parse_args()
 
-    C=launch_cyberball(args.premiere_phase,args.transition,args.exclusion,args.minimum,args.maximum)
+    C=launch_cyberball(args.premiere_phase,args.transition,args.exclusion,args.minimum,args.maximum, args.patient_name, args.filePath)
     C.lancement()
 

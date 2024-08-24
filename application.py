@@ -86,6 +86,7 @@ def submit_cyberball():
         minimum = data.get("minimum")
         maximum = data.get("maximum")
         trigger = data.get("trigger")
+        patient_name = data.get("patient_name")
         output_file = data.get("output_file")
         filePath = data.get("filePath")
         print("ça passe")
@@ -96,6 +97,7 @@ def submit_cyberball():
             '--exclusion', exclusion,
             '--transition', transition,
             '--minimum', minimum,
+            '--patient_name', patient_name,
             '--maximum', maximum,
             '--trigger', trigger,
             '--output_file', output_file,

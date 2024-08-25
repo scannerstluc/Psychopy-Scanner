@@ -14,7 +14,7 @@ from Paradigme_parent import Parente
 
 class Adjectifs(Parente):
 
-    def __init__(self, duration, betweenstimuli, zoom, blocks, entrainement, per_block, filepath, output):
+    def __init__(self, duration, betweenstimuli, zoom, blocks, entrainement, per_block, filepath, output, port, baudrate, trigger, activation):
         self.words = self.reading("Input/Paradigme_Adjectifs/"+filepath)
         self.entrainement_words = self.reading("Input/Paradigme_Adjectifs/entrainement.txt")
         self.me_entrainement = self.entrainement_words.copy()
@@ -41,6 +41,14 @@ class Adjectifs(Parente):
         self.per_block = per_block
         self.experience_text = ""
         self.hashmapvaleurs= {"d":"1", "q":"2", "c":"3", "b":"4"}
+        self.port = port
+        self.baudrate = baudrate
+        self.trigger = trigger
+        if activation == "True":
+            self.activation = True
+        else:
+            self.activation = False
+        print(self.activation)
 
         self.win = visual.Window(fullscr=True)
         self.explication_texts = super().inputs_texts("Input/Starting_Texts/adjectifs.txt")
@@ -64,7 +72,6 @@ class Adjectifs(Parente):
         self.win.flip()
         event.waitKeys()
         Deuxieme_texte = self.explication_texts[1]
-
 
         texte.text = Deuxieme_texte
         texte.draw()
@@ -139,6 +146,8 @@ class Adjectifs(Parente):
         texte_5_words.text = mot
         texte_5_words.draw()
         self.win.flip()
+        if self.activation:
+            super().send_character(self.port, self.baudrate)
         response_time="None"
         timer = core.Clock()
         k="None"
@@ -324,11 +333,15 @@ if __name__ == "__main__":
     parser.add_argument("--blocks", type=int, required=True, help="Nombre de blocks d'adjectifs")
     parser.add_argument("--entrainement", type=int, required=True, help="Nombre de blocks d'entrainement")
     parser.add_argument("--per_block", type=int, required=True, help="Nombre d'adjectifs pas block")
+    parser.add_argument("--activation", type=str, required=True, help="Pour le boitier avec les EEG")
 
-
+    parser.add_argument('--port', type=str, required=False, help="Port")
+    parser.add_argument('--baudrate', type=int, required=False, help="Speed port")
+    parser.add_argument('--trigger', type=str, required=False, help="caractère pour lancer le programme")
 
     args = parser.parse_args()
-    paradigm = Adjectifs(args.duration, args.betweenstimuli, args.zoom, args.blocks, args.entrainement, args.per_block, args.file, args.output_file)
+    paradigm = Adjectifs(args.duration, args.betweenstimuli, args.zoom, args.blocks, args.entrainement, args.per_block,
+                         args.file, args.output_file, args.port, args.baudrate, args.trigger, args.activation)
     paradigm.lancement()
     paradigm.fin()
 

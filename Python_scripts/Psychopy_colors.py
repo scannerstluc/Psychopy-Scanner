@@ -12,7 +12,7 @@ from Paradigme_parent import Parente
 
 
 class Colors(Parente):
-    def __init__(self, duration, betweenstimuli, zoom, langage, filepath, output):
+    def __init__(self, duration, betweenstimuli, zoom, langage, filepath, output, port, baudrate, trigger, activation):
         self.win = visual.Window(fullscr=True, color="black")
         event.globalKeys.add(key='escape', func=self.win.close)
         self.fs = 44100  # fréquence d'échantillonnage
@@ -31,6 +31,13 @@ class Colors(Parente):
         self.trial_type= []
         self.reaction = []
         self.langue = langage
+        self.port = port
+        self.baudrate = baudrate
+        self.trigger = trigger
+        if activation == "True":
+            self.activation = True
+        else:
+            self.activation = False
 
 
         self.cross_stim = visual.ShapeStim(
@@ -111,10 +118,14 @@ class Colors(Parente):
 
 
     def lancement(self):
+        texte = visual.TextStim(self.win, text=self.Premier_texte, color=[1, 1, 1], alignText="left", wrapWidth=1.5,
+                                font='Arial')
+        texte.draw()
+        self.win.flip()
         words, colors, stimuli_names=self.reading("Input/Paradigme_Couleur/"+self.filepath)
         text_stim = visual.TextStim(self.win, wrapWidth=1.5, font="Arial", height=0.1+(0.01*self.zoom))
         count=0
-        super().wait_for_trigger("s")
+        super().wait_for_trigger(self.trigger)
         self.global_timer.reset()
         recordings=[]
         for mot in words:
@@ -135,6 +146,8 @@ class Colors(Parente):
             self.onset.append(self.global_timer.getTime())
             self.timer.reset()
             recording = sd.rec(int(self.stimuli_duration * self.fs), samplerate=self.fs, channels=1, dtype='int16')
+            if self.activation:
+                super().send_character(self.port,self.baudrate)
             sd.wait()
             self.duration.append(self.timer.getTime())
             self.stimuli.append(stimuli_names[count])
@@ -157,6 +170,7 @@ class Colors(Parente):
         core.quit()
 
 if __name__ == "__main__":
+    print("ooo?")
     parser = argparse.ArgumentParser(description="Exécuter le paradigme Psychopy")
     parser.add_argument("--duration", type=float, required=True, help="Durée en secondes des stimuli")
     parser.add_argument("--file", type=str, help="Chemin vers le fichier de mots", required=False)
@@ -164,9 +178,15 @@ if __name__ == "__main__":
     parser.add_argument("--output_file", type=str, required=True, help="Nom du fichier d'output")
     parser.add_argument("--betweenstimuli", type=float, required=True, help="Temps entre les stimuli")
     parser.add_argument("--choice", type=str, required=True, help="Choix de la langue")
+    parser.add_argument("--activation", type=str, required=True, help="Pour le boitier avec les EEG")
+
+    parser.add_argument('--port', type=str, required=False, help="Port")
+    parser.add_argument('--baudrate', type=int, required=False, help="Speed port")
+    parser.add_argument('--trigger', type=str, required=False, help="caractère pour lancer le programme")
 
     args = parser.parse_args()
-    colors = Colors(args.duration, args.betweenstimuli, args.zoom, args.choice, args.file, args.output_file).lancement()
+    colors = Colors(args.duration, args.betweenstimuli, args.zoom, args.choice, args.file, args.output_file,
+                    args.port, args.baudrate, args.trigger, args.activation).lancement()
 
 
 #Colors(duration=2,betweenstimuli=1,zoom=10,filepath="colors_list.txt", output="wififi").lancement()

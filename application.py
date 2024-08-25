@@ -35,14 +35,21 @@ def submit_text():
         duration = data.get('duration')
         words = data.get('words')
         zoom = data.get('zoom')
-        trigger = data.get('trigger')
         file = data.get('filePath')
         output_file = data.get('output_file')
+        activation = data.get('activation')
+        port = data.get('port')
+        baudrate = data.get('baudrate')
+        trigger = data.get('trigger')
+        print(data)
         subprocess.run([
             sys.executable, 'Python_scripts/Psychopy_Text.py',
             '--duration', duration,
             '--words', words,
             '--file', file,
+            '--port', port,
+            '--activation', str(activation),
+            '--baudrate', str(baudrate),
             '--trigger', trigger,
             '--output_file', output_file,
             '--zoom', zoom
@@ -62,11 +69,18 @@ def submit_emo_voice():
         betweenstimuli = data.get('betweenstimuli')
         file = data.get('filePath')
         output_file = data.get('output_file')
-        print("working here?")
+        activation = data.get('activation')
+        port = data.get('port')
+        baudrate = data.get('baudrate')
+        trigger = data.get('trigger')
         subprocess.run([
             sys.executable, 'Python_scripts/Psychopy_EMO_VOICES.py',
             '--duration', duration,
             '--file', file,
+            '--port', port,
+            '--activation', str(activation),
+            '--baudrate', str(baudrate),
+            '--trigger', trigger,
             '--betweenstimuli', betweenstimuli,
             '--output_file', output_file,
         ])
@@ -119,11 +133,22 @@ def submit_emo_faces():
         betweenstimuli = data.get('betweenstimuli')
         file = data.get('filePath')
         output_file = data.get('output_file')
+        activation = data.get('activation')
+        port = data.get('port')
+        print('woking before')
+        baudrate = data.get('baudrate')
+        print(baudrate)
+        trigger = data.get('trigger')
         print("working here?")
+        print(str(activation))
         subprocess.run([
             sys.executable, 'Python_scripts/Psychopy_EMO_FACE.py',
             '--duration', duration,
             '--file', file,
+            '--port', port,
+            '--activation', str(activation),
+            '--baudrate', str(baudrate),
+            '--trigger', trigger,
             '--betweenstimuli', betweenstimuli,
             '--output_file', output_file,
         ])
@@ -141,6 +166,10 @@ def submit_adjectifs():
         betweenstimuli = data.get('betweenstimuli')
         file = data.get('filePath')
         output_file = data.get('output_file')
+        activation = data.get('activation')
+        port = data.get('port')
+        baudrate = data.get('baudrate')
+        trigger = data.get('trigger')
         blocks = data.get('blocks')
         zoom = data.get('zoom')
         entrainement = data.get('entrainement')
@@ -150,6 +179,10 @@ def submit_adjectifs():
             sys.executable, 'Python_scripts/Psychopy_Adjectifs.py',
             '--duration', duration,
             '--file', file,
+            '--port', port,
+            '--activation', str(activation),
+            '--baudrate', str(baudrate),
+            '--trigger', trigger,
             '--blocks', blocks,
             '--zoom', zoom,
             '--entrainement', entrainement,
@@ -173,11 +206,19 @@ def submit_stroop():
         output_file = data.get('output_file')
         zoom = data.get('zoom')
         choice = data.get('choice')
+        activation = data.get('activation')
+        port = data.get('port')
+        baudrate = data.get('baudrate')
+        trigger = data.get('trigger')
         print(data)
         subprocess.Popen([
             sys.executable, 'Python_scripts/Psychopy_colors.py',
             '--duration', duration,
             '--file', file,
+            '--port', port,
+            '--activation', str(activation),
+            '--baudrate', str(baudrate),
+            '--trigger', trigger,
             '--zoom', zoom,
             '--choice', choice,
             '--betweenstimuli', betweenstimuli,
@@ -198,8 +239,11 @@ def submit_localizer():
         betweenstimuli = data.get('betweenstimuli')
         blocks = data.get('blocks')
         per_block = data.get('per_blocks')
-        trigger = data.get('trigger')
         output_file = data.get('output_file')
+        activation = data.get('activation')
+        port = data.get('port')
+        baudrate = data.get('baudrate')
+        trigger = data.get('trigger')
 
         print(data)
         subprocess.run([
@@ -207,6 +251,9 @@ def submit_localizer():
             '--duration', duration,
             '--blocks', blocks,
             '--per_block', per_block,
+            '--port', port,
+            '--activation', str(activation),
+            '--baudrate', str(baudrate),
             '--trigger', trigger,
             '--betweenstimuli', betweenstimuli,
             '--output_file', output_file,
@@ -225,13 +272,20 @@ def submit_images():
         duration = data.get('duration')
         file = data.get('filePath')
         zoom = data.get('zoom')
-        trigger = data.get('trigger')
         betweenstimuli = data.get('betweenstimuli')
         output_file = data.get('output_file')
+        activation = data.get('activation')
+        port = data.get('port')
+        baudrate = data.get('baudrate')
+        trigger = data.get('trigger')
+        print(data)
         subprocess.run([
             sys.executable, 'Python_scripts/Psychopy_Image.py',
             '--duration', duration,
             '--file', file,
+            '--port', port,
+            '--activation', str(activation),
+            '--baudrate', str(baudrate),
             '--trigger', trigger,
             '--output_file', output_file,
             '--betweenstimuli', betweenstimuli,
@@ -254,12 +308,20 @@ def submit_videos():
         trigger = data.get('trigger')
         betweenstimuli = data.get('betweenstimuli')
         output_file = data.get('output_file')
+        activation = data.get('activation')
+        port = data.get('port')
+        baudrate = data.get('baudrate')
+        trigger = data.get('trigger')
+        print(data)
         subprocess.run([
             sys.executable, 'Python_scripts/Psychopy_Video.py',
             '--duration', duration,
             '--file', file,
-            '--trigger', trigger,
             '--output_file', output_file,
+            '--port', port,
+            '--activation', str(activation),
+            '--baudrate', str(baudrate),
+            '--trigger', trigger,
             '--betweenstimuli', betweenstimuli,
             '--zoom', zoom
         ])
@@ -270,6 +332,6 @@ def submit_videos():
 
     
 if __name__ == '__main__':
-    webbrowser.open('http://127.0.0.1:5000')
-
-    serve(app, host='0.0.0.0', port=5000)
+    #webbrowser.open('http://127.0.0.1:5000')
+    app.run(debug=True)
+    #serve(app, host='0.0.0.0', port=5000)

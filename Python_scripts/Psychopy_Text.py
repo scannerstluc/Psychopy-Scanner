@@ -9,7 +9,7 @@ from Paradigme_parent import Parente
 
 
 class PsychoPyParadigm(Parente):
-    def __init__(self, duration, words, zoom, file, trigger, output):
+    def __init__(self, duration, words, zoom, file, output, port, baudrate, trigger, activation):
         self.duration = int(duration)
         self.words = words
         self.zoom = zoom
@@ -19,7 +19,13 @@ class PsychoPyParadigm(Parente):
         self.stimuli = []
         self.global_timer= core.Clock()
         self.output=output
+        self.port = port
+        self.baudrate = baudrate
         self.trigger = trigger
+        if activation == "True":
+            self.activation = True
+        else:
+            self.activation = False
 
 
     def affichage_mots(self, win, text_stim, words, display_time):
@@ -28,6 +34,8 @@ class PsychoPyParadigm(Parente):
             text_stim.setText(word)
             text_stim.draw()
             win.flip()
+            if self.activation and words != [":; $+", " #^=-", ":?$µ", "###"]:
+                super().send_character(self.port,self.baudrate)
             self.stimuli_apparition.append(self.global_timer.getTime())  # Enregistrer le moment où le stimulus apparaît
             timer.reset()  # Réinitialiser l'horloge à chaque nouveau mot
             while timer.getTime() < display_time:
@@ -53,7 +61,7 @@ class PsychoPyParadigm(Parente):
 
         text_stim = visual.TextStim(win, text='', color=[1, 1, 1], height=90+(90*self.zoom/100))
 
-        super().wait_for_trigger("s")
+        super().wait_for_trigger(self.trigger)
         self.global_timer.reset()
         nothinkinglist = [":; $+", " #^=-", ":?$µ", "###"]
         self.affichage_mots(win, text_stim, nothinkinglist, self.duration)
@@ -99,9 +107,13 @@ if __name__ == "__main__":
     parser.add_argument("--zoom", type=int, required=True, help="Pourcentage Zoom")
     parser.add_argument("--file", type=str, help="Chemin vers le fichier de mots", required=False)
     parser.add_argument("--output_file", type=str, required=True, help="Nom du fichier d'output")
-    parser.add_argument('--trigger', type=str, required=True, help="caractère pour lancer le programme")
+    parser.add_argument("--activation", type=str, required=True, help="Pour le boitier avec les EEG")
 
+    parser.add_argument('--port', type=str, required=False, help="Port")
+    parser.add_argument('--baudrate', type=int, required=False, help="Speed port")
+    parser.add_argument('--trigger', type=str, required=False, help="caractère pour lancer le programme")
 
     args = parser.parse_args()
-    paradigm = PsychoPyParadigm(args.duration, args.words, args.zoom, args.file, args.trigger  ,args.output_file)
+    paradigm = PsychoPyParadigm(args.duration, args.words, args.zoom, args.file,args.output_file,args.port,
+                                args.baudrate, args.trigger, args.activation)
     paradigm.run()

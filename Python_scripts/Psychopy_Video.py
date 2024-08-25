@@ -10,13 +10,19 @@ from Paradigme_parent import Parente
 
 
 class VideoPsycho(Parente):
-    def __init__(self, duration, betweenstimuli, file, zoom, trigger, output):
+    def __init__(self, duration, betweenstimuli, file, zoom, output, port, baudrate, trigger, activation):
         self.duration = duration
         self.betweenstimuli = betweenstimuli
         self.file = file
         self.zoom = zoom
-        self.trigger = trigger
         self.output = output
+        self.port = port
+        self.baudrate = baudrate
+        self.trigger = trigger
+        if activation == "True":
+            self.activation = True
+        else:
+            self.activation = False
 
 
     def reading(self, filename):
@@ -49,7 +55,7 @@ class VideoPsycho(Parente):
             closeShape=False,
             lineColor="white"
         )
-        super().wait_for_trigger("s")
+        super().wait_for_trigger(self.trigger)
         global_timer = core.Clock()
         thezoom = 1.3+(0.77*zoom/100)
         for x in range(len(videos)):
@@ -77,6 +83,8 @@ class VideoPsycho(Parente):
             movie_stim.size = thezoom
             timer.reset()
             apparition_stimuli.append(global_timer.getTime())
+            if self.activation:
+                super().send_character(self.port,self.baudrate)
             while timer.getTime() < duration:
                 movie_stim.draw()
                 win.flip()
@@ -130,9 +138,13 @@ if __name__ == "__main__":
     parser.add_argument("--file", type=str, help="Chemin du fichier contenant les stimuli")
     parser.add_argument("--zoom", type=int, required=True, help="Pourcentage Zoom")
     parser.add_argument("--output_file", type=str, required=True, help="Nom du fichier d'output")
-    parser.add_argument('--trigger', type=str, required=True, help="caractère pour lancer le programme")
+    parser.add_argument("--activation", type=str, required=True, help="Pour le boitier avec les EEG")
 
+    parser.add_argument('--port', type=str, required=False, help="Port")
+    parser.add_argument('--baudrate', type=int, required=False, help="Speed port")
+    parser.add_argument('--trigger', type=str, required=False, help="caractère pour lancer le programme")
 
     args = parser.parse_args()
-    videos= VideoPsycho(args.duration, args.betweenstimuli, "Input/Paradigme_video/"+args.file, args.zoom, args.trigger, args.output_file)
+    videos= VideoPsycho(args.duration, args.betweenstimuli, "Input/Paradigme_video/"+args.file, args.zoom,
+                         args.output_file, args.port, args.baudrate, args.trigger, args.activation)
     videos.lancement()

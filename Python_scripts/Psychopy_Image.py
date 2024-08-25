@@ -10,12 +10,11 @@ import serial
 
 
 class static_image(Parente):
-    def __init__(self, duration, betweenstimuli, file, zoom, trigger, output):
+    def __init__(self, duration, betweenstimuli, file, zoom, output, port, baudrate, trigger, activation):
         self.duration = duration #args.duration, args.betweenstimuli, args.file, args.zoom, args.port, args.baudrate, args.trigger  ,args.output_file)
         self.betweenstimuli = betweenstimuli
         self.file = file
         self.zoom = zoom
-        self.trigger = trigger
         self.click_times = []
         self.win = win = visual.Window(
             fullscr=True,
@@ -25,6 +24,13 @@ class static_image(Parente):
         self.mouse = event.Mouse(win=self.win)
         event.globalKeys.add(key='escape', func=self.win.close)
         self.output = output
+        self.port = port
+        self.baudrate = baudrate
+        self.trigger = trigger
+        if activation == "True":
+            self.activation = True
+        else:
+            self.activation = False
 
 
 
@@ -75,12 +81,14 @@ class static_image(Parente):
             count+=1
 
 
-        super().wait_for_trigger("s")
+        super().wait_for_trigger(self.trigger)
         global_timer = core.Clock() #Horloge principale
 
         for image_stim in liste_image_win:
             image_stim.draw()
             self.win.flip()
+            if self.activation:
+                super().send_character(self.port,self.baudrate)
             stimulus_apparition.append(global_timer.getTime())
             timer.reset()  # Réinitialiser le timer à chaque nouvelle image
             clicked = False  # Variable pour vérifier si un clic a été détecté
@@ -159,9 +167,14 @@ if __name__ == "__main__":
     parser.add_argument("--file", type=str, help="Chemin du fichier contenant les stimuli")
     parser.add_argument("--zoom", type=int, required=True, help="Pourcentage Zoom")
     parser.add_argument("--output_file", type=str, required=True, help="Nom du fichier d'output")
-    parser.add_argument('--trigger', type=str, required=True, help="caractère pour lancer le programme")
+    parser.add_argument("--activation", type=str, required=True, help="Pour le boitier avec les EEG")
+
+    parser.add_argument('--port', type=str, required=False, help="Port")
+    parser.add_argument('--baudrate', type=int, required=False, help="Speed port")
+    parser.add_argument('--trigger', type=str, required=False, help="caractère pour lancer le programme")
 
     args = parser.parse_args()
 
-    images = static_image(args.duration, args.betweenstimuli, args.file, args.zoom, args.trigger, args.output_file)
+    images = static_image(args.duration, args.betweenstimuli, args.file, args.zoom, args.output_file,
+                          args.port, args.baudrate, args.trigger, args.activation)
     images.lancement()

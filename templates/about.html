@@ -10,6 +10,7 @@
     <header class="header">
         <h1 class="header-center">Ion's Psychopy</h1>
         <div class="header-right">
+            <button class ="navbutton"  onclick="document.getElementById('fileinput').click()">Starting text</button>
             <button id="serialport" class="navbutton">Serial Port</button>
             <button id="openPopup" class="navbutton">Change of Patient</button>
             <span id="patientName">Patient ID</span>
@@ -21,6 +22,10 @@
         <div class="popup">
             <h4 style="color: #0c0b0b">Configuration du port</h4>
             <div class="input-overlay">
+                <div class="input-group" >
+                    <input class ="checkbox_style" type="checkbox" id="option1" value="Option1">
+                    <span class="checkbox_input"> Activation </span>
+                </div>
                 <div class="input-overlay-container">
                     <span>Nom du port</span>
                     <input type="text" placeholder="ex: COM3" id="port">
@@ -71,12 +76,13 @@
         <input type="file" id="fileinput-stroop" class="cache">
         <input type="file" id="fileinput-emo-voice" class="cache">
         <input type="file" id="fileinput-cyberball" class="cache">
+        <input type="file" id="launching_text" class="cache">
 
 
 
         <span id="resultPort"class="cache">Patient</span>
-        <span id="resultBaudrate"class="cache">Patient</span>
-        <span id="resultTrigger" class="cache">Patient</span>
+        <span id="resultBaudrate"class="cache">-1</span>
+        <span id="resultTrigger" class="cache">s</span>
 
 
 
@@ -432,16 +438,25 @@
                 const zoom = document.getElementById('zoom').value || 'Non spécifié';
                 const fileInput = document.getElementById('fileinput');
                 const output_file = document.getElementById('patientName').textContent;
-                let trigger = document.getElementById('resultTrigger').textContent;
                 let fileName = fileInput.value.split('\\').pop();  // Cela extraira uniquement le nom du fichier.
+                const activation = document.getElementById("option1").checked;
+
+                let port = document.getElementById('resultPort').textContent.trim();
+                let baudrate = document.getElementById('resultBaudrate').textContent;
+                let trigger = document.getElementById('resultTrigger').textContent.trim();
+
+                if (baudrate === "" || port === "") {
+                    baudrate = -1; // Garder les valeurs comme chaîne pour la consistance
+                    port = 'Patient'; // Remplacer 'Patient' avec une valeur appropriée
+                }
+
+                if (trigger === ""){
+                    trigger = "s"
+                }
 
                 if (!fileName && words=='Non spécifié'){
                     alert('Veuillez sélectionner un fichier ou entrer des mots avant de soumettre.');
                     return;
-                }
-
-                if (trigger=="Patient"){
-                    trigger="s"
                 }
 
                 // Envoyer les données au serveur
@@ -454,8 +469,11 @@
                         duration: duration,
                         words: words,
                         zoom: zoom,
-                        trigger: trigger,
                         output_file: output_file,
+                        port: port,
+                        activation: activation,
+                        baudrate: baudrate,
+                        trigger: trigger,
                         filePath: fileName // Envoyer la valeur de l'input de fichier comme un simple string
                     }),
                 })
@@ -474,6 +492,20 @@
                 const fileInput = document.getElementById('fileinput-emo-voice');
                 const output_file = document.getElementById('patientName').textContent;
                 let fileName = fileInput.value.split('\\').pop();  // Cela extraira uniquement le nom du fichier.
+                const activation = document.getElementById("option1").checked;
+
+                let port = document.getElementById('resultPort').textContent.trim();
+                let baudrate = document.getElementById('resultBaudrate').textContent;
+                let trigger = document.getElementById('resultTrigger').textContent.trim();
+
+                if (baudrate === "" || port === "") {
+                    baudrate = -1; // Garder les valeurs comme chaîne pour la consistance
+                    port = 'Patient'; // Remplacer 'Patient' avec une valeur appropriée
+                }
+
+                if (trigger === ""){
+                    trigger = "s"
+                }
 
                 if (!fileName){
                     alert('Veuillez sélectionner un fichier ou entrer des mots avant de soumettre.');
@@ -490,6 +522,10 @@
                         duration: duration,
                         betweenstimuli: betweenstimuli,
                         output_file: output_file,
+                        port: port,
+                        activation: activation,
+                        baudrate: baudrate,
+                        trigger: trigger,
                         filePath: fileName // Envoyer la valeur de l'input de fichier comme un simple string
                     }),
                 })
@@ -507,11 +543,26 @@
                 const fileInput = document.getElementById('fileinput-emo-face');
                 const output_file = document.getElementById('patientName').textContent;
                 let fileName = fileInput.value.split('\\').pop();  // Cela extraira uniquement le nom du fichier.
+                const activation = document.getElementById("option1").checked;
 
+                let port = document.getElementById('resultPort').textContent.trim();
+                let baudrate = document.getElementById('resultBaudrate').textContent;
+                let trigger = document.getElementById('resultTrigger').textContent.trim();
+
+                if (baudrate === "" || port === "") {
+                    baudrate = -1; // Garder les valeurs comme chaîne pour la consistance
+                    port = 'Patient'; // Remplacer 'Patient' avec une valeur appropriée
+                }
+
+                if (trigger === ""){
+                    trigger = "s"
+                }
                 if (!fileName){
                     alert('Veuillez sélectionner un fichier ou entrer des mots avant de soumettre.');
                     return;
                 }
+
+                alert(activation)
 
                 // Envoyer les données au serveur
                 fetch('/submit-emo-faces', {
@@ -523,6 +574,10 @@
                         duration: duration,
                         betweenstimuli: betweenstimuli,
                         output_file: output_file,
+                        port: port,
+                        activation: activation,
+                        baudrate: baudrate,
+                        trigger: trigger,
                         filePath: fileName // Envoyer la valeur de l'input de fichier comme un simple string
                     }),
                 })
@@ -543,6 +598,21 @@
                 const output_file = document.getElementById('patientName').textContent;
                 const choice = document.getElementById('choice').value || 'Non spécifié'
                 let fileName = fileInput.value.split('\\').pop();  // Cela extraira uniquement le nom du fichier.
+                const activation = document.getElementById("option1").checked;
+
+                let port = document.getElementById('resultPort').textContent.trim();
+                let baudrate = document.getElementById('resultBaudrate').textContent;
+                let trigger = document.getElementById('resultTrigger').textContent.trim();
+
+                if (baudrate === "" || port === "") {
+                    baudrate = -1; // Garder les valeurs comme chaîne pour la consistance
+                    port = 'Patient'; // Remplacer 'Patient' avec une valeur appropriée
+                }
+
+                if (trigger === ""){
+                    trigger = "s"
+                }
+
 
                 alert(choice)
                 if (!fileName){
@@ -562,6 +632,10 @@
                         zoom: zoom,
                         choice: choice,
                         output_file: output_file,
+                        port: port,
+                        activation: activation,
+                        baudrate: baudrate,
+                        trigger: trigger,
                         filePath: fileName // Envoyer la valeur de l'input de fichier comme un simple string
                     }),
                 })
@@ -580,11 +654,22 @@
                 const output_file = document.getElementById('patientName').textContent;
                 const blocks = document.getElementById("number_of_blocks-localizer").value || 'Non spécifié';
                 const per_blocks = document.getElementById("number_per_block-localizer").value || 'Non spécifié';
-                let trigger = document.getElementById('resultTrigger').textContent;
+                const activation = document.getElementById("option1").checked;
 
-                if (trigger=="Patient"){
-                    trigger="s"
+                let port = document.getElementById('resultPort').textContent.trim();
+                let baudrate = document.getElementById('resultBaudrate').textContent;
+                let trigger = document.getElementById('resultTrigger').textContent.trim();
+
+                if (baudrate === "" || port === "") {
+                    baudrate = -1; // Garder les valeurs comme chaîne pour la consistance
+                    port = 'Patient'; // Remplacer 'Patient' avec une valeur appropriée
                 }
+
+                if (trigger === ""){
+                    trigger = "s"
+                }
+
+
                 // Envoyer les données au serveur
                 fetch('/submit-localizer', {
                     method: 'POST',
@@ -594,6 +679,9 @@
                     body: JSON.stringify({
                         duration: duration,
                         betweenstimuli: betweenstimuli,
+                        port: port,
+                        activation: activation,
+                        baudrate: baudrate,
                         trigger: trigger,
                         blocks: blocks,
                         per_blocks: per_blocks,
@@ -620,6 +708,20 @@
                 const zoom = document.getElementById('zoom-adjectifs').value || 'Non spécifié';
                 const output_file = document.getElementById('patientName').textContent;
                 let fileName = fileInput.value.split('\\').pop();  // Cela extraira uniquement le nom du fichier.
+                const activation = document.getElementById("option1").checked;
+
+                let port = document.getElementById('resultPort').textContent.trim();
+                let baudrate = document.getElementById('resultBaudrate').textContent;
+                let trigger = document.getElementById('resultTrigger').textContent.trim();
+
+                if (baudrate === "" || port === "") {
+                    baudrate = -1; // Garder les valeurs comme chaîne pour la consistance
+                    port = 'Patient'; // Remplacer 'Patient' avec une valeur appropriée
+                }
+
+                if (trigger === ""){
+                    trigger = "s"
+                }
 
                 if (!fileName){
                     alert('Veuillez sélectionner un fichier ou entrer des mots avant de soumettre.');
@@ -640,6 +742,10 @@
                         zoom: zoom,
                         per_block: per_block,
                         output_file: output_file,
+                        port: port,
+                        activation: activation,
+                        baudrate: baudrate,
+                        trigger: trigger,
                         filePath: fileName // Envoyer la valeur de l'input de fichier comme un simple string
                     }),
                 })
@@ -705,13 +811,20 @@
             const fileInput = document.getElementById('fileinput-image');
             const zoom = document.getElementById('zoom-image').value || 'Non spécifié';
             const output_file = document.getElementById('patientName').textContent;
-            const port = document.getElementById('resultPort').textContent;
-            const baudrate = document.getElementById('resultBaudrate').textContent;
-            let trigger = document.getElementById('resultTrigger').textContent;
             let fileName = fileInput.value.split('\\').pop();
+            const activation = document.getElementById("option1").checked;
 
-            if (trigger=="Patient"){
-                trigger="s"
+            let port = document.getElementById('resultPort').textContent.trim();
+            let baudrate = document.getElementById('resultBaudrate').textContent;
+            let trigger = document.getElementById('resultTrigger').textContent.trim();
+
+            if (baudrate === "" || port === "") {
+                baudrate = -1; // Garder les valeurs comme chaîne pour la consistance
+                port = 'Patient'; // Remplacer 'Patient' avec une valeur appropriée
+            }
+
+            if (trigger === ""){
+                trigger = "s"
             }
 
 
@@ -724,16 +837,17 @@
             fetch('/submit-images', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Cotntent-Type': 'application/json',
                 },
                 body: JSON.stringify({
                     duration: duration,
                     betweenstimuli: betweenstimuli,
-                    port: port,
-                    baudrate: baudrate,
-                    trigger: trigger,
                     zoom: zoom,
                     output_file: output_file,
+                    port: port,
+                    activation: activation,
+                    baudrate: baudrate,
+                    trigger: trigger,
                     filePath: fileName // Envoyer la valeur de l'input de fichier comme un simple string
                 }),
             })
@@ -752,10 +866,21 @@
             const fileInput = document.getElementById('fileinput-video');
             const zoom = document.getElementById('zoom-video').value || 'Non spécifié';
             const output_file = document.getElementById('patientName').textContent;
-            const port = document.getElementById('resultPort').textContent;
-            const baudrate = document.getElementById('resultBaudrate').textContent;
-            let trigger = document.getElementById('resultTrigger').textContent;
             let fileName = fileInput.value.split('\\').pop();  // Cela extraira uniquement le nom du fichier.
+            const activation = document.getElementById("option1").checked;
+
+            let port = document.getElementById('resultPort').textContent.trim();
+            let baudrate = document.getElementById('resultBaudrate').textContent;
+            let trigger = document.getElementById('resultTrigger').textContent.trim();
+
+            if (baudrate === "" || port === "") {
+                baudrate = -1; // Garder les valeurs comme chaîne pour la consistance
+                port = 'Patient'; // Remplacer 'Patient' avec une valeur appropriée
+            }
+
+            if (trigger === ""){
+                trigger = "s"
+            }
 
             if (!fileName) {
                 alert('Veuillez sélectionner un fichier avant de soumettre.');
@@ -775,10 +900,11 @@
                     duration: duration,
                     betweenstimuli: betweenstimuli,
                     zoom: zoom,
+                    output_file: output_file,
                     port: port,
+                    activation: activation,
                     baudrate: baudrate,
                     trigger: trigger,
-                    output_file: output_file,
                     filePath: fileName // Envoyer la valeur de l'input de fichier comme un simple string
                 }),
             })

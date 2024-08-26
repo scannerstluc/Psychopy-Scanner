@@ -10,7 +10,7 @@ from Paradigme_parent import Parente
 
 
 class VideoPsycho(Parente):
-    def __init__(self, duration, betweenstimuli, file, zoom, output, port, baudrate, trigger, activation):
+    def __init__(self, duration, betweenstimuli, file, zoom, output, port, baudrate, trigger, activation, hauteur, largeur):
         self.duration = duration
         self.betweenstimuli = betweenstimuli
         self.file = file
@@ -23,6 +23,20 @@ class VideoPsycho(Parente):
             self.activation = True
         else:
             self.activation = False
+        self.win = visual.Window(
+            size=(800, 600),
+            fullscr=True,
+            # color = [0, 0, 1],
+            # color = [1,0,0],
+            color=[-0.042607843137254943, 0.0005215686274509665, -0.025607843137254943],
+            units="pix"
+        )
+
+        rect_width = largeur
+        rect_height = hauteur
+        self.rect = visual.Rect(self.win, width=rect_width, height=rect_height, fillColor='white', lineColor='white',
+                                units='pix')
+        self.rect.pos = (self.win.size[0] / 2 - rect_width / 2, self.win.size[1] / 2 - rect_height / 2)
 
 
     def reading(self, filename):
@@ -39,17 +53,10 @@ class VideoPsycho(Parente):
         file = copy.copy(videos)
         for x in range(len(videos)):
             videos[x] = "Input/Paradigme_video/Stimuli/" + videos[x]
-        win = visual.Window(
-            fullscr=True,
-            #color = [0, 0, 1],
-            #color = [1,0,0],
-            color= [-0.042607843137254943, 0.0005215686274509665, -0.025607843137254943],
-            units="pix"
-        )
-        event.globalKeys.add(key='escape', func=win.close)
+        event.globalKeys.add(key='escape', func=self.win.close)
 
         cross_stim = visual.ShapeStim(
-            win=win,
+            win=self.win,
             vertices=((0, -20), (0, 20), (0, 0), (-20, 0), (20, 0)),
             lineWidth=3,
             closeShape=False,
@@ -57,12 +64,12 @@ class VideoPsycho(Parente):
         )
         super().wait_for_trigger(self.trigger)
         global_timer = core.Clock()
+        timer = core.Clock()
         thezoom = 1.3+(0.77*zoom/100)
         for x in range(len(videos)):
-            timer = core.Clock()
             video_path = videos[x]
             movie_stim = visual.MovieStim(
-                win=win,
+                win=self.win,
                 filename=video_path,
                 size=[1920,1080],
                 pos=(0, 0),
@@ -73,7 +80,7 @@ class VideoPsycho(Parente):
                 units='norm'
             )
             cross_stim.draw()
-            win.flip()
+            self.win.flip()
             timer.reset()
             apparition_stimuli.append(global_timer.getTime())
             while timer.getTime() < between_stimuli:
@@ -86,20 +93,21 @@ class VideoPsycho(Parente):
             if self.activation:
                 super().send_character(self.port,self.baudrate)
             while timer.getTime() < duration:
+                self.rect.draw()
                 movie_stim.draw()
-                win.flip()
+                self.win.flip()
             longueur_stimuli.append(timer.getTime())
             stimuli_liste.append(file[x])
 
         cross_stim.draw()
-        win.flip()
+        self.win.flip()
         timer.reset()
         apparition_stimuli.append(global_timer.getTime())
         while timer.getTime() < between_stimuli:
             pass
         longueur_stimuli.append(timer.getTime())
         stimuli_liste.append("Fixation")
-        win.close()
+        self.win.close()
         return longueur_stimuli, apparition_stimuli, stimuli_liste
 
     def write_tsv(self, onset, duration, file_stimuli, trial_type, filename="output.tsv"):
@@ -143,8 +151,11 @@ if __name__ == "__main__":
     parser.add_argument('--port', type=str, required=False, help="Port")
     parser.add_argument('--baudrate', type=int, required=False, help="Speed port")
     parser.add_argument('--trigger', type=str, required=False, help="caractère pour lancer le programme")
+    parser.add_argument("--hauteur", type=float, required=True, help="hauteur du rectangle")
+    parser.add_argument("--largeur", type=float, required=True, help="Largeur du rectangle")
 
     args = parser.parse_args()
     videos= VideoPsycho(args.duration, args.betweenstimuli, "Input/Paradigme_video/"+args.file, args.zoom,
-                         args.output_file, args.port, args.baudrate, args.trigger, args.activation)
+                         args.output_file, args.port, args.baudrate, args.trigger, args.activation,
+                        args.hauteur, args.largeur)
     videos.lancement()

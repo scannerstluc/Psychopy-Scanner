@@ -3,7 +3,7 @@ import re
 import time
 from abc import ABC, abstractmethod
 from datetime import datetime
-from psychopy import event, visual
+from psychopy import event, visual, core
 
 import serial
 
@@ -33,6 +33,20 @@ class Parente(ABC):
     def wait_for_trigger(self, trigger='s'):
         event.waitKeys(keyList=[trigger])
 
+    def proper_waitkey(self, trigger='s'):
+        donottake = trigger
+        while True:
+            keys = event.waitKeys()
+            if donottake not in keys:  # Condition pour quitter la boucle
+                break
+
+    def launching_texts(self,win,textes):
+        for x in range (len(textes)):
+            self.Premier_texte = textes[x]
+            texte = visual.TextStim(win, text=self.Premier_texte, color=[1, 1, 1], alignText="left", wrapWidth=1.5,
+                                    font='Arial')
+            texte.draw()
+            win.flip()
     def send_character(self, port, baud_rate):
         char = "t"
         try:

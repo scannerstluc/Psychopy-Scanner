@@ -41,6 +41,8 @@ def submit_text():
         port = data.get('port')
         baudrate = data.get('baudrate')
         trigger = data.get('trigger')
+        hauteur = data.get('hauteur')
+        largeur = data.get('largeur')
         print(data)
         subprocess.run([
             sys.executable, 'Python_scripts/Psychopy_Text.py',
@@ -51,6 +53,8 @@ def submit_text():
             '--activation', str(activation),
             '--baudrate', str(baudrate),
             '--trigger', trigger,
+            '--hauteur', hauteur,
+            '--largeur', largeur,
             '--output_file', output_file,
             '--zoom', zoom
         ])
@@ -72,6 +76,8 @@ def submit_emo_voice():
         activation = data.get('activation')
         port = data.get('port')
         baudrate = data.get('baudrate')
+        hauteur = data.get('hauteur')
+        largeur = data.get('largeur')
         trigger = data.get('trigger')
         subprocess.run([
             sys.executable, 'Python_scripts/Psychopy_EMO_VOICES.py',
@@ -81,6 +87,8 @@ def submit_emo_voice():
             '--activation', str(activation),
             '--baudrate', str(baudrate),
             '--trigger', trigger,
+            '--hauteur', hauteur,
+            '--largeur', largeur,
             '--betweenstimuli', betweenstimuli,
             '--output_file', output_file,
         ])
@@ -135,6 +143,8 @@ def submit_emo_faces():
         output_file = data.get('output_file')
         activation = data.get('activation')
         port = data.get('port')
+        hauteur = data.get('hauteur')
+        largeur = data.get('largeur')
         print('woking before')
         baudrate = data.get('baudrate')
         print(baudrate)
@@ -149,6 +159,8 @@ def submit_emo_faces():
             '--activation', str(activation),
             '--baudrate', str(baudrate),
             '--trigger', trigger,
+            '--hauteur', hauteur,
+            '--largeur', largeur,
             '--betweenstimuli', betweenstimuli,
             '--output_file', output_file,
         ])
@@ -167,9 +179,12 @@ def submit_adjectifs():
         file = data.get('filePath')
         output_file = data.get('output_file')
         activation = data.get('activation')
+        random = data.get('random')
         port = data.get('port')
         baudrate = data.get('baudrate')
         trigger = data.get('trigger')
+        hauteur = data.get('hauteur')
+        largeur = data.get('largeur')
         blocks = data.get('blocks')
         zoom = data.get('zoom')
         entrainement = data.get('entrainement')
@@ -181,8 +196,11 @@ def submit_adjectifs():
             '--file', file,
             '--port', port,
             '--activation', str(activation),
+            '--random', str(random),
             '--baudrate', str(baudrate),
             '--trigger', trigger,
+            '--hauteur', hauteur,
+            '--largeur', largeur,
             '--blocks', blocks,
             '--zoom', zoom,
             '--entrainement', entrainement,
@@ -210,6 +228,8 @@ def submit_stroop():
         port = data.get('port')
         baudrate = data.get('baudrate')
         trigger = data.get('trigger')
+        hauteur = data.get('hauteur')
+        largeur = data.get('largeur')
         print(data)
         subprocess.Popen([
             sys.executable, 'Python_scripts/Psychopy_colors.py',
@@ -219,6 +239,8 @@ def submit_stroop():
             '--activation', str(activation),
             '--baudrate', str(baudrate),
             '--trigger', trigger,
+            '--hauteur', hauteur,
+            '--largeur', largeur,
             '--zoom', zoom,
             '--choice', choice,
             '--betweenstimuli', betweenstimuli,
@@ -244,6 +266,9 @@ def submit_localizer():
         port = data.get('port')
         baudrate = data.get('baudrate')
         trigger = data.get('trigger')
+        hauteur = data.get('hauteur')
+        largeur = data.get('largeur')
+        random = data.get('random')
 
         print(data)
         subprocess.run([
@@ -255,6 +280,9 @@ def submit_localizer():
             '--activation', str(activation),
             '--baudrate', str(baudrate),
             '--trigger', trigger,
+            '--hauteur', hauteur,
+            '--largeur', largeur,
+            '--random', str(random),
             '--betweenstimuli', betweenstimuli,
             '--output_file', output_file,
         ])
@@ -268,16 +296,22 @@ def submit_localizer():
 @app.route('/submit-images', methods=['POST'])
 def submit_images():
     try:
+        print("ooo?")
+        print("'oo")
         data = request.get_json()
+        print(data)
         duration = data.get('duration')
         file = data.get('filePath')
         zoom = data.get('zoom')
+        print("oop")
         betweenstimuli = data.get('betweenstimuli')
         output_file = data.get('output_file')
         activation = data.get('activation')
         port = data.get('port')
         baudrate = data.get('baudrate')
         trigger = data.get('trigger')
+        hauteur = data.get('hauteur')
+        largeur = data.get('largeur')
         print(data)
         subprocess.run([
             sys.executable, 'Python_scripts/Psychopy_Image.py',
@@ -287,6 +321,8 @@ def submit_images():
             '--activation', str(activation),
             '--baudrate', str(baudrate),
             '--trigger', trigger,
+            '--hauteur', hauteur,
+            '--largeur', largeur,
             '--output_file', output_file,
             '--betweenstimuli', betweenstimuli,
             '--zoom', zoom
@@ -312,6 +348,8 @@ def submit_videos():
         port = data.get('port')
         baudrate = data.get('baudrate')
         trigger = data.get('trigger')
+        hauteur = data.get('hauteur')
+        largeur = data.get('largeur')
         print(data)
         subprocess.run([
             sys.executable, 'Python_scripts/Psychopy_Video.py',
@@ -322,6 +360,8 @@ def submit_videos():
             '--activation', str(activation),
             '--baudrate', str(baudrate),
             '--trigger', trigger,
+            '--hauteur', hauteur,
+            '--largeur', largeur,
             '--betweenstimuli', betweenstimuli,
             '--zoom', zoom
         ])

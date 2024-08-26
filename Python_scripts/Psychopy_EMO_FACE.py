@@ -11,7 +11,7 @@ from Paradigme_parent import Parente
 class Emo_Face(Parente):
 
 
-    def __init__(self, duration, betweenstimuli, filepath, output, port, baudrate, trigger, activation):
+    def __init__(self, duration, betweenstimuli, filepath, output, port, baudrate, trigger, activation, hauteur, largeur):
         self.onset = []
         self.duration = []
         self.stimuli_file =[]
@@ -29,7 +29,11 @@ class Emo_Face(Parente):
         else:
             self.activation = False
         print(self.activation)
-
+        rect_width = largeur
+        rect_height = hauteur
+        self.rect = visual.Rect(self.win, width=rect_width, height=rect_height, fillColor='white', lineColor='white',
+                                units='pix')
+        self.rect.pos = (self.win.size[0] / 2 - rect_width / 2, self.win.size[1] / 2 - rect_height / 2)
 
     def reading(self,filename):
         with open(filename, "r") as fichier:
@@ -46,7 +50,7 @@ class Emo_Face(Parente):
                 tsv_writer.writerow([onset[i], duration[i], trial_type[i], reaction[i], file_stimuli[i]])
 
     def lancement(self):
-        self.win = visual.Window(fullscr=True)
+        self.win = visual.Window(size=(800, 600), fullscr=True)
         self.mouse = event.Mouse(win=self.win)
         global_timer=core.Clock()
         timer = core.Clock()
@@ -90,12 +94,12 @@ class Emo_Face(Parente):
             clicked_time = "None"
             timer.reset()
             image_stim.draw()
+            self.rect.draw()
             self.win.flip()
             #super().send_character()
             self.onset.append(global_timer.getTime())
             while timer.getTime() < self.stimuli_duration:
                 button = self.mouse.getPressed()  # Mise à jour de l'état des boutons de la souris
-
                 if any(button):
                     if not clicked:  # Vérifier si c'est le premier clic détecté
                         clicked_time = timer.getTime()
@@ -126,6 +130,8 @@ if __name__ == "__main__":
     parser.add_argument('--port', type=str, required=False, help="Port")
     parser.add_argument('--baudrate', type=int, required=False, help="Speed port")
     parser.add_argument('--trigger', type=str, required=False, help="caractère pour lancer le programme")
+    parser.add_argument("--hauteur", type=float, required=True, help="hauteur du rectangle")
+    parser.add_argument("--largeur", type=float, required=True, help="Largeur du rectangle")
 
 
     args = parser.parse_args()
@@ -135,7 +141,8 @@ if __name__ == "__main__":
     print(args.trigger)
     print("oki")
     paradigm = Emo_Face(args.duration, args.betweenstimuli, args.file,
-                        args.output_file, args.port, args.baudrate, args.trigger, args.activation)
+                        args.output_file, args.port, args.baudrate, args.trigger, args.activation,
+                        args.hauteur, args.largeur)
     paradigm.lancement()
 
 

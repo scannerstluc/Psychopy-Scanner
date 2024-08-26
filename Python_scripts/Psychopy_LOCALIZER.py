@@ -12,8 +12,9 @@ from Paradigme_parent import Parente
 
 
 class Localizer(Parente):
-    def __init__(self, duration, betweenstimuli, number_of_block, number_per_block, output, port, baudrate, trigger, activation):
-        self.win = visual.Window(fullscr=True)
+    def __init__(self, duration, betweenstimuli, number_of_block, number_per_block, output, port, baudrate, trigger,
+                 activation, hauteur, largeur, random):
+        self.win = visual.Window(size=(800, 600), fullscr=True)
         self.cross_stim = visual.ShapeStim(
             win=self.win,
             vertices=((0, -0.03), (0, 0.03), (0, 0), (-0.03, 0), (0.03, 0)),  # Utilisation d'unités normalisées
@@ -46,15 +47,35 @@ class Localizer(Parente):
             self.activation = True
         else:
             self.activation = False
+        if random == "True":
+            self.random = True
+        else:
+            self.random = False
+
+        self.ordre=self.reading("Input/Paradigme_LOCALIZER/block_order.txt")
         print(self.activation)
+        print(self.ordre)
+        rect_width = largeur
+        rect_height = hauteur
+        self.rect = visual.Rect(self.win, width=rect_width, height=rect_height, fillColor='white', lineColor='white',
+                                units='pix')
+        self.rect.pos = (self.win.size[0] / 2 - rect_width / 2, self.win.size[1] / 2 - rect_height / 2)
 
     def lancement(self):
         super().wait_for_trigger(self.trigger)
         for x in range (self.number_of_blocks):
-            self.show_block(random.choice(self.keys),self.number_per_block)
+            if self.random:
+                self.show_block(random.choice(self.keys),self.number_per_block)
+            else:
+                y = x%8
+                self.show_block(self.ordre[y],self.number_per_block)
+
         self.write_tsv(self.onset,self.duration,self.block_type, self.stim_file, self.trial_type,self.output)
 
-
+    def reading(self,filename):
+        with open(filename, "r") as fichier:
+            ma_liste = [line.strip() for line in fichier]
+        return ma_liste
     def write_tsv(self, onset, duration, block_type, file_stimuli, trial_type, filename="output.tsv"):
         filename=super().preprocessing_tsv(filename)
 
@@ -65,6 +86,7 @@ class Localizer(Parente):
                 tsv_writer.writerow([onset[i], duration[i], block_type[i], file_stimuli[i], trial_type[i]])
     def get_groups_and_keys(self):
         import os
+        print("Getting groups and keys...")
         directory_path = 'Input/Paradigme_LOCALIZER/images'
         for filename in os.listdir(directory_path):
             if filename.endswith((".jpg", ".jpeg")):
@@ -73,17 +95,25 @@ class Localizer(Parente):
                 self.groups[prefix+"1"].append(filename)
         for key in self.groups.keys():
             self.keys.append(key)
+        print(self.keys)
 
 
     def show_block(self, group_name, number_per_block):
         toshow=[]
         while len(toshow)<number_per_block:
             if self.groups[group_name] != []:
-                stimuli=random.choice(self.groups[group_name])
+                if self.random:
+                    stimuli=random.choice(self.groups[group_name])
+                else:
+                    stimuli=self.groups[group_name][0]
                 self.groups[group_name].remove(stimuli)
                 toshow.append(stimuli)
             else:
-                stimuli=random.choice(self.groups[group_name+"1"])
+                if self.random:
+                    stimuli=random.choice(self.groups[group_name+"1"])
+                else:
+                    print(group_name)
+                    stimuli=self.groups[group_name+"1"]
                 toshow.append(stimuli)
         liste_image_win=[]
         for image in toshow:
@@ -110,6 +140,7 @@ class Localizer(Parente):
             self.block_type.append("None")
             self.onset.append(self.global_timer.getTime())
             image_stim.draw()
+            self.rect.draw()
             self.win.flip()
             if self.activation:
                 super().send_character(self.port,self.baudrate)
@@ -130,13 +161,17 @@ if __name__ == "__main__":
     parser.add_argument("--output_file", type=str, required=True, help="Nom du fichier d'output")
     parser.add_argument("--betweenstimuli", type=float, required=True, help="Temps entre les stimuli")
     parser.add_argument("--activation", type=str, required=True, help="Pour le boitier avec les EEG")
+    parser.add_argument("--random", type=str, required=True, help="Ordre random stimuli")
 
     parser.add_argument('--port', type=str, required=False, help="Port")
     parser.add_argument('--baudrate', type=int, required=False, help="Speed port")
     parser.add_argument('--trigger', type=str, required=False, help="caractère pour lancer le programme")
+    parser.add_argument("--hauteur", type=float, required=True, help="hauteur du rectangle")
+    parser.add_argument("--largeur", type=float, required=True, help="Largeur du rectangle")
 
     args = parser.parse_args()
 
     localizer = Localizer(args.duration,args.betweenstimuli,args.blocks,args.per_block, args.output_file,
-                          args.port, args.baudrate, args.trigger, args.activation)
+                          args.port, args.baudrate, args.trigger, args.activation,
+                         args.hauteur, args.largeur, args.random)
     localizer.lancement()

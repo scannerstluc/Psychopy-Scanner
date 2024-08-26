@@ -10,13 +10,13 @@ import serial
 
 
 class static_image(Parente):
-    def __init__(self, duration, betweenstimuli, file, zoom, output, port, baudrate, trigger, activation):
+    def __init__(self, duration, betweenstimuli, file, zoom, output, port, baudrate, trigger, activation, hauteur, largeur):
         self.duration = duration #args.duration, args.betweenstimuli, args.file, args.zoom, args.port, args.baudrate, args.trigger  ,args.output_file)
         self.betweenstimuli = betweenstimuli
         self.file = file
         self.zoom = zoom
         self.click_times = []
-        self.win = win = visual.Window(
+        self.win = visual.Window(
             fullscr=True,
             #color=[-0.0118, 0.0039, -0.0196],
             units="pix"
@@ -31,6 +31,11 @@ class static_image(Parente):
             self.activation = True
         else:
             self.activation = False
+
+        rect_width = largeur
+        rect_height = hauteur
+        self.rect = visual.Rect(self.win, width=rect_width, height=rect_height, fillColor='white', lineColor='white', units='pix')
+        self.rect.pos = (self.win.size[0] / 2 - rect_width / 2, self.win.size[1] / 2 - rect_height / 2)
 
 
 
@@ -86,6 +91,7 @@ class static_image(Parente):
 
         for image_stim in liste_image_win:
             image_stim.draw()
+            self.rect.draw()
             self.win.flip()
             if self.activation:
                 super().send_character(self.port,self.baudrate)
@@ -161,6 +167,7 @@ class static_image(Parente):
 
 
 if __name__ == "__main__":
+    print("on rentre")
     parser = argparse.ArgumentParser(description="Exécuter le paradigme Psychopy")
     parser.add_argument("--duration", type=float, required=True, help="Durée en secondes des stimuli")
     parser.add_argument("--betweenstimuli", type=float, required=True, help="Durée en secondes entre les stimuli")
@@ -172,9 +179,12 @@ if __name__ == "__main__":
     parser.add_argument('--port', type=str, required=False, help="Port")
     parser.add_argument('--baudrate', type=int, required=False, help="Speed port")
     parser.add_argument('--trigger', type=str, required=False, help="caractère pour lancer le programme")
+    parser.add_argument("--hauteur", type=float, required=True, help="hauteur du rectangle")
+    parser.add_argument("--largeur", type=float, required=True, help="Largeur du rectangle")
 
     args = parser.parse_args()
-
+    print(args.hauteur)
     images = static_image(args.duration, args.betweenstimuli, args.file, args.zoom, args.output_file,
-                          args.port, args.baudrate, args.trigger, args.activation)
+                          args.port, args.baudrate, args.trigger, args.activation, args.hauteur,
+                          args.largeur)
     images.lancement()

@@ -20,7 +20,7 @@
     <div class="overlay" id="popupSerial" style="display: none;">
         <span class="close-btn" onclick="closePopup('popupSerial')">&times;</span>
         <div class="popup">
-            <h4 style="color: #0c0b0b">Configuration du port</h4>
+            <h3 style="color: #0c0b0b">Configuration du port</h3>
             <div class="input-overlay">
                 <div class="input-group" >
                     <input class ="checkbox_style" type="checkbox" id="option1" value="Option1">
@@ -39,6 +39,15 @@
                 <div class="input-overlay-container">
                     <span>Caractère pour lancer</span>
                     <input type="text" placeholder="ex: s" id="trigger">
+                </div>
+                <div class = "input-overlay-container">
+                    <h3>Taille du rectange en haut à droite</h3>
+                    <div class = "input-group">
+                        <span style="margin-top: 16px">Largeur</span>
+                        <input type="text" placeholder="ex: 100" id="largeur">
+                        <span style="margin-top: 16px">Hauteur</span>
+                        <input type="text" placeholder="ex: 50" id="hauteur">
+                    </div>
                 </div>
             </div>
             <button onclick="submitPort()" class="submit">Submit</button>
@@ -216,6 +225,10 @@
                                     <input type="text" id="number_per_blocks-adjectifs" placeholder="par exemple: 5">
                                 </div>
                                 <div class="input-container">
+                                    <h3> Ordre aléatoire </h3>
+                                    <input  type="checkbox" id="random-adj" value="option1" style=" height: 50px">
+                                </div>
+                                <div class="input-container">
                                     <h3></h3>
                                     <button class="submit" onclick="submitAdjectifs()">Submit</button>
                                 </div>
@@ -334,8 +347,12 @@
                                 </div>
                             </div>
                             <div class="input-group">
-
                                 <div class="input-container">
+                                    <h3> Ordre aléatoire </h3>
+                                    <input  type="checkbox" id="random-local" value="Option1" style=" height: 50px">
+                                </div>
+                                <div class="input-container">
+                                    <h3></h3>
                                     <button class="submit" onclick="submitLocalizer()">Submit</button>
                                 </div>
                             </div>
@@ -444,6 +461,8 @@
                 let port = document.getElementById('resultPort').textContent.trim();
                 let baudrate = document.getElementById('resultBaudrate').textContent;
                 let trigger = document.getElementById('resultTrigger').textContent.trim();
+                let hauteur = document.getElementById('hauteur').value || '0';
+                let largeur = document.getElementById('largeur').value || '0';
 
                 if (baudrate === "" || port === "") {
                     baudrate = -1; // Garder les valeurs comme chaîne pour la consistance
@@ -474,6 +493,8 @@
                         activation: activation,
                         baudrate: baudrate,
                         trigger: trigger,
+                        hauteur: hauteur,
+                        largeur: largeur,
                         filePath: fileName // Envoyer la valeur de l'input de fichier comme un simple string
                     }),
                 })
@@ -497,6 +518,8 @@
                 let port = document.getElementById('resultPort').textContent.trim();
                 let baudrate = document.getElementById('resultBaudrate').textContent;
                 let trigger = document.getElementById('resultTrigger').textContent.trim();
+                let hauteur = document.getElementById('hauteur').value || '0';
+                let largeur = document.getElementById('largeur').value || '0';
 
                 if (baudrate === "" || port === "") {
                     baudrate = -1; // Garder les valeurs comme chaîne pour la consistance
@@ -526,6 +549,8 @@
                         activation: activation,
                         baudrate: baudrate,
                         trigger: trigger,
+                        hauteur: hauteur,
+                        largeur: largeur,
                         filePath: fileName // Envoyer la valeur de l'input de fichier comme un simple string
                     }),
                 })
@@ -548,6 +573,8 @@
                 let port = document.getElementById('resultPort').textContent.trim();
                 let baudrate = document.getElementById('resultBaudrate').textContent;
                 let trigger = document.getElementById('resultTrigger').textContent.trim();
+                let hauteur = document.getElementById('hauteur').value || '0';
+                let largeur = document.getElementById('largeur').value || '0';
 
                 if (baudrate === "" || port === "") {
                     baudrate = -1; // Garder les valeurs comme chaîne pour la consistance
@@ -578,6 +605,8 @@
                         activation: activation,
                         baudrate: baudrate,
                         trigger: trigger,
+                        hauteur: hauteur,
+                        largeur: largeur,
                         filePath: fileName // Envoyer la valeur de l'input de fichier comme un simple string
                     }),
                 })
@@ -603,6 +632,8 @@
                 let port = document.getElementById('resultPort').textContent.trim();
                 let baudrate = document.getElementById('resultBaudrate').textContent;
                 let trigger = document.getElementById('resultTrigger').textContent.trim();
+                let hauteur = document.getElementById('hauteur').value || '0';
+                let largeur = document.getElementById('largeur').value || '0';
 
                 if (baudrate === "" || port === "") {
                     baudrate = -1; // Garder les valeurs comme chaîne pour la consistance
@@ -636,6 +667,8 @@
                         activation: activation,
                         baudrate: baudrate,
                         trigger: trigger,
+                        hauteur: hauteur,
+                        largeur: largeur,
                         filePath: fileName // Envoyer la valeur de l'input de fichier comme un simple string
                     }),
                 })
@@ -655,10 +688,13 @@
                 const blocks = document.getElementById("number_of_blocks-localizer").value || 'Non spécifié';
                 const per_blocks = document.getElementById("number_per_block-localizer").value || 'Non spécifié';
                 const activation = document.getElementById("option1").checked;
+                const random = document.getElementById("random-local").checked;
 
                 let port = document.getElementById('resultPort').textContent.trim();
                 let baudrate = document.getElementById('resultBaudrate').textContent;
                 let trigger = document.getElementById('resultTrigger').textContent.trim();
+                let hauteur = document.getElementById('hauteur').value || '0';
+                let largeur = document.getElementById('largeur').value || '0';
 
                 if (baudrate === "" || port === "") {
                     baudrate = -1; // Garder les valeurs comme chaîne pour la consistance
@@ -681,11 +717,14 @@
                         betweenstimuli: betweenstimuli,
                         port: port,
                         activation: activation,
+                        random: random,
                         baudrate: baudrate,
                         trigger: trigger,
                         blocks: blocks,
                         per_blocks: per_blocks,
-                        output_file: output_file
+                        output_file: output_file,
+                        hauteur: hauteur,
+                        largeur: largeur
                     }),
                 })
                 .then(response => response.json())
@@ -709,10 +748,14 @@
                 const output_file = document.getElementById('patientName').textContent;
                 let fileName = fileInput.value.split('\\').pop();  // Cela extraira uniquement le nom du fichier.
                 const activation = document.getElementById("option1").checked;
+                const random = document.getElementById("random-adj").checked;
+                alert(random)
 
                 let port = document.getElementById('resultPort').textContent.trim();
                 let baudrate = document.getElementById('resultBaudrate').textContent;
                 let trigger = document.getElementById('resultTrigger').textContent.trim();
+                let hauteur = document.getElementById('hauteur').value || '0';
+                let largeur = document.getElementById('largeur').value || '0';
 
                 if (baudrate === "" || port === "") {
                     baudrate = -1; // Garder les valeurs comme chaîne pour la consistance
@@ -744,8 +787,11 @@
                         output_file: output_file,
                         port: port,
                         activation: activation,
+                        random: random,
                         baudrate: baudrate,
                         trigger: trigger,
+                        hauteur: hauteur,
+                        largeur: largeur,
                         filePath: fileName // Envoyer la valeur de l'input de fichier comme un simple string
                     }),
                 })
@@ -813,10 +859,13 @@
             const output_file = document.getElementById('patientName').textContent;
             let fileName = fileInput.value.split('\\').pop();
             const activation = document.getElementById("option1").checked;
+            let hauteur = document.getElementById('hauteur').value || '0';
+            let largeur = document.getElementById('largeur').value || '0';
 
             let port = document.getElementById('resultPort').textContent.trim();
             let baudrate = document.getElementById('resultBaudrate').textContent;
             let trigger = document.getElementById('resultTrigger').textContent.trim();
+
 
             if (baudrate === "" || port === "") {
                 baudrate = -1; // Garder les valeurs comme chaîne pour la consistance
@@ -837,7 +886,7 @@
             fetch('/submit-images', {
                 method: 'POST',
                 headers: {
-                    'Cotntent-Type': 'application/json',
+                    'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
                     duration: duration,
@@ -848,6 +897,8 @@
                     activation: activation,
                     baudrate: baudrate,
                     trigger: trigger,
+                    hauteur: hauteur,
+                    largeur: largeur,
                     filePath: fileName // Envoyer la valeur de l'input de fichier comme un simple string
                 }),
             })
@@ -872,6 +923,8 @@
             let port = document.getElementById('resultPort').textContent.trim();
             let baudrate = document.getElementById('resultBaudrate').textContent;
             let trigger = document.getElementById('resultTrigger').textContent.trim();
+            let hauteur = document.getElementById('hauteur').value || '0';
+            let largeur = document.getElementById('largeur').value || '0';
 
             if (baudrate === "" || port === "") {
                 baudrate = -1; // Garder les valeurs comme chaîne pour la consistance
@@ -905,6 +958,8 @@
                     activation: activation,
                     baudrate: baudrate,
                     trigger: trigger,
+                    hauteur: hauteur,
+                    largeur: largeur,
                     filePath: fileName // Envoyer la valeur de l'input de fichier comme un simple string
                 }),
             })

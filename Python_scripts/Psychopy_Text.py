@@ -9,7 +9,7 @@ from Paradigme_parent import Parente
 
 
 class PsychoPyParadigm(Parente):
-    def __init__(self, duration, words, zoom, file, output, port, baudrate, trigger, activation):
+    def __init__(self, duration, words, zoom, file, output, port, baudrate, trigger, activation, hauteur, largeur):
         self.duration = int(duration)
         self.words = words
         self.zoom = zoom
@@ -22,10 +22,14 @@ class PsychoPyParadigm(Parente):
         self.port = port
         self.baudrate = baudrate
         self.trigger = trigger
+
         if activation == "True":
             self.activation = True
         else:
             self.activation = False
+
+        self.rect_width = largeur
+        self.rect_height = hauteur
 
 
     def affichage_mots(self, win, text_stim, words, display_time):
@@ -33,6 +37,7 @@ class PsychoPyParadigm(Parente):
         for word in words:
             text_stim.setText(word)
             text_stim.draw()
+            self.rect.draw()
             win.flip()
             if self.activation and words != [":; $+", " #^=-", ":?$µ", "###"]:
                 super().send_character(self.port,self.baudrate)
@@ -56,7 +61,10 @@ class PsychoPyParadigm(Parente):
             pass
 
     def words_psychopy(self):
-        win = visual.Window(fullscr=True, color=[-1, -1, -1], units='pix')
+        win = visual.Window(size=(800, 600), fullscr=True, color=[-1, -1, -1], units='pix')
+        self.rect = visual.Rect(win, width=self.rect_width, height=self.rect_height, fillColor='white', lineColor='white',
+                                units='pix')
+        self.rect.pos = (win.size[0] / 2 - self.rect_width / 2, win.size[1] / 2 - self.rect_height / 2)
         event.globalKeys.add(key='escape', func=win.close)
 
         text_stim = visual.TextStim(win, text='', color=[1, 1, 1], height=90+(90*self.zoom/100))
@@ -112,8 +120,10 @@ if __name__ == "__main__":
     parser.add_argument('--port', type=str, required=False, help="Port")
     parser.add_argument('--baudrate', type=int, required=False, help="Speed port")
     parser.add_argument('--trigger', type=str, required=False, help="caractère pour lancer le programme")
+    parser.add_argument("--hauteur", type=float, required=True, help="hauteur du rectangle")
+    parser.add_argument("--largeur", type=float, required=True, help="Largeur du rectangle")
 
     args = parser.parse_args()
     paradigm = PsychoPyParadigm(args.duration, args.words, args.zoom, args.file,args.output_file,args.port,
-                                args.baudrate, args.trigger, args.activation)
+                                args.baudrate, args.trigger, args.activation, args.hauteur, args.largeur)
     paradigm.run()

@@ -12,8 +12,8 @@ from Paradigme_parent import Parente
 
 
 class Colors(Parente):
-    def __init__(self, duration, betweenstimuli, zoom, langage, filepath, output, port, baudrate, trigger, activation):
-        self.win = visual.Window(fullscr=True, color="black")
+    def __init__(self, duration, betweenstimuli, zoom, langage, filepath, output, port, baudrate, trigger, activation, hauteur, largeur):
+        self.win = visual.Window(size=(800, 600), fullscr=True, color="black")
         event.globalKeys.add(key='escape', func=self.win.close)
         self.fs = 44100  # fréquence d'échantillonnage
         self.stimuli_duration = duration  # durée de l'enregistrement en secondes
@@ -38,6 +38,11 @@ class Colors(Parente):
             self.activation = True
         else:
             self.activation = False
+        rect_width = largeur
+        rect_height = hauteur
+        self.rect = visual.Rect(self.win, width=rect_width, height=rect_height, fillColor='white', lineColor='white',
+                                units='pix')
+        self.rect.pos = (self.win.size[0] / 2 - rect_width / 2, self.win.size[1] / 2 - rect_height / 2)
 
 
         self.cross_stim = visual.ShapeStim(
@@ -118,9 +123,12 @@ class Colors(Parente):
 
 
     def lancement(self):
-        texte = visual.TextStim(self.win, text=self.Premier_texte, color=[1, 1, 1], alignText="left", wrapWidth=1.5,
-                                font='Arial')
-        texte.draw()
+        texts= super().inputs_texts("Input/Starting_Texts/couleur.txt")
+        super().launching_texts(self.win, texts)
+        print(self.trigger)
+        super().proper_waitkey(self.trigger)
+        text_after= visual.TextStim(self.win, text="Le Scanner va maintenant démarrer.", alignText="center", wrapWidth=1.5, font="Arial")
+        text_after.draw()
         self.win.flip()
         words, colors, stimuli_names=self.reading("Input/Paradigme_Couleur/"+self.filepath)
         text_stim = visual.TextStim(self.win, wrapWidth=1.5, font="Arial", height=0.1+(0.01*self.zoom))
@@ -142,6 +150,7 @@ class Colors(Parente):
             text_stim.text=mot
             text_stim.color=colors[count]
             text_stim.draw()
+            self.rect.draw()
             self.win.flip()
             self.onset.append(self.global_timer.getTime())
             self.timer.reset()
@@ -183,10 +192,14 @@ if __name__ == "__main__":
     parser.add_argument('--port', type=str, required=False, help="Port")
     parser.add_argument('--baudrate', type=int, required=False, help="Speed port")
     parser.add_argument('--trigger', type=str, required=False, help="caractère pour lancer le programme")
+    parser.add_argument("--hauteur", type=float, required=True, help="hauteur du rectangle")
+    parser.add_argument("--largeur", type=float, required=True, help="Largeur du rectangle")
 
     args = parser.parse_args()
+    print(args.trigger)
     colors = Colors(args.duration, args.betweenstimuli, args.zoom, args.choice, args.file, args.output_file,
-                    args.port, args.baudrate, args.trigger, args.activation).lancement()
+                    args.port, args.baudrate, args.trigger, args.activation,
+                        args.hauteur, args.largeur).lancement()
 
 
 #Colors(duration=2,betweenstimuli=1,zoom=10,filepath="colors_list.txt", output="wififi").lancement()

@@ -6,7 +6,6 @@ from datetime import datetime
 import argparse
 from psychopy import visual, core, event
 from Paradigme_parent import Parente
-import serial
 
 
 
@@ -15,7 +14,7 @@ import serial
 
 class Adjectifs(Parente):
 
-    def __init__(self, duration, betweenstimuli, zoom, blocks, entrainement, per_block, filepath, output, port, baudrate, trigger):
+    def __init__(self, duration, betweenstimuli, zoom, blocks, entrainement, per_block, filepath, output, port, baudrate, trigger, activation):
         self.words = self.reading("Input/Paradigme_Adjectifs/"+filepath)
         self.entrainement_words = self.reading("Input/Paradigme_Adjectifs/entrainement.txt")
         self.me_entrainement = self.entrainement_words.copy()
@@ -41,20 +40,20 @@ class Adjectifs(Parente):
         self.entrainement_block = entrainement
         self.per_block = per_block
         self.experience_text = ""
+        self.hashmapvaleurs= {"d":"1", "q":"2", "c":"3", "b":"4"}
         self.port = port
         self.baudrate = baudrate
-        self.ser = serial.Serial(self.port, self.baudrate)
+        self.trigger = trigger
+        if activation == "True":
+            self.activation = True
+        else:
+            self.activation = False
+        print(self.activation)
 
         self.win = visual.Window(fullscr=True)
         self.explication_texts = super().inputs_texts("Input/Starting_Texts/adjectifs.txt")
 
         event.globalKeys.add(key='escape', func=self.win.close)
-
-    def waiting_boitier(self):
-        while True:
-            if self.ser.in_waiting > 0:
-                self.ser.read().decode('utf-8')
-                break
 
 
 
@@ -68,95 +67,51 @@ class Adjectifs(Parente):
 
         self.Premier_texte = self.explication_texts[0]
 
-        """("Dans l'exercice qui va suivre vous verrez apparaitre des adjectifs. \n" +
-                     "Suivant la consigne, vous devrez juger pour chaque adjectif: \n\n" +
-                     "-comment il s'applique à vous-même \n" +
-                     "-comment il s'applique à votre meilleur(e) ami(e) \n" +
-                     "-ou alors donner le nombre de syllabes qui le composent\n\n" +
-                     "(appuyer sur une touche pour lire la suite)")"""
-
         texte = visual.TextStim(self.win, text=self.Premier_texte, color=[1, 1, 1], alignText="left", wrapWidth=1.5, font='Arial')
         texte.draw()
         self.win.flip()
-        self.waiting_boitier()
-        #event.waitKeys()
+        event.waitKeys()
         Deuxieme_texte = self.explication_texts[1]
-        """
-        Deuxieme_texte = (
-                    'Dans la consigne "MOI" vous devez dire dans quelle mesure l\'adjectif s\'applique à vous.\n \n' +
-                    'Dans la consigne "MON AMI(E)" vous devez indiquer comment l\'adjectif s\'applique à votre meilleur(e) ami(e).\n\n' +
-                    'Vous répondrez avec les touches suivantes:\n' +
-                    '1 (index) : ne s\'applique pas du tout \n' +
-                    '2 (majeur) : s\'applique un peu\n' +
-                    '3 (annulaire) : s\'applique assez bien\n' +
-                    '4 (auriculaire) : s\'applique parfaitement\n\n' +
-                    '(appuyer sur une touche pour lire la suite)')"""
 
         texte.text = Deuxieme_texte
         texte.draw()
         self.win.flip()
-        self.waiting_boitier()
-        #event.waitKeys()
+        event.waitKeys()
         troisieme_texte = self.explication_texts[2]
-        """troisieme_texte = (
-                    'Dans la consigne "SYLLABES" vous devez donner le nombre de syllabes qui composent l\'adjectif en appuyant sur la touche correspondate: ' +
-                    '1, 2, 3 ou 4 syllabe(s) \n\n' +
-                    'Par exemple: \n' +
-                    'le mot "attentif" a 3 syllabes: at-ten-tif\n\n' +
-                    'Les mots défileront automatiquement, essayez de répondre pour chacun d\'eux le plus spontanément possible\n\n' +
-                    '(appuyer sur une touche pour lire la suite)')"""
 
         texte.text = troisieme_texte
         texte.draw()
         self.win.flip()
-        self.waiting_boitier()
-        #event.waitKeys()
+        event.waitKeys()
 
         quatrieme_texte = self.explication_texts[3]
-        """quatrieme_texte = (
-                    'A présent nous allons faire un court entrainement pour vous familiariser avec l\'exercise.\n\n' +
-                    '(appuyer sur une touche pour lire la suite)')"""
 
         texte.text = quatrieme_texte
         texte.draw()
         self.win.flip()
-        self.waiting_boitier()
-        #event.waitKeys()
+        event.waitKeys()
 
         cinquieme_texte = self.explication_texts[4]
-        """cinquieme_texte = ('Veuillez penser à la personne que vous considérez votre meilleur(e) ami(e).\n' +
-                           'Il est important que vous soyez capable de la décrire mentalement ' +
-                           'de façon assez précise \n\n' +
-                           'Prenez votre temps...\n\n' +
-                           'Quand vous êtes prèt(e), appuyez sur une touche pour démarrer l\'entrainement...')"""
 
         texte.text = cinquieme_texte
         texte.draw()
         self.win.flip()
-        self.waiting_boitier()
-        #event.waitKeys()
+        event.waitKeys()
 
         self.experience_text = self.explication_texts[5]
 
 
         self.Me_shortcue = self.explication_texts[6]
-        """self.Me_shortcue = ('MOI \n\n' +
-                       'Comment l\'adjectif s\'applique à moi?')"""
-
 
         self.Friend_shortcue = self.explication_texts[7]
-        """self.Friend_shortcue = ('MON AMI(E) [this could be someone else of course]\n\n'
-                           + 'Comment l\'adjectif s\'applique-t-il à mon/ma meilleur(e) ami(e) ?')"""
 
         self.Syllabe_shortcue = self.explication_texts[8]
-        """self.Syllabe_shortcue = ('SYLLABES\n\n' +
-                            'Combien de syllables comporte cet adjectif?')"""
 
         self.entrainement()
         texte.text = self.experience_text
         texte.draw()
         self.win.flip()
-        self.waiting_boitier()
+        event.waitKeys()
         self.blocks()
 
 
@@ -191,20 +146,21 @@ class Adjectifs(Parente):
         texte_5_words.text = mot
         texte_5_words.draw()
         self.win.flip()
+        if self.activation:
+            super().send_character(self.port, self.baudrate)
         response_time="None"
         timer = core.Clock()
         k="None"
         while timer.getTime() < self.stimuli_duration:  # Limite de temps de 4 secondes
             if k=="None":
-                if self.ser.in_waiting>0:
-                    key = self.ser.read().decode('utf-8') # Récupérer les touches pressées
-                    #ser.read().decode('utf-8')
-                    if "1" in key or "2" in key or '3' in key or "4" in key :
-                        k=key
-                        response_time=timer.getTime()
-                        texte_5_words.text=" "
-                        texte_5_words.draw()
-                        self.win.flip()
+                key = event.getKeys()
+                #d=1, q=2, c=3, b=4
+                if "d" in key or "q" in key or 'c' in key or "b" in key :
+                    k = self.hashmapvaleurs.get(key[0])
+                    response_time=timer.getTime()
+                    texte_5_words.text=" "
+                    texte_5_words.draw()
+                    self.win.flip()
         self.response.append(k)
         self.reaction_time.append(response_time)
 
@@ -338,27 +294,19 @@ class Adjectifs(Parente):
             if len(choice_block)==0:
                 break
             block = random.choice(choice_block)
-            #self.order_blocks.append(block)
-            print(block)
             hashmap[block] -= 1
             if hashmap[block] == 0:
                 choice_block.remove(block)
 
             if block == "me":
-                print("dans me")
                 self.debut_me()
                 self.show_words(self.per_block,block)
-                #self.show_5_words(block)
             elif block == "friend":
-                print("dans friend")
                 self.debut_friend()
                 self.show_words(self.per_block,block)
-                #self.show_5_words(block)
             elif block == "syllabe":
-                print("dans syllabe")
                 self.debut_syllabe()
                 self.show_words(self.per_block,block)
-                #self.show_5_words(block)
 
             # Affichage de la croix de fixation pendant 100 secondes
             cross_stim.draw()
@@ -377,22 +325,23 @@ class Adjectifs(Parente):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Exécuter le paradigme Psychopy")
-    parser.add_argument("--duration", type=int, required=True, help="Durée en secondes des stimuli")
+    parser.add_argument("--duration", type=float, required=True, help="Durée en secondes des stimuli")
     parser.add_argument("--file", type=str, help="Chemin vers le fichier de mots", required=False)
     parser.add_argument("--zoom", type=int, required=True, help="Le zoom sur les adjectifs")
     parser.add_argument("--output_file", type=str, required=True, help="Nom du fichier d'output")
-    parser.add_argument("--betweenstimuli", type=int, required=True, help="Temps entre les stimuli")
+    parser.add_argument("--betweenstimuli", type=float, required=True, help="Temps entre les stimuli")
     parser.add_argument("--blocks", type=int, required=True, help="Nombre de blocks d'adjectifs")
     parser.add_argument("--entrainement", type=int, required=True, help="Nombre de blocks d'entrainement")
-    parser.add_argument('--port', type=str, required=True, help="Port")
-    parser.add_argument('--baudrate', type=int, required=True, help="Speed port")
-    parser.add_argument('--trigger', type=str, required=True, help="caractère pour lancer le programme")
     parser.add_argument("--per_block", type=int, required=True, help="Nombre d'adjectifs pas block")
+    parser.add_argument("--activation", type=str, required=True, help="Pour le boitier avec les EEG")
 
-
+    parser.add_argument('--port', type=str, required=False, help="Port")
+    parser.add_argument('--baudrate', type=int, required=False, help="Speed port")
+    parser.add_argument('--trigger', type=str, required=False, help="caractère pour lancer le programme")
 
     args = parser.parse_args()
-    paradigm = Adjectifs(args.duration, args.betweenstimuli, args.zoom, args.blocks, args.entrainement, args.per_block, args.file, args.output_file, args.port, args.baudrate, args.trigger)
+    paradigm = Adjectifs(args.duration, args.betweenstimuli, args.zoom, args.blocks, args.entrainement, args.per_block,
+                         args.file, args.output_file, args.port, args.baudrate, args.trigger, args.activation)
     paradigm.lancement()
     paradigm.fin()
 

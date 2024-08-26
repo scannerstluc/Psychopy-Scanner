@@ -11,7 +11,7 @@ from Paradigme_parent import Parente
 class Emo_Face(Parente):
 
 
-    def __init__(self, duration, betweenstimuli, filepath, output):
+    def __init__(self, duration, betweenstimuli, filepath, output, port, baudrate, trigger, activation):
         self.onset = []
         self.duration = []
         self.stimuli_file =[]
@@ -21,6 +21,15 @@ class Emo_Face(Parente):
         self.betweenstimuli = betweenstimuli
         self.filepath = filepath
         self.output= output
+        self.port = port
+        self.baudrate = baudrate
+        self.trigger = trigger
+        if activation == "True":
+            self.activation = True
+        else:
+            self.activation = False
+        print(self.activation)
+
 
     def reading(self,filename):
         with open(filename, "r") as fichier:
@@ -63,13 +72,14 @@ class Emo_Face(Parente):
             image_stim.image=image
             images.append(image_stim)
 
-        super().wait_for_trigger(port=None)
+        super().wait_for_trigger(self.trigger)
         for image_stim in images:
             timer.reset()
             cross_stim.draw()
             self.win.flip()
+            if self.activation:
+                super().send_character(self.port,self.baudrate)
             self.onset.append(global_timer.getTime())
-
             while timer.getTime() < self.betweenstimuli:
                 pass
             self.duration.append(timer.getTime())
@@ -81,6 +91,7 @@ class Emo_Face(Parente):
             timer.reset()
             image_stim.draw()
             self.win.flip()
+            #super().send_character()
             self.onset.append(global_timer.getTime())
             while timer.getTime() < self.stimuli_duration:
                 button = self.mouse.getPressed()  # Mise à jour de l'état des boutons de la souris
@@ -94,7 +105,7 @@ class Emo_Face(Parente):
                 # Vous pouvez ajouter ici d'autres actions à exécuter pendant l'attente
             self.click_times.append(clicked_time)
             self.duration.append(timer.getTime())
-            self.stimuli_file.append(image_stim.image[34:])
+            self.stimuli_file.append(image_stim.image[40:])
             self.trial_type.append("stimuli")
 
 
@@ -104,15 +115,27 @@ class Emo_Face(Parente):
 
 
 if __name__ == "__main__":
+    print("ça entre")
     parser = argparse.ArgumentParser(description="Exécuter le paradigme Psychopy")
-    parser.add_argument("--duration", type=int, required=True, help="Durée en secondes des stimuli")
+    parser.add_argument("--duration", type=float, required=True, help="Durée en secondes des stimuli")
     parser.add_argument("--file", type=str, help="Chemin vers le fichier de mots", required=False)
     parser.add_argument("--output_file", type=str, required=True, help="Nom du fichier d'output")
-    parser.add_argument("--betweenstimuli", type=int, required=True, help="Temps entre les stimuli")
+    parser.add_argument("--betweenstimuli", type=float, required=True, help="Temps entre les stimuli")
+    parser.add_argument("--activation", type=str, required=True, help="Pour le boitier avec les EEG")
+
+    parser.add_argument('--port', type=str, required=False, help="Port")
+    parser.add_argument('--baudrate', type=int, required=False, help="Speed port")
+    parser.add_argument('--trigger', type=str, required=False, help="caractère pour lancer le programme")
 
 
     args = parser.parse_args()
-    paradigm = Emo_Face(args.duration, args.betweenstimuli, args.file, args.output_file)
+    print(args.activation)
+    print(args.port)
+    print(args.baudrate)
+    print(args.trigger)
+    print("oki")
+    paradigm = Emo_Face(args.duration, args.betweenstimuli, args.file,
+                        args.output_file, args.port, args.baudrate, args.trigger, args.activation)
     paradigm.lancement()
 
 

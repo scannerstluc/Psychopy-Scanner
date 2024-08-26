@@ -9,7 +9,7 @@ from Paradigme_parent import Parente
 
 class voices(Parente):
 
-    def __init__(self, duration, betweenstimuli, file, output):
+    def __init__(self, duration, betweenstimuli, file, output, port, baudrate, trigger, activation):
         self.win = visual.Window(fullscr=True)
         self.cross_stim = visual.ShapeStim(
             win=self.win,
@@ -33,6 +33,14 @@ class voices(Parente):
         self.trial_type=[]
         self.stim_file=[]
         self.reaction = []
+        self.port = port
+        self.baudrate = baudrate
+        self.trigger = trigger
+        if activation == "True":
+            self.activation = True
+        else:
+            self.activation = False
+        print(self.activation)
 
     def reading(self,filename):
         print(os.getcwd())
@@ -54,7 +62,7 @@ class voices(Parente):
         print(os.getcwd())
         print("oui ?")
         self.voices = self.reading("Input/Paradigme_EMO_VOICES/"+self.file)
-        super().wait_for_trigger(port=None)
+        super().wait_for_trigger(self.trigger)
         for x in self.voices:
             print(x)
             custom_sound = sound.Sound("Input/Paradigme_EMO_VOICES/emo_voices/"+x)
@@ -75,6 +83,8 @@ class voices(Parente):
             text_stim.draw()
             self.timer.reset()
             self.win.flip()
+            if self.activation:
+                super().send_character(self.port,self.baudrate)
             custom_sound.play()
             self.onset.append(self.global_timer.getTime())
             while self.timer.getTime()<custom_sound.getDuration():
@@ -93,12 +103,17 @@ class voices(Parente):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Exécuter le paradigme Psychopy")
-    parser.add_argument("--duration", type=int, required=True, help="Durée en secondes des stimuli")
+    parser.add_argument("--duration", type=float, required=True, help="Durée en secondes des stimuli")
     parser.add_argument("--file", type=str, help="Chemin vers le fichier de mots", required=False)
     parser.add_argument("--output_file", type=str, required=True, help="Nom du fichier d'output")
-    parser.add_argument("--betweenstimuli", type=int, required=True, help="Temps entre les stimuli")
+    parser.add_argument("--betweenstimuli", type=float, required=True, help="Temps entre les stimuli")
+    parser.add_argument("--activation", type=str, required=True, help="Pour le boitier avec les EEG")
+
+    parser.add_argument('--port', type=str, required=False, help="Port")
+    parser.add_argument('--baudrate', type=int, required=False, help="Speed port")
+    parser.add_argument('--trigger', type=str, required=False, help="caractère pour lancer le programme")
 
     args = parser.parse_args()
-    paradigm = voices(args.duration, args.betweenstimuli, args.file, args.output_file)
+    paradigm = voices(args.duration, args.betweenstimuli, args.file, args.output_file, args.port, args.baudrate, args.trigger, args.activation)
     paradigm.lancement()
 

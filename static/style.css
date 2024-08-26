@@ -17,6 +17,16 @@ html, body {
     z-index: 100;
 }
 
+.checkbox_style{
+    transform: scale(3.5);
+    margin-left: 25px;
+    margin-bottom: 15px;
+}
+
+.checkbox_input{
+    margin-top: 10px;
+}
+
 select {
     font-family: Arial, sans-serif;
     font-size: 16px;

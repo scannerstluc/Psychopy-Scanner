@@ -16,6 +16,7 @@ class Emo_Face(Parente):
     def __init__(self, duration, betweenstimuli, filepath, output, port, baudrate, trigger, activation, hauteur,
                  largeur, zoom, random):
         self.onset = []
+        self.win = visual.Window(size=(800, 600), fullscr=True)
         self.duration = []
         self.stimuli_file =[]
         self.trial_type = []
@@ -40,7 +41,7 @@ class Emo_Face(Parente):
         print(self.activation)
         rect_width = largeur
         rect_height = hauteur
-        self.rect = visual.Rect(self.win, width=rect_width, height=rect_height, fillColor='white', lineColor='white',
+        self.rect = visual.Rect(win=self.win, width=rect_width, height=rect_height, fillColor='white', lineColor='white',
                                 units='pix')
         self.rect.pos = (self.win.size[0] / 2 - rect_width / 2, self.win.size[1] / 2 - rect_height / 2)
 

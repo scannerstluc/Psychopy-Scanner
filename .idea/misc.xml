@@ -3,5 +3,8 @@
   <component name="Black">
     <option name="sdkName" value="Python 3.10 (API Psycho)" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.10 (API Psycho)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.10 (Psychopy-Scanner) (2)" project-jdk-type="Python SDK" />
+  <component name="PyCharmProfessionalAdvertiser">
+    <option name="shown" value="true" />
+  </component>
 </project>

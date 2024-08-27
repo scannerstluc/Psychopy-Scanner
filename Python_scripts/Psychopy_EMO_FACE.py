@@ -1,17 +1,20 @@
 import csv
 import os
+import random
 from datetime import datetime
 
 import argparse
 from psychopy import visual, event, core
 from Paradigme_parent import Parente
+from PIL import Image
 
 
 
 class Emo_Face(Parente):
 
 
-    def __init__(self, duration, betweenstimuli, filepath, output, port, baudrate, trigger, activation, hauteur, largeur):
+    def __init__(self, duration, betweenstimuli, filepath, output, port, baudrate, trigger, activation, hauteur,
+                 largeur, zoom, random):
         self.onset = []
         self.duration = []
         self.stimuli_file =[]
@@ -23,11 +26,17 @@ class Emo_Face(Parente):
         self.output= output
         self.port = port
         self.baudrate = baudrate
+        self.zoom = zoom
         self.trigger = trigger
+        self.win = visual.Window(size=(800, 600), fullscr=True, units="norm")
         if activation == "True":
             self.activation = True
         else:
             self.activation = False
+        if random == "True":
+            self.random = True
+        else:
+            self.random = False
         print(self.activation)
         rect_width = largeur
         rect_height = hauteur
@@ -35,6 +44,10 @@ class Emo_Face(Parente):
                                 units='pix')
         self.rect.pos = (self.win.size[0] / 2 - rect_width / 2, self.win.size[1] / 2 - rect_height / 2)
 
+    def redimension(self, hauteur, largeur):
+        new_hauteur = (hauteur*self.zoom*4)+100
+        new_largeur = (largeur*self.zoom*4)+100
+        return new_hauteur,new_largeur
     def reading(self,filename):
         with open(filename, "r") as fichier:
             ma_liste = [line.strip() for line in fichier]
@@ -50,8 +63,15 @@ class Emo_Face(Parente):
                 tsv_writer.writerow([onset[i], duration[i], trial_type[i], reaction[i], file_stimuli[i]])
 
     def lancement(self):
-        self.win = visual.Window(size=(800, 600), fullscr=True)
         self.mouse = event.Mouse(win=self.win)
+        texts = super().inputs_texts("Input/Starting_Texts/emo_face.txt")
+        super().launching_texts(self.win, texts)
+        print(self.trigger)
+        super().proper_waitkey(self.trigger)
+        text_after = visual.TextStim(self.win, text="Le Scanner va maintenant démarrer.", alignText="center",
+                                     wrapWidth=1.5, font="Arial")
+        text_after.draw()
+        self.win.flip()
         global_timer=core.Clock()
         timer = core.Clock()
         event.globalKeys.add(key='escape', func=self.win.close)
@@ -66,14 +86,32 @@ class Emo_Face(Parente):
         )
 
         images = []
-        for image in self.reading("Input/Paradigme_EMO_FACE/"+self.filepath):
+        thezoom = 0.7 + (0.012*self.zoom)
+        images_files = self.reading("Input/Paradigme_EMO_FACE/"+self.filepath)
+        print(images_files)
+        if self.random:
+            random.shuffle(images_files)
+
+        for image in images_files:
             image_stim = visual.ImageStim(
                 win=self.win,
                 pos=(0, 0),
                 size=None
             )
+            prefix="Input/Paradigme_EMO_FACE/EMO_faces_list/"
+            suffix = image
             image = "Input/Paradigme_EMO_FACE/EMO_faces_list/"+image
-            image_stim.image=image
+            #image_stim.image=image
+            image = Image.open(image)
+            largeur_actuelle, hauteur_actuelle = image_stim.size
+            new_hauteur, new_largeur = self.redimension(hauteur_actuelle, largeur_actuelle)
+            image_redimensionnee = image.resize((int(new_largeur), int(new_hauteur)), Image.LANCZOS)
+            if os.path.exists(prefix+"1"+suffix):
+                os.remove(prefix+"1"+suffix)
+            image_redimensionnee.save(prefix+"1"+suffix)
+            image_stim.image=prefix+"1"+suffix
+
+            #image_stim.size = (thezoom,thezoom)
             images.append(image_stim)
 
         super().wait_for_trigger(self.trigger)
@@ -126,6 +164,10 @@ if __name__ == "__main__":
     parser.add_argument("--output_file", type=str, required=True, help="Nom du fichier d'output")
     parser.add_argument("--betweenstimuli", type=float, required=True, help="Temps entre les stimuli")
     parser.add_argument("--activation", type=str, required=True, help="Pour le boitier avec les EEG")
+    parser.add_argument("--zoom", type=float, required=True, help="Pourcentage Zoom")
+    parser.add_argument("--random", type=str, required=True, help="Ordre random stimuli")
+
+
 
     parser.add_argument('--port', type=str, required=False, help="Port")
     parser.add_argument('--baudrate', type=int, required=False, help="Speed port")
@@ -142,7 +184,7 @@ if __name__ == "__main__":
     print("oki")
     paradigm = Emo_Face(args.duration, args.betweenstimuli, args.file,
                         args.output_file, args.port, args.baudrate, args.trigger, args.activation,
-                        args.hauteur, args.largeur)
+                        args.hauteur, args.largeur, args.zoom, args.random)
     paradigm.lancement()
 
 

@@ -43,6 +43,7 @@ def submit_text():
         trigger = data.get('trigger')
         hauteur = data.get('hauteur')
         largeur = data.get('largeur')
+        random = data.get('random')
         print(data)
         subprocess.run([
             sys.executable, 'Python_scripts/Psychopy_Text.py',
@@ -54,6 +55,7 @@ def submit_text():
             '--baudrate', str(baudrate),
             '--trigger', trigger,
             '--hauteur', hauteur,
+            '--random', str(random),
             '--largeur', largeur,
             '--output_file', output_file,
             '--zoom', zoom
@@ -79,6 +81,7 @@ def submit_emo_voice():
         hauteur = data.get('hauteur')
         largeur = data.get('largeur')
         trigger = data.get('trigger')
+        random = data.get('random')
         subprocess.run([
             sys.executable, 'Python_scripts/Psychopy_EMO_VOICES.py',
             '--duration', duration,
@@ -89,6 +92,7 @@ def submit_emo_voice():
             '--trigger', trigger,
             '--hauteur', hauteur,
             '--largeur', largeur,
+            '--random', str(random),
             '--betweenstimuli', betweenstimuli,
             '--output_file', output_file,
         ])
@@ -144,13 +148,11 @@ def submit_emo_faces():
         activation = data.get('activation')
         port = data.get('port')
         hauteur = data.get('hauteur')
+        zoom = data.get('zoom')
         largeur = data.get('largeur')
-        print('woking before')
         baudrate = data.get('baudrate')
-        print(baudrate)
         trigger = data.get('trigger')
-        print("working here?")
-        print(str(activation))
+        random = data.get('random')
         subprocess.run([
             sys.executable, 'Python_scripts/Psychopy_EMO_FACE.py',
             '--duration', duration,
@@ -160,6 +162,8 @@ def submit_emo_faces():
             '--baudrate', str(baudrate),
             '--trigger', trigger,
             '--hauteur', hauteur,
+            '--zoom', zoom,
+            '--random', str(random),
             '--largeur', largeur,
             '--betweenstimuli', betweenstimuli,
             '--output_file', output_file,
@@ -230,6 +234,7 @@ def submit_stroop():
         trigger = data.get('trigger')
         hauteur = data.get('hauteur')
         largeur = data.get('largeur')
+        random = data.get('random')
         print(data)
         subprocess.Popen([
             sys.executable, 'Python_scripts/Psychopy_colors.py',
@@ -241,6 +246,7 @@ def submit_stroop():
             '--trigger', trigger,
             '--hauteur', hauteur,
             '--largeur', largeur,
+            '--random', str(random),
             '--zoom', zoom,
             '--choice', choice,
             '--betweenstimuli', betweenstimuli,
@@ -264,10 +270,12 @@ def submit_localizer():
         output_file = data.get('output_file')
         activation = data.get('activation')
         port = data.get('port')
+        zoom = data.get('zoom')
         baudrate = data.get('baudrate')
         trigger = data.get('trigger')
         hauteur = data.get('hauteur')
         largeur = data.get('largeur')
+        betweenblocks = data.get('betweenblocks')
         random = data.get('random')
 
         print(data)
@@ -281,9 +289,11 @@ def submit_localizer():
             '--baudrate', str(baudrate),
             '--trigger', trigger,
             '--hauteur', hauteur,
+            '--zoom', zoom,
             '--largeur', largeur,
             '--random', str(random),
             '--betweenstimuli', betweenstimuli,
+            '--betweenblocks', betweenblocks,
             '--output_file', output_file,
         ])
         print("working here?")
@@ -312,6 +322,7 @@ def submit_images():
         trigger = data.get('trigger')
         hauteur = data.get('hauteur')
         largeur = data.get('largeur')
+        random = data.get('random')
         print(data)
         subprocess.run([
             sys.executable, 'Python_scripts/Psychopy_Image.py',
@@ -323,6 +334,7 @@ def submit_images():
             '--trigger', trigger,
             '--hauteur', hauteur,
             '--largeur', largeur,
+            '--random', str(random),
             '--output_file', output_file,
             '--betweenstimuli', betweenstimuli,
             '--zoom', zoom
@@ -350,6 +362,7 @@ def submit_videos():
         trigger = data.get('trigger')
         hauteur = data.get('hauteur')
         largeur = data.get('largeur')
+        random = data.get('random')
         print(data)
         subprocess.run([
             sys.executable, 'Python_scripts/Psychopy_Video.py',
@@ -361,6 +374,7 @@ def submit_videos():
             '--baudrate', str(baudrate),
             '--trigger', trigger,
             '--hauteur', hauteur,
+            '--random', str(random),
             '--largeur', largeur,
             '--betweenstimuli', betweenstimuli,
             '--zoom', zoom

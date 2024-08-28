@@ -36,6 +36,7 @@ def submit_text():
         words = data.get('words')
         zoom = data.get('zoom')
         file = data.get('filePath')
+        launching = data.get('launching_text')
         output_file = data.get('output_file')
         activation = data.get('activation')
         port = data.get('port')
@@ -44,13 +45,16 @@ def submit_text():
         hauteur = data.get('hauteur')
         largeur = data.get('largeur')
         random = data.get('random')
+        fixation = data.get('fixation')
         print(data)
         subprocess.run([
             sys.executable, 'Python_scripts/Psychopy_Text.py',
             '--duration', duration,
             '--words', words,
             '--file', file,
+            '--launching', launching,
             '--port', port,
+            '--fixation', fixation,
             '--activation', str(activation),
             '--baudrate', str(baudrate),
             '--trigger', trigger,
@@ -77,6 +81,7 @@ def submit_emo_voice():
         output_file = data.get('output_file')
         activation = data.get('activation')
         port = data.get('port')
+        launching = data.get('launching_text')
         baudrate = data.get('baudrate')
         hauteur = data.get('hauteur')
         largeur = data.get('largeur')
@@ -90,6 +95,7 @@ def submit_emo_voice():
             '--activation', str(activation),
             '--baudrate', str(baudrate),
             '--trigger', trigger,
+            '--launching', launching,
             '--hauteur', hauteur,
             '--largeur', largeur,
             '--random', str(random),
@@ -112,6 +118,7 @@ def submit_cyberball():
         minimum = data.get("minimum")
         maximum = data.get("maximum")
         trigger = data.get("trigger")
+        launching = data.get("launching_text")
         patient_name = data.get("patient_name")
         output_file = data.get("output_file")
         filePath = data.get("filePath")
@@ -123,6 +130,7 @@ def submit_cyberball():
             '--exclusion', exclusion,
             '--transition', transition,
             '--minimum', minimum,
+            '--launching', launching,
             '--patient_name', patient_name,
             '--maximum', maximum,
             '--trigger', trigger,
@@ -149,6 +157,7 @@ def submit_emo_faces():
         port = data.get('port')
         hauteur = data.get('hauteur')
         zoom = data.get('zoom')
+        launching = data.get('launching_text')
         largeur = data.get('largeur')
         baudrate = data.get('baudrate')
         trigger = data.get('trigger')
@@ -162,6 +171,7 @@ def submit_emo_faces():
             '--baudrate', str(baudrate),
             '--trigger', trigger,
             '--hauteur', hauteur,
+            '--launching', launching,
             '--zoom', zoom,
             '--random', str(random),
             '--largeur', largeur,
@@ -189,11 +199,13 @@ def submit_adjectifs():
         trigger = data.get('trigger')
         hauteur = data.get('hauteur')
         largeur = data.get('largeur')
+        launching = data.get('launching_text')
         blocks = data.get('blocks')
         zoom = data.get('zoom')
         entrainement = data.get('entrainement')
         per_block = data.get('per_block')
         print("working here?")
+        print(data)
         subprocess.run([
             sys.executable, 'Python_scripts/Psychopy_Adjectifs.py',
             '--duration', duration,
@@ -203,6 +215,7 @@ def submit_adjectifs():
             '--random', str(random),
             '--baudrate', str(baudrate),
             '--trigger', trigger,
+            '--launching', launching,
             '--hauteur', hauteur,
             '--largeur', largeur,
             '--blocks', blocks,
@@ -234,6 +247,7 @@ def submit_stroop():
         trigger = data.get('trigger')
         hauteur = data.get('hauteur')
         largeur = data.get('largeur')
+        launching = data.get('launching_text')
         random = data.get('random')
         print(data)
         subprocess.Popen([
@@ -244,6 +258,7 @@ def submit_stroop():
             '--activation', str(activation),
             '--baudrate', str(baudrate),
             '--trigger', trigger,
+            '--launching', launching,
             '--hauteur', hauteur,
             '--largeur', largeur,
             '--random', str(random),
@@ -275,8 +290,11 @@ def submit_localizer():
         trigger = data.get('trigger')
         hauteur = data.get('hauteur')
         largeur = data.get('largeur')
+        launching = data.get('launching_text')
         betweenblocks = data.get('betweenblocks')
         random = data.get('random')
+        file = data.get('fileName')
+
 
         print(data)
         subprocess.run([
@@ -289,6 +307,53 @@ def submit_localizer():
             '--baudrate', str(baudrate),
             '--trigger', trigger,
             '--hauteur', hauteur,
+            '--launching', launching,
+            '--zoom', zoom,
+            '--file', file,
+            '--largeur', largeur,
+            '--random', str(random),
+            '--betweenstimuli', betweenstimuli,
+            '--betweenblocks', betweenblocks,
+            '--output_file', output_file,
+        ])
+        print("working here?")
+
+        return jsonify({'status': 'success', 'message': 'Données reçues et script exécuté'})
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)})
+
+
+@app.route('/submit-priming', methods=['POST'])
+def submit_priming():
+    try:
+        print("working heere?")
+        data = request.get_json()
+        duration = data.get('duration')
+        betweenstimuli = data.get('betweenstimuli')
+        blocks = data.get('blocks')
+        output_file = data.get('output_file')
+        activation = data.get('activation')
+        port = data.get('port')
+        zoom = data.get('zoom')
+        baudrate = data.get('baudrate')
+        trigger = data.get('trigger')
+        hauteur = data.get('hauteur')
+        largeur = data.get('largeur')
+        launching = data.get('launching_text')
+        betweenblocks = data.get('betweenblocks')
+        random = data.get('random')
+        print('in priming')
+        print(data)
+        subprocess.run([
+            sys.executable, 'Python_scripts/Psychopy_Priming.py',
+            '--duration', duration,
+            '--blocks', blocks,
+            '--port', port,
+            '--activation', str(activation),
+            '--baudrate', str(baudrate),
+            '--trigger', trigger,
+            '--hauteur', hauteur,
+            '--launching', launching,
             '--zoom', zoom,
             '--largeur', largeur,
             '--random', str(random),
@@ -322,6 +387,7 @@ def submit_images():
         trigger = data.get('trigger')
         hauteur = data.get('hauteur')
         largeur = data.get('largeur')
+        launching = data.get('launching_text')
         random = data.get('random')
         print(data)
         subprocess.run([
@@ -329,6 +395,7 @@ def submit_images():
             '--duration', duration,
             '--file', file,
             '--port', port,
+            '--launching', launching,
             '--activation', str(activation),
             '--baudrate', str(baudrate),
             '--trigger', trigger,
@@ -353,7 +420,6 @@ def submit_videos():
         duration = data.get('duration')
         file = data.get('filePath')
         zoom = data.get('zoom')
-        trigger = data.get('trigger')
         betweenstimuli = data.get('betweenstimuli')
         output_file = data.get('output_file')
         activation = data.get('activation')
@@ -362,6 +428,7 @@ def submit_videos():
         trigger = data.get('trigger')
         hauteur = data.get('hauteur')
         largeur = data.get('largeur')
+        launching = data.get('launching_text')
         random = data.get('random')
         print(data)
         subprocess.run([
@@ -374,6 +441,7 @@ def submit_videos():
             '--baudrate', str(baudrate),
             '--trigger', trigger,
             '--hauteur', hauteur,
+            '--launching', launching,
             '--random', str(random),
             '--largeur', largeur,
             '--betweenstimuli', betweenstimuli,
@@ -386,6 +454,6 @@ def submit_videos():
 
     
 if __name__ == '__main__':
-    webbrowser.open('http://127.0.0.1:5000')
-    #app.run(debug=True)
-    serve(app, host='0.0.0.0', port=5000)
+    #webbrowser.open('http://127.0.0.1:5000')
+    app.run(debug=True)
+    #serve(app, host='0.0.0.0', port=5000)

@@ -15,7 +15,7 @@ from Paradigme_parent import Parente
 class Adjectifs(Parente):
 
     def __init__(self, duration, betweenstimuli, zoom, blocks, entrainement, per_block, filepath, output, port, baudrate,
-                 trigger, activation, hauteur, largeur, random):
+                 trigger, activation, hauteur, largeur, random, launching):
         self.words = self.reading("Input/Paradigme_Adjectifs/"+filepath)
         self.entrainement_words = self.reading("Input/Paradigme_Adjectifs/entrainement.txt")
         self.me_entrainement = self.entrainement_words.copy()
@@ -32,7 +32,7 @@ class Adjectifs(Parente):
         self.reaction_time = []
         self.response = []
         self.keys = ["c","q","d","b"]
-
+        self.launching = launching
         self.stimuli_duration = duration
         self.betweenstimuli = betweenstimuli
         self.zoom = zoom
@@ -56,8 +56,8 @@ class Adjectifs(Parente):
             self.random = False
         print(self.activation)
 
-        self.win = visual.Window(size=(800, 600), fullscr=True)
-        self.explication_texts = super().inputs_texts("Input/Starting_Texts/adjectifs.txt")
+        self.win = visual.Window(size=(800, 600), fullscr=True , units="norm")
+        self.explication_texts = super().inputs_texts("Input/Paradigme_Adjectifs/"+self.launching)
 
         event.globalKeys.add(key='escape', func=self.win.close)
 
@@ -122,6 +122,8 @@ class Adjectifs(Parente):
         texte.draw()
         self.win.flip()
         super().proper_waitkey(self.trigger)
+        super().wait_for_trigger(self.trigger)
+
         self.blocks()
 
 
@@ -152,7 +154,7 @@ class Adjectifs(Parente):
 
 
     def show_1_word(self, mot):
-        texte_5_words = visual.TextStim(self.win, color=[1, 1, 1], wrapWidth=1.5, font="Arial", height=0.1+(0.001*self.zoom))
+        texte_5_words = visual.TextStim(self.win, color=[1, 1, 1], wrapWidth=1.5, font="Arial", height=0.1 + (0.004*self.zoom))
         texte_5_words.text = mot
         texte_5_words.draw()
         self.rect.draw()
@@ -318,6 +320,7 @@ class Adjectifs(Parente):
         longueur = len(self.words)//self.per_block
         hashmap = {"me": longueur, "friend": longueur, "syllabe": longueur}
         clock = core.Clock()
+        fixation_duration = self.betweenstimuli  # en secondes
 
         for x in range(number_of_blocks):
             if len(choice_block)==0:
@@ -340,7 +343,6 @@ class Adjectifs(Parente):
             # Affichage de la croix de fixation pendant 100 secondes
             cross_stim.draw()
             self.win.flip()
-            fixation_duration = self.betweenstimuli  # en secondes
             clock.reset()
 
             while clock.getTime() < fixation_duration:
@@ -356,7 +358,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Exécuter le paradigme Psychopy")
     parser.add_argument("--duration", type=float, required=True, help="Durée en secondes des stimuli")
     parser.add_argument("--file", type=str, help="Chemin vers le fichier de mots", required=False)
-    parser.add_argument("--zoom", type=int, required=True, help="Le zoom sur les adjectifs")
+    parser.add_argument("--launching", type=str, help="Chemin vers le fichier de mots", required=False)
+    parser.add_argument("--zoom", type=float, required=True, help="Le zoom sur les adjectifs")
     parser.add_argument("--output_file", type=str, required=True, help="Nom du fichier d'output")
     parser.add_argument("--betweenstimuli", type=float, required=True, help="Temps entre les stimuli")
     parser.add_argument("--blocks", type=int, required=True, help="Nombre de blocks d'adjectifs")
@@ -375,7 +378,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     paradigm = Adjectifs(args.duration, args.betweenstimuli, args.zoom, args.blocks, args.entrainement, args.per_block,
                          args.file, args.output_file, args.port, args.baudrate, args.trigger, args.activation,
-                        args.hauteur, args.largeur, args.random)
+                        args.hauteur, args.largeur, args.random, args.launching)
     paradigm.lancement()
     paradigm.fin()
 

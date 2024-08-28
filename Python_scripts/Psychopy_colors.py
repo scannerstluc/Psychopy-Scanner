@@ -1,5 +1,6 @@
 import csv
 import os
+import random
 from datetime import datetime
 
 import argparse
@@ -12,8 +13,9 @@ from Paradigme_parent import Parente
 
 
 class Colors(Parente):
-    def __init__(self, duration, betweenstimuli, zoom, langage, filepath, output, port, baudrate, trigger, activation, hauteur, largeur):
-        self.win = visual.Window(size=(800, 600), fullscr=True, color="black")
+    def __init__(self, duration, betweenstimuli, zoom, langage, filepath, output, port, baudrate, trigger, activation,
+                 hauteur, largeur, random, launching):
+        self.win = visual.Window(size=(800, 600), fullscr=True, color="black", units="norm")
         event.globalKeys.add(key='escape', func=self.win.close)
         self.fs = 44100  # fréquence d'échantillonnage
         self.stimuli_duration = duration  # durée de l'enregistrement en secondes
@@ -25,6 +27,7 @@ class Colors(Parente):
         self.timer = core.Clock()  # création de l'horloge
         self.global_timer = core.Clock()
         self.patient_id = output
+        self.launching = launching
         self.onset = []
         self.duration = []
         self.stimuli = []
@@ -38,6 +41,10 @@ class Colors(Parente):
             self.activation = True
         else:
             self.activation = False
+        if random =="True":
+            self.random = True
+        else:
+            self.random = False
         rect_width = largeur
         rect_height = hauteur
         self.rect = visual.Rect(self.win, width=rect_width, height=rect_height, fillColor='white', lineColor='white',
@@ -46,13 +53,13 @@ class Colors(Parente):
 
 
         self.cross_stim = visual.ShapeStim(
-                win=self.win,
-                vertices=((0, -0.03), (0, 0.03), (0, 0), (-0.03, 0), (0.03, 0)),  # Utilisation d'unités normalisées
-                lineWidth=3,
-                closeShape=False,
-                lineColor="white",
-                units='height'  # Utilisation d'unités basées sur la hauteur de l'écran
-            )
+            win=self.win,
+            vertices=((0, -0.03), (0, 0.03), (0, 0), (-0.03, 0), (0.03, 0)),  # Utilisation d'unités normalisées
+            lineWidth=3,
+            closeShape=False,
+            lineColor="white",
+            units='height'  # Utilisation d'unités basées sur la hauteur de l'écran
+        )
 
     def reading(self,filename):
         words = []
@@ -123,15 +130,18 @@ class Colors(Parente):
 
 
     def lancement(self):
-        texts= super().inputs_texts("Input/Starting_Texts/couleur.txt")
-        super().launching_texts(self.win, texts)
-        print(self.trigger)
-        super().proper_waitkey(self.trigger)
-        text_after= visual.TextStim(self.win, text="Le Scanner va maintenant démarrer.", alignText="center", wrapWidth=1.5, font="Arial")
-        text_after.draw()
-        self.win.flip()
+        texts= super().inputs_texts("Input/Paradigme_Couleur/"+self.launching)
+        super().launching_texts(self.win, texts,self.trigger)
         words, colors, stimuli_names=self.reading("Input/Paradigme_Couleur/"+self.filepath)
-        text_stim = visual.TextStim(self.win, wrapWidth=1.5, font="Arial", height=0.1+(0.01*self.zoom))
+        if self.random:
+            print("on y entre")
+            combined = list(zip(words, colors, stimuli_names))
+            random.shuffle(combined)
+            words_shuffled, colors_shuffled, stimuli_names_shuffled = zip(*combined)
+            words = list(words_shuffled)
+            colors= list(colors_shuffled)
+            stimuli_names = list(stimuli_names_shuffled)
+        text_stim = visual.TextStim(self.win, wrapWidth=1.5, font="Arial", height=0.1 + (0.005*self.zoom))
         count=0
         super().wait_for_trigger(self.trigger)
         self.global_timer.reset()
@@ -183,11 +193,14 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Exécuter le paradigme Psychopy")
     parser.add_argument("--duration", type=float, required=True, help="Durée en secondes des stimuli")
     parser.add_argument("--file", type=str, help="Chemin vers le fichier de mots", required=False)
-    parser.add_argument("--zoom", type=int, required=True, help="Pourcentage Zoom")
+    parser.add_argument("--launching", type=str, help="Chemin vers le fichier de mots", required=False)
+    parser.add_argument("--zoom", type=float, required=True, help="Pourcentage Zoom")
     parser.add_argument("--output_file", type=str, required=True, help="Nom du fichier d'output")
     parser.add_argument("--betweenstimuli", type=float, required=True, help="Temps entre les stimuli")
     parser.add_argument("--choice", type=str, required=True, help="Choix de la langue")
     parser.add_argument("--activation", type=str, required=True, help="Pour le boitier avec les EEG")
+    parser.add_argument("--random", type=str, required=True, help="Ordre random stimuli")
+
 
     parser.add_argument('--port', type=str, required=False, help="Port")
     parser.add_argument('--baudrate', type=int, required=False, help="Speed port")
@@ -199,7 +212,7 @@ if __name__ == "__main__":
     print(args.trigger)
     colors = Colors(args.duration, args.betweenstimuli, args.zoom, args.choice, args.file, args.output_file,
                     args.port, args.baudrate, args.trigger, args.activation,
-                        args.hauteur, args.largeur).lancement()
+                        args.hauteur, args.largeur, args.random, args.launching).lancement()
 
 
 #Colors(duration=2,betweenstimuli=1,zoom=10,filepath="colors_list.txt", output="wififi").lancement()

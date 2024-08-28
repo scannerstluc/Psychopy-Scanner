@@ -10,7 +10,7 @@ from Paradigme_parent import Parente
 
 
 class launch_cyberball(Parente) :
-    def __init__(self, phase1, transition, exclusion, minimum, maximum, patient_name, photo) :
+    def __init__(self, phase1, transition, exclusion, minimum, maximum, patient_name, photo, launching, trigger) :
 
         self.win = visual.Window(size=(800, 600), units="norm", fullscr=True)
 
@@ -59,6 +59,8 @@ class launch_cyberball(Parente) :
         self.onset = []
         self.duration = []
         self.phase = []
+        self.launching = launching
+        self.trigger = trigger
 
     def redimension(self, hauteur, largeur):
         multi = 204/hauteur
@@ -126,6 +128,9 @@ class launch_cyberball(Parente) :
 
 
     def lancement(self):
+        texts = super().inputs_texts("Input/Cyberball/"+self.launching)
+        super().launching_texts(self.win, texts,self.trigger)
+        super().wait_for_trigger(self.trigger)
         texte = visual.TextStim(self.win, color=[1, 1, 1], alignText="left", wrapWidth=1.5, font='Arial')
         Sans_point = ("En attente de tous les participants")
         Premier_texte = ("En attente de tous les participants.")
@@ -283,10 +288,12 @@ if __name__ == "__main__":
     parser.add_argument("--patient_name", type=str, required=True, help="Nom du patient")
 
     parser.add_argument("--filePath", type=str, help="Chemin vers le fichier de mots", required=False)
+    parser.add_argument("--launching", type=str, help="Chemin vers le fichier de mots", required=False)
     parser.add_argument("--output_file", type=str, required=True, help="Nom du fichier d'output")
     parser.add_argument('--trigger', type=str, required=True, help="caractère pour lancer le programme")
     args = parser.parse_args()
 
-    C=launch_cyberball(args.premiere_phase,args.transition,args.exclusion,args.minimum,args.maximum, args.patient_name, args.filePath)
+    C=launch_cyberball(args.premiere_phase,args.transition,args.exclusion,args.minimum,args.maximum,
+                       args.patient_name, args.filePath, args.launching, args.trigger)
     C.lancement()
 

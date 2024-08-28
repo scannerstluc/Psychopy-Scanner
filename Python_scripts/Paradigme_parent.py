@@ -27,7 +27,7 @@ class Parente(ABC):
     def inputs_texts(self,chemin):
         with open(chemin, 'r', encoding='utf-8') as file:
             contenu = file.read()
-        texts = re.findall(r'\|(.*?)\|', contenu, re.DOTALL)
+        texts = re.findall(r'\*(.*?)\*', contenu, re.DOTALL)
         return texts
 
     def wait_for_trigger(self, trigger='s'):
@@ -40,13 +40,19 @@ class Parente(ABC):
             if donottake not in keys:  # Condition pour quitter la boucle
                 break
 
-    def launching_texts(self,win,textes):
-        for x in range (len(textes)):
+    def launching_texts(self,win,textes,trigger):
+        print("???")
+        for x in range (len(textes)-1):
+            print("wtf")
             self.Premier_texte = textes[x]
             texte = visual.TextStim(win, text=self.Premier_texte, color=[1, 1, 1], alignText="left", wrapWidth=1.5,
                                     font='Arial')
             texte.draw()
             win.flip()
+            self.proper_waitkey(trigger)
+        text_after= visual.TextStim(win, text=textes[x+1], alignText="center", wrapWidth=1.5, font="Arial")
+        text_after.draw()
+        win.flip()
     def send_character(self, port, baud_rate):
         char = "t"
         try:

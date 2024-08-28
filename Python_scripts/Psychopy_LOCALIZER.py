@@ -12,9 +12,9 @@ from Paradigme_parent import Parente
 
 
 class Localizer(Parente):
-    def __init__(self, duration, betweenstimuli, number_of_block, number_per_block, output, port, baudrate, trigger,
-                 activation, hauteur, largeur, random):
-        self.win = visual.Window(size=(800, 600), fullscr=True)
+    def __init__(self, duration, betweenstimuli, betweenblocks, number_of_block, number_per_block, output, port, baudrate, trigger,
+                 activation, hauteur, largeur, random, zoom, launching, file):
+        self.win = visual.Window(size=(800, 600), fullscr=True, units="norm")
         self.cross_stim = visual.ShapeStim(
             win=self.win,
             vertices=((0, -0.03), (0, 0.03), (0, 0), (-0.03, 0), (0.03, 0)),  # Utilisation d'unités normalisées
@@ -30,7 +30,11 @@ class Localizer(Parente):
         self.betweenstimuli = betweenstimuli
         self.number_of_blocks = number_of_block
         self.number_per_block = number_per_block
+        self.betweenblocks= betweenblocks
         self.output = output
+        self.file = file
+        self.launching = launching
+        self.zoom = zoom
         self.voices = []
         self.onset = []
         self.duration = []
@@ -52,7 +56,7 @@ class Localizer(Parente):
         else:
             self.random = False
 
-        self.ordre=self.reading("Input/Paradigme_LOCALIZER/block_order.txt")
+        self.ordre=self.reading("Input/Paradigme_LOCALIZER/"+self.file)
         print(self.activation)
         print(self.ordre)
         rect_width = largeur
@@ -62,10 +66,24 @@ class Localizer(Parente):
         self.rect.pos = (self.win.size[0] / 2 - rect_width / 2, self.win.size[1] / 2 - rect_height / 2)
 
     def lancement(self):
+        texts = super().inputs_texts("Input/Paradigme_LOCALIZER/"+self.launching)
+        super().launching_texts(self.win, texts, self.trigger)
         super().wait_for_trigger(self.trigger)
+        self.global_timer.reset()
         for x in range (self.number_of_blocks):
+            self.cross_stim.draw()
+            self.win.flip()
+            self.onset.append(self.global_timer.getTime())
+            self.timer.reset()
+            print(self.betweenblocks)
+            while self.timer.getTime() < self.betweenblocks:
+                pass
+            self.duration.append(self.timer.getTime())
+            self.trial_type.append("Fixation")
+            self.stim_file.append("None")
+            self.block_type.append("None")
             if self.random:
-                self.show_block(random.choice(self.keys),self.number_per_block)
+                self.show_block(random.choice(self.ordre),self.number_per_block)
             else:
                 y = x%8
                 self.show_block(self.ordre[y],self.number_per_block)
@@ -124,20 +142,12 @@ class Localizer(Parente):
                 pos=(0, 0),
                 size=None
             )
+            image_stim.size = 0.7 + (0.012*self.zoom)
             #image_stim.size= 0.8+(0.3*self.zoom/100)
             liste_image_win.append(image_stim)
         count=0
+        limite = len(liste_image_win)
         for image_stim in liste_image_win:
-            self.onset.append(self.global_timer.getTime())
-            self.cross_stim.draw()
-            self.win.flip()
-            self.timer.reset()  # Réinitialiser le timer à chaque nouvelle image
-            while self.timer.getTime() < self.betweenstimuli:
-                pass
-            self.duration.append(self.timer.getTime())
-            self.trial_type.append("Fixation")
-            self.stim_file.append("None")
-            self.block_type.append("None")
             self.onset.append(self.global_timer.getTime())
             image_stim.draw()
             self.rect.draw()
@@ -151,6 +161,17 @@ class Localizer(Parente):
             self.trial_type.append("Stimuli")
             self.stim_file.append(toshow[count])
             self.block_type.append(group_name)
+            if count != limite-1:
+                self.onset.append(self.global_timer.getTime())
+                self.cross_stim.draw()
+                self.win.flip()
+                self.timer.reset()  # Réinitialiser le timer à chaque nouvelle image
+                while self.timer.getTime() < self.betweenstimuli:
+                    pass
+                self.duration.append(self.timer.getTime())
+                self.trial_type.append("Fixation")
+                self.stim_file.append("None")
+                self.block_type.append("None")
             count+=1
 
 if __name__ == "__main__":
@@ -158,10 +179,15 @@ if __name__ == "__main__":
     parser.add_argument("--duration", type=float, required=True, help="Durée en secondes des stimuli")
     parser.add_argument("--blocks", type=int, required=True, help="Pourcentage Zoom")
     parser.add_argument("--per_block", type=int, required=True, help="Pourcentage Zoom")
+    parser.add_argument("--zoom", type=float, required=True, help="Pourcentage Zoom")
     parser.add_argument("--output_file", type=str, required=True, help="Nom du fichier d'output")
+    parser.add_argument("--file", type=str, required=True, help="Nom du fichier d'input")
     parser.add_argument("--betweenstimuli", type=float, required=True, help="Temps entre les stimuli")
+    parser.add_argument("--betweenblocks", type=float, required=True, help="Temps entre les blocks")
     parser.add_argument("--activation", type=str, required=True, help="Pour le boitier avec les EEG")
     parser.add_argument("--random", type=str, required=True, help="Ordre random stimuli")
+    parser.add_argument("--launching", type=str, help="Chemin vers le fichier de mots", required=False)
+
 
     parser.add_argument('--port', type=str, required=False, help="Port")
     parser.add_argument('--baudrate', type=int, required=False, help="Speed port")
@@ -171,7 +197,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    localizer = Localizer(args.duration,args.betweenstimuli,args.blocks,args.per_block, args.output_file,
+    localizer = Localizer(args.duration,args.betweenstimuli, args.betweenblocks, args.blocks,args.per_block, args.output_file,
                           args.port, args.baudrate, args.trigger, args.activation,
-                         args.hauteur, args.largeur, args.random)
+                         args.hauteur, args.largeur, args.random, args.zoom, args.launching, args.file)
     localizer.lancement()

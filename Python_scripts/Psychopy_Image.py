@@ -1,6 +1,7 @@
 import argparse
 import csv
 import os
+import random
 from datetime import datetime
 
 from Paradigme_parent import Parente
@@ -10,31 +11,34 @@ import serial
 
 
 class static_image(Parente):
-    def __init__(self, duration, betweenstimuli, file, zoom, output, port, baudrate, trigger, activation, hauteur, largeur):
+    def __init__(self, duration, betweenstimuli, file, zoom, output, port, baudrate, trigger, activation, hauteur,
+                 largeur, random, launching):
         self.duration = duration #args.duration, args.betweenstimuli, args.file, args.zoom, args.port, args.baudrate, args.trigger  ,args.output_file)
         self.betweenstimuli = betweenstimuli
         self.file = file
         self.zoom = zoom
         self.click_times = []
-        self.win = visual.Window(
-            fullscr=True,
-            #color=[-0.0118, 0.0039, -0.0196],
-            units="pix"
-        )
+        self.win = visual.Window(size=(800, 600), fullscr=True, units="norm")
         self.mouse = event.Mouse(win=self.win)
         event.globalKeys.add(key='escape', func=self.win.close)
         self.output = output
         self.port = port
+        self.global_timer = core.Clock() #Horloge principale
         self.baudrate = baudrate
         self.trigger = trigger
+        self.launching = launching
         if activation == "True":
             self.activation = True
         else:
             self.activation = False
+        if random == "True":
+            self.random = True
+        else:
+            self.random = False
 
         rect_width = largeur
         rect_height = hauteur
-        self.rect = visual.Rect(self.win, width=rect_width, height=rect_height, fillColor='white', lineColor='white', units='pix')
+        self.rect = visual.Rect(self.win, width=rect_width, height=rect_height, fillColor='white', lineColor='white', units='norm')
         self.rect.pos = (self.win.size[0] / 2 - rect_width / 2, self.win.size[1] / 2 - rect_height / 2)
 
 
@@ -53,21 +57,22 @@ class static_image(Parente):
     def static_images_psychopy(self, chemin, duration, betweenstimuli, zoom, trigger):
         chemin = "Input/Paradigme_images_statiques/" + chemin
         images, orientation = self.reading(chemin)
+        if self.random:
+            random.shuffle(images)
         cross_stim = visual.ShapeStim(
             win=self.win,
-            vertices=((0, -20), (0, 20), (0, 0), (-20, 0), (20, 0)),
+            vertices=((0, -0.03), (0, 0.03), (0, 0), (-0.03, 0), (0.03, 0)),  # Utilisation d'unités normalisées
             lineWidth=3,
             closeShape=False,
-            lineColor="white"
+            lineColor="white",
+            units='height'  # Utilisation d'unités basées sur la hauteur de l'écran
         )
-        thezoom = 0.8+(0.3*zoom/100)
+        thezoom = 0.7 + (0.012*self.zoom)
         #thezoom = 1 if zoom else 0.5
         timer = core.Clock()  # Horloge réinitialisée à chaque stimuli
         stimulus_times = []  # Liste pour enregistrer la durée des stimuli
         stimulus_apparition=[] #Liste pour enregistrer le timing d'apparition des stimuli
         stimuli_liste = [] #Liste pour enregistrer les noms des stimuli, si c'est une croix ce sera Fixation sinon le nom du fichier
-        cross_stim.draw()
-        self.win.flip()
         liste_image_win = []
         count = 0
         for image in images:
@@ -78,16 +83,23 @@ class static_image(Parente):
                 pos=(0, 0),
                 size=None
             )
-            image_stim.size *= thezoom
+            image_stim.size = thezoom
             image_stim.ori = orientation[count]
             liste_image_win.append(image_stim)
             stimuli_liste.append(image)
             stimuli_liste.append("Fixation")
             count+=1
 
-
+        texts = super().inputs_texts("Input/Paradigme_images_statiques/"+self.launching)
+        super().launching_texts(self.win, texts,self.trigger)
         super().wait_for_trigger(self.trigger)
-        global_timer = core.Clock() #Horloge principale
+        self.global_timer.reset()
+        cross_stim.draw()
+        self.win.flip()
+        timer.reset()
+        while timer.getTime() < betweenstimuli:
+            pass
+
 
         for image_stim in liste_image_win:
             image_stim.draw()
@@ -95,7 +107,7 @@ class static_image(Parente):
             self.win.flip()
             if self.activation:
                 super().send_character(self.port,self.baudrate)
-            stimulus_apparition.append(global_timer.getTime())
+            stimulus_apparition.append(self.global_timer.getTime())
             timer.reset()  # Réinitialiser le timer à chaque nouvelle image
             clicked = False  # Variable pour vérifier si un clic a été détecté
             clicked_time = "None"
@@ -112,7 +124,7 @@ class static_image(Parente):
             cross_stim.draw()
             self.win.flip()
             self.click_times.append(clicked_time)
-            stimulus_apparition.append(global_timer.getTime())
+            stimulus_apparition.append(self.global_timer.getTime())
             timer.reset() # Réinitialiser le timer à chaque nouvelle image
             while timer.getTime() < betweenstimuli:
                 pass
@@ -172,9 +184,13 @@ if __name__ == "__main__":
     parser.add_argument("--duration", type=float, required=True, help="Durée en secondes des stimuli")
     parser.add_argument("--betweenstimuli", type=float, required=True, help="Durée en secondes entre les stimuli")
     parser.add_argument("--file", type=str, help="Chemin du fichier contenant les stimuli")
-    parser.add_argument("--zoom", type=int, required=True, help="Pourcentage Zoom")
+    parser.add_argument("--zoom", type=float, required=True, help="Pourcentage Zoom")
     parser.add_argument("--output_file", type=str, required=True, help="Nom du fichier d'output")
     parser.add_argument("--activation", type=str, required=True, help="Pour le boitier avec les EEG")
+    parser.add_argument("--random", type=str, required=True, help="Ordre random stimuli")
+    parser.add_argument("--launching", type=str, help="Chemin vers le fichier de mots", required=False)
+
+
 
     parser.add_argument('--port', type=str, required=False, help="Port")
     parser.add_argument('--baudrate', type=int, required=False, help="Speed port")
@@ -186,5 +202,5 @@ if __name__ == "__main__":
     print(args.hauteur)
     images = static_image(args.duration, args.betweenstimuli, args.file, args.zoom, args.output_file,
                           args.port, args.baudrate, args.trigger, args.activation, args.hauteur,
-                          args.largeur)
+                          args.largeur, args.random, args.launching)
     images.lancement()

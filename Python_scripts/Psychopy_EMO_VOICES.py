@@ -1,5 +1,6 @@
 import csv
 import os
+import random
 from datetime import datetime
 
 import argparse
@@ -9,7 +10,8 @@ from Paradigme_parent import Parente
 
 class voices(Parente):
 
-    def __init__(self, duration, betweenstimuli, file, output, port, baudrate, trigger, activation, hauteur, largeur):
+    def __init__(self, duration, betweenstimuli, file, output, port, baudrate, trigger, activation, hauteur,
+                 largeur, random, launching):
         self.win = visual.Window(size=(800, 600), fullscr=True)
         self.cross_stim = visual.ShapeStim(
             win=self.win,
@@ -17,7 +19,7 @@ class voices(Parente):
             lineWidth=3,
             closeShape=False,
             lineColor="white",
-            units='height'
+            units='height'  # Utilisation d'unités basées sur la hauteur de l'écran
         )
         event.globalKeys.add(key='escape', func=self.win.close)
         self.mouse = event.Mouse(win=self.win)
@@ -25,6 +27,7 @@ class voices(Parente):
         self.stimuli_duration = duration
         self.betweenstimuli = betweenstimuli
         self.output = output
+        self.launching = launching
         self.timer = core.Clock()
         self.global_timer = core.Clock()
         self.voices=[]
@@ -40,6 +43,10 @@ class voices(Parente):
             self.activation = True
         else:
             self.activation = False
+        if random == "True":
+            self.random = True
+        else:
+            self.random=False
         print(self.activation)
         rect_width = largeur
         rect_height = hauteur
@@ -64,8 +71,13 @@ class voices(Parente):
                 tsv_writer.writerow([onset[i], duration[i], trial_type[i], reaction[i], file_stimuli[i]])
 
     def lancement(self):
+        texts = super().inputs_texts("Input/Paradigme_EMO_VOICES/"+self.launching)
+        super().launching_texts(self.win, texts, self.trigger)
         self.voices = self.reading("Input/Paradigme_EMO_VOICES/"+self.file)
+        if self.random:
+            random.shuffle(self.voices)
         super().wait_for_trigger(self.trigger)
+        self.global_timer.reset()
         for x in self.voices:
             print(x)
             custom_sound = sound.Sound("Input/Paradigme_EMO_VOICES/emo_voices/"+x)
@@ -112,6 +124,10 @@ if __name__ == "__main__":
     parser.add_argument("--output_file", type=str, required=True, help="Nom du fichier d'output")
     parser.add_argument("--betweenstimuli", type=float, required=True, help="Temps entre les stimuli")
     parser.add_argument("--activation", type=str, required=True, help="Pour le boitier avec les EEG")
+    parser.add_argument("--random", type=str, required=True, help="Ordre random stimuli")
+    parser.add_argument("--launching", type=str, help="Chemin vers le fichier de mots", required=False)
+
+
 
     parser.add_argument('--port', type=str, required=False, help="Port")
     parser.add_argument('--baudrate', type=int, required=False, help="Speed port")
@@ -121,6 +137,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     paradigm = voices(args.duration, args.betweenstimuli, args.file, args.output_file, args.port, args.baudrate,
-                      args.trigger, args.activation, args.hauteur, args.largeur)
+                      args.trigger, args.activation, args.hauteur, args.largeur, args.random, args.launching)
     paradigm.lancement()
 

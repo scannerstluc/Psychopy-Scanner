@@ -14,9 +14,8 @@ class Emo_Face(Parente):
 
 
     def __init__(self, duration, betweenstimuli, filepath, output, port, baudrate, trigger, activation, hauteur,
-                 largeur, zoom, random):
+                 largeur, zoom, random, launching):
         self.onset = []
-        self.win = visual.Window(size=(800, 600), fullscr=True)
         self.duration = []
         self.stimuli_file =[]
         self.trial_type = []
@@ -29,6 +28,7 @@ class Emo_Face(Parente):
         self.baudrate = baudrate
         self.zoom = zoom
         self.trigger = trigger
+        self.launching = launching
         self.win = visual.Window(size=(800, 600), fullscr=True, units="norm")
         if activation == "True":
             self.activation = True
@@ -65,16 +65,6 @@ class Emo_Face(Parente):
 
     def lancement(self):
         self.mouse = event.Mouse(win=self.win)
-        texts = super().inputs_texts("Input/Starting_Texts/emo_face.txt")
-        super().launching_texts(self.win, texts)
-        print(self.trigger)
-        super().proper_waitkey(self.trigger)
-        text_after = visual.TextStim(self.win, text="Le Scanner va maintenant démarrer.", alignText="center",
-                                     wrapWidth=1.5, font="Arial")
-        text_after.draw()
-        self.win.flip()
-        global_timer=core.Clock()
-        timer = core.Clock()
         event.globalKeys.add(key='escape', func=self.win.close)
 
         cross_stim = visual.ShapeStim(
@@ -101,6 +91,7 @@ class Emo_Face(Parente):
             )
             prefix="Input/Paradigme_EMO_FACE/EMO_faces_list/"
             suffix = image
+            print(image)
             image = "Input/Paradigme_EMO_FACE/EMO_faces_list/"+image
             #image_stim.image=image
             image = Image.open(image)
@@ -114,8 +105,11 @@ class Emo_Face(Parente):
 
             #image_stim.size = (thezoom,thezoom)
             images.append(image_stim)
-
+        texts = super().inputs_texts("Input/Paradigme_EMO_FACE/"+self.launching)
+        super().launching_texts(self.win, texts, self.trigger)
         super().wait_for_trigger(self.trigger)
+        global_timer = core.Clock()
+        timer = core.Clock()
         for image_stim in images:
             timer.reset()
             cross_stim.draw()
@@ -167,6 +161,8 @@ if __name__ == "__main__":
     parser.add_argument("--activation", type=str, required=True, help="Pour le boitier avec les EEG")
     parser.add_argument("--zoom", type=float, required=True, help="Pourcentage Zoom")
     parser.add_argument("--random", type=str, required=True, help="Ordre random stimuli")
+    parser.add_argument("--launching", type=str, help="Chemin vers le fichier de mots", required=False)
+
 
 
 
@@ -185,7 +181,7 @@ if __name__ == "__main__":
     print("oki")
     paradigm = Emo_Face(args.duration, args.betweenstimuli, args.file,
                         args.output_file, args.port, args.baudrate, args.trigger, args.activation,
-                        args.hauteur, args.largeur, args.zoom, args.random)
+                        args.hauteur, args.largeur, args.zoom, args.random, args.launching)
     paradigm.lancement()
 
 

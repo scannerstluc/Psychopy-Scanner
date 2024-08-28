@@ -35,8 +35,6 @@ class static_image(Parente):
             self.random = True
         else:
             self.random = False
-        print(largeur)
-        print(hauteur)
         rect_width = largeur
         rect_height = hauteur
         self.rect = visual.Rect(self.win, width=rect_width, height=rect_height, fillColor='white', lineColor='white',
@@ -82,15 +80,19 @@ class static_image(Parente):
             image_stim = visual.ImageStim(
                 win=self.win,
                 image=image_path,
-                pos=(0, 0),
-                size=None
+                pos=(0, 0)
             )
-            image_stim.size = thezoom
-            image_stim.ori = orientation[count]
+
+            base_width, base_height = image_stim.size  # Taille par défaut de l'image
+            zoom_factor = 0.5 + (0.012 * self.zoom)  # Ajustement du facteur de zoom
+
+            # Ajuster la taille en fonction du facteur de zoom
+            image_stim.size = (base_width * zoom_factor, base_height * zoom_factor)
+            image_stim.ori = orientation[count]  # Orientation de l'image
             liste_image_win.append(image_stim)
             stimuli_liste.append(image)
             stimuli_liste.append("Fixation")
-            count+=1
+            count += 1
 
         texts = super().inputs_texts("Input/Paradigme_images_statiques/"+self.launching)
         super().launching_texts(self.win, texts,self.trigger)

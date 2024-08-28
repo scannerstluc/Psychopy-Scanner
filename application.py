@@ -342,6 +342,7 @@ def submit_priming():
         launching = data.get('launching_text')
         betweenblocks = data.get('betweenblocks')
         random = data.get('random')
+        file = data.get('fileName')
         print('in priming')
         print(data)
         subprocess.run([
@@ -350,6 +351,7 @@ def submit_priming():
             '--blocks', blocks,
             '--port', port,
             '--activation', str(activation),
+            '--file', file,
             '--baudrate', str(baudrate),
             '--trigger', trigger,
             '--hauteur', hauteur,

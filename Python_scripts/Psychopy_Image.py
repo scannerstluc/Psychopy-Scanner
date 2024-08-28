@@ -35,10 +35,12 @@ class static_image(Parente):
             self.random = True
         else:
             self.random = False
-
+        print(largeur)
+        print(hauteur)
         rect_width = largeur
         rect_height = hauteur
-        self.rect = visual.Rect(self.win, width=rect_width, height=rect_height, fillColor='white', lineColor='white', units='norm')
+        self.rect = visual.Rect(self.win, width=rect_width, height=rect_height, fillColor='white', lineColor='white',
+                                units='pix')
         self.rect.pos = (self.win.size[0] / 2 - rect_width / 2, self.win.size[1] / 2 - rect_height / 2)
 
 

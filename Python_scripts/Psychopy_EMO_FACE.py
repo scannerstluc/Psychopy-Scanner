@@ -87,6 +87,7 @@ class Emo_Face(Parente):
             image_stim = visual.ImageStim(
                 win=self.win,
                 pos=(0, 0),
+                image = "Input/Paradigme_EMO_FACE/EMO_faces_list/"+image,
                 size=None
             )
             prefix="Input/Paradigme_EMO_FACE/EMO_faces_list/"
@@ -94,17 +95,13 @@ class Emo_Face(Parente):
             print(image)
             image = "Input/Paradigme_EMO_FACE/EMO_faces_list/"+image
             #image_stim.image=image
-            image = Image.open(image)
-            largeur_actuelle, hauteur_actuelle = image_stim.size
-            new_hauteur, new_largeur = self.redimension(hauteur_actuelle, largeur_actuelle)
-            image_redimensionnee = image.resize((int(new_largeur), int(new_hauteur)), Image.LANCZOS)
-            if os.path.exists(prefix+"1"+suffix):
-                os.remove(prefix+"1"+suffix)
-            image_redimensionnee.save(prefix+"1"+suffix)
-            image_stim.image=prefix+"1"+suffix
+            base_width, base_height = image_stim.size  # Taille par défaut de l'image
+            zoom_factor = 0.5+ (0.012 * self.zoom)  # Ajustement du facteur de zoom
 
-            #image_stim.size = (thezoom,thezoom)
+            # Ajuster la taille en fonction du facteur de zoom
+            image_stim.size = (base_width * zoom_factor, base_height * zoom_factor)
             images.append(image_stim)
+
         texts = super().inputs_texts("Input/Paradigme_EMO_FACE/"+self.launching)
         super().launching_texts(self.win, texts, self.trigger)
         super().wait_for_trigger(self.trigger)

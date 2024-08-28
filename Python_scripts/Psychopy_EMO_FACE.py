@@ -96,7 +96,7 @@ class Emo_Face(Parente):
             image = "Input/Paradigme_EMO_FACE/EMO_faces_list/"+image
             #image_stim.image=image
             base_width, base_height = image_stim.size  # Taille par défaut de l'image
-            zoom_factor = 0.5+ (0.012 * self.zoom)  # Ajustement du facteur de zoom
+            zoom_factor = 0.2+ (0.012 * self.zoom)  # Ajustement du facteur de zoom
 
             # Ajuster la taille en fonction du facteur de zoom
             image_stim.size = (base_width * zoom_factor, base_height * zoom_factor)

@@ -1,4 +1,5 @@
 import argparse
+import copy
 import csv
 import os
 from collections import defaultdict
@@ -11,9 +12,9 @@ from Paradigme_parent import Parente
 
 
 
-class Localizer(Parente):
+class Priming(Parente):
     def __init__(self, duration, betweenstimuli, betweenblocks, number_of_block, output, port, baudrate, trigger,
-                 activation, hauteur, largeur, random, zoom, launching):
+                 activation, hauteur, largeur, random, zoom, launching, file):
         self.win = visual.Window(size=(800, 600), fullscr=True, units="norm")
         self.cross_stim = visual.ShapeStim(
             win=self.win,
@@ -23,6 +24,7 @@ class Localizer(Parente):
             lineColor="white",
             units='height'
         )
+        self.mouse = event.Mouse(win=self.win)
         event.globalKeys.add(key='escape', func=self.win.close)
         self.timer = core.Clock()
         self.global_timer = core.Clock()
@@ -33,6 +35,8 @@ class Localizer(Parente):
         self.output = output
         self.launching = launching
         self.zoom = zoom
+        self.file = file
+        self.click_times = []
         self.voices = []
         self.onset = []
         self.duration = []
@@ -54,18 +58,38 @@ class Localizer(Parente):
         else:
             self.random = False
 
-        self.ordre=self.reading("Input/Paradigme_Priming/block_order.txt")
+        self.ordre=self.reading("Input/Paradigme_Priming/"+self.file)
+        self.real_groups = self.real_reading("Input/Paradigme_Priming/" + self.file)
+        self.copy_real_groups = copy.deepcopy(self.real_groups)
         rect_width = largeur
         rect_height = hauteur
         self.rect = visual.Rect(self.win, width=rect_width, height=rect_height, fillColor='white', lineColor='white',
                                 units='pix')
         self.rect.pos = (self.win.size[0] / 2 - rect_width / 2, self.win.size[1] / 2 - rect_height / 2)
+    def real_reading(self,filename):
+        with open(filename, 'r') as fichier:
+            lignes = fichier.readlines()
+        lignes = [ligne.strip() for ligne in lignes]
+        groupes = []
+        groupe_actuel = []
 
+        for ligne in lignes:
+            if ligne:
+                groupe_actuel.append(ligne)
+            else:
+                if groupe_actuel:
+                    groupes.append(groupe_actuel)
+                    groupe_actuel = []
+        if groupe_actuel:
+            groupes.append(groupe_actuel)
+        print(groupes[0])
+        return groupes
     def lancement(self):
-        texts = super().inputs_texts("Input/Paradigme_LOCALIZER/" + self.launching)
+        texts = super().inputs_texts("Input/Paradigme_Priming/" + self.launching)
         super().launching_texts(self.win, texts, self.trigger)
         super().wait_for_trigger(self.trigger)
         self.global_timer.reset()
+        index_of_groups = len(self.real_groups) - 1
         for x in range (self.number_of_blocks):
             self.cross_stim.draw()
             self.win.flip()
@@ -74,14 +98,15 @@ class Localizer(Parente):
             while self.timer.getTime() < self.betweenblocks:
                 pass
             self.duration.append(self.timer.getTime())
+            self.click_times.append("None")
             self.trial_type.append("Fixation")
             self.stim_file.append("None")
             self.block_type.append("None")
             if self.random:
-                self.show_block(random.choice(self.keys),2)
+                self.show_block(random.randint(0,index_of_groups),2)
             else:
-                y = x%12
-                self.show_block(self.ordre[y], 2)
+                y = x % index_of_groups
+                self.show_block(y, 2)
         self.write_tsv(self.onset,self.duration,self.block_type, self.stim_file, self.trial_type,self.output)
 
     def reading(self,filename):
@@ -93,9 +118,9 @@ class Localizer(Parente):
 
         with open(filename, mode='w', newline='') as file:
             tsv_writer = csv.writer(file, delimiter='\t')
-            tsv_writer.writerow(['onset', 'duration', "block_type" ,'stim_file','trial_type' ])
+            tsv_writer.writerow(['onset', 'duration', "reaction", "block_index" ,'stim_file','trial_type' ])
             for i in range(len(onset)):
-                tsv_writer.writerow([onset[i], duration[i], block_type[i], file_stimuli[i], trial_type[i]])
+                tsv_writer.writerow([onset[i], duration[i], self.click_times[i], block_type[i], file_stimuli[i], trial_type[i]])
     def get_groups_and_keys(self):
         import os
         print("Getting groups and keys...")
@@ -109,21 +134,21 @@ class Localizer(Parente):
             self.keys.append(key)
 
 
-    def show_block(self, group_name, number_per_block):
+    def show_block(self, index, number_per_block):
         toshow=[]
         while len(toshow)<number_per_block:
-            if self.groups[group_name] != []:
+            if self.real_groups[index] != []:
                 if self.random:
-                    stimuli=random.choice(self.groups[group_name])
+                    stimuli = random.choice(self.real_groups[index])
                 else:
-                    stimuli=self.groups[group_name][0]
-                self.groups[group_name].remove(stimuli)
+                    stimuli = self.real_groups[index][0]
+                self.real_groups[index].remove(stimuli)
                 toshow.append(stimuli)
             else:
                 if self.random:
-                    stimuli=random.choice(self.groups[group_name+"1"])
+                    stimuli = random.choice(self.copy_real_groups[index])
                 else:
-                    stimuli=self.groups[group_name+"1"][0]
+                    stimuli = self.copy_real_groups[index]
                 toshow.append(stimuli)
         liste_image_win=[]
         for image in toshow:
@@ -134,7 +159,9 @@ class Localizer(Parente):
                 pos=(0, 0),
                 size=None
             )
-            image_stim.size = 0.7 + (0.012*self.zoom)
+            base_width, base_height = image_stim.size
+            zoom = 0.5 + (0.012 * self.zoom)
+            image_stim.size = (base_width * zoom, base_height * zoom)
             #image_stim.size= 0.8+(0.3*self.zoom/100)
             liste_image_win.append(image_stim)
         count=0
@@ -144,15 +171,23 @@ class Localizer(Parente):
             image_stim.draw()
             self.rect.draw()
             self.win.flip()
+            clicked = False  # Variable pour vérifier si un clic a été détecté
+            clicked_time = "None"
             if self.activation:
                 super().send_character(self.port,self.baudrate)
             self.timer.reset()  # Réinitialiser le timer à chaque nouvelle image
             while self.timer.getTime() < self.stimuli_duration:
-                pass
+                button = self.mouse.getPressed()  # Mise à jour de l'état des boutons de la souris
+                if any(button):
+                    if not clicked:  # Vérifier si c'est le premier clic détecté
+                        clicked_time = self.timer.getTime()
+                        print("Clic détecté à :", clicked_time, "secondes")
+                        clicked = True  # Empêcher l'enregistrement de clics multiple
+            self.click_times.append(clicked_time)
             self.duration.append(self.timer.getTime())
             self.trial_type.append("Stimuli")
             self.stim_file.append(toshow[count])
-            self.block_type.append(group_name)
+            self.block_type.append(index+1)
             if count != limite-1:
                 self.onset.append(self.global_timer.getTime())
                 self.cross_stim.draw()
@@ -161,6 +196,7 @@ class Localizer(Parente):
                 while self.timer.getTime() < self.betweenstimuli:
                     pass
                 self.duration.append(self.timer.getTime())
+                self.click_times.append("Nonde")
                 self.trial_type.append("Fixation")
                 self.stim_file.append("None")
                 self.block_type.append("None")
@@ -178,6 +214,8 @@ if __name__ == "__main__":
     parser.add_argument("--activation", type=str, required=True, help="Pour le boitier avec les EEG")
     parser.add_argument("--random", type=str, required=True, help="Ordre random stimuli")
     parser.add_argument("--launching", type=str, help="Chemin vers le fichier de mots", required=False)
+    parser.add_argument("--file", type=str, required=True, help="Nom du fichier d'input")
+
 
 
     parser.add_argument('--port', type=str, required=False, help="Port")
@@ -188,7 +226,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    localizer = Localizer(args.duration,args.betweenstimuli, args.betweenblocks, args.blocks, args.output_file,
+    prime = Priming(args.duration,args.betweenstimuli, args.betweenblocks, args.blocks, args.output_file,
                           args.port, args.baudrate, args.trigger, args.activation,
-                         args.hauteur, args.largeur, args.random, args.zoom, args.launching)
-    localizer.lancement()
+                         args.hauteur, args.largeur, args.random, args.zoom, args.launching, args.file)
+    prime.lancement()

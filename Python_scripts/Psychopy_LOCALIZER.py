@@ -1,4 +1,5 @@
 import argparse
+import copy
 import csv
 import os
 from collections import defaultdict
@@ -43,7 +44,7 @@ class Localizer(Parente):
         self.groups = defaultdict(list)
         self.keys = []
         self.block_type = []
-        self.get_groups_and_keys()
+        #self.get_groups_and_keys()
         self.port = port
         self.baudrate = baudrate
         self.trigger = trigger
@@ -57,6 +58,8 @@ class Localizer(Parente):
             self.random = False
 
         self.ordre=self.reading("Input/Paradigme_LOCALIZER/"+self.file)
+        self.real_groups = self.real_reading("Input/Paradigme_LOCALIZER/"+self.file)
+        self.copy_real_groups = copy.deepcopy(self.real_groups)
         print(self.activation)
         print(self.ordre)
         rect_width = largeur
@@ -70,6 +73,7 @@ class Localizer(Parente):
         super().launching_texts(self.win, texts, self.trigger)
         super().wait_for_trigger(self.trigger)
         self.global_timer.reset()
+        index_of_groups = len(self.real_groups)-1
         for x in range (self.number_of_blocks):
             self.cross_stim.draw()
             self.win.flip()
@@ -83,10 +87,11 @@ class Localizer(Parente):
             self.stim_file.append("None")
             self.block_type.append("None")
             if self.random:
-                self.show_block(random.choice(self.ordre),self.number_per_block)
+
+                self.show_block(random.randint(0,index_of_groups),self.number_per_block)
             else:
-                y = x%8
-                self.show_block(self.ordre[y],self.number_per_block)
+                y = x%index_of_groups
+                self.show_block(y,self.number_per_block)
 
         self.write_tsv(self.onset,self.duration,self.block_type, self.stim_file, self.trial_type,self.output)
 
@@ -94,12 +99,31 @@ class Localizer(Parente):
         with open(filename, "r") as fichier:
             ma_liste = [line.strip() for line in fichier]
         return ma_liste
+
+    def real_reading(self,filename):
+        with open(filename, 'r') as fichier:
+            lignes = fichier.readlines()
+        lignes = [ligne.strip() for ligne in lignes]
+        groupes = []
+        groupe_actuel = []
+
+        for ligne in lignes:
+            if ligne:
+                groupe_actuel.append(ligne)
+            else:
+                if groupe_actuel:
+                    groupes.append(groupe_actuel)
+                    groupe_actuel = []
+        if groupe_actuel:
+            groupes.append(groupe_actuel)
+        print(groupes[0])
+        return groupes
     def write_tsv(self, onset, duration, block_type, file_stimuli, trial_type, filename="output.tsv"):
         filename=super().preprocessing_tsv(filename)
 
         with open(filename, mode='w', newline='') as file:
             tsv_writer = csv.writer(file, delimiter='\t')
-            tsv_writer.writerow(['onset', 'duration', "block_type" ,'stim_file','trial_type' ])
+            tsv_writer.writerow(['onset', 'duration', "block_index" ,'stim_file','trial_type' ])
             for i in range(len(onset)):
                 tsv_writer.writerow([onset[i], duration[i], block_type[i], file_stimuli[i], trial_type[i]])
     def get_groups_and_keys(self):
@@ -116,22 +140,21 @@ class Localizer(Parente):
         print(self.keys)
 
 
-    def show_block(self, group_name, number_per_block):
+    def show_block(self, index, number_per_block):
         toshow=[]
         while len(toshow)<number_per_block:
-            if self.groups[group_name] != []:
+            if self.real_groups[index] != []:
                 if self.random:
-                    stimuli=random.choice(self.groups[group_name])
+                    stimuli=random.choice(self.real_groups[index])
                 else:
-                    stimuli=self.groups[group_name][0]
-                self.groups[group_name].remove(stimuli)
+                    stimuli=self.real_groups[index][0]
+                self.real_groups[index].remove(stimuli)
                 toshow.append(stimuli)
             else:
                 if self.random:
-                    stimuli=random.choice(self.groups[group_name+"1"])
+                    stimuli=random.choice(self.copy_real_groups[index])
                 else:
-                    print(group_name)
-                    stimuli=self.groups[group_name+"1"]
+                    stimuli=self.copy_real_groups[index]
                 toshow.append(stimuli)
         liste_image_win=[]
         for image in toshow:
@@ -142,7 +165,10 @@ class Localizer(Parente):
                 pos=(0, 0),
                 size=None
             )
-            image_stim.size = 0.7 + (0.012*self.zoom)
+            base_width, base_height = image_stim.size
+            zoom = 0.5 + (0.012*self.zoom)
+            image_stim.size = (base_width * zoom, base_height * zoom)
+
             #image_stim.size= 0.8+(0.3*self.zoom/100)
             liste_image_win.append(image_stim)
         count=0
@@ -160,7 +186,7 @@ class Localizer(Parente):
             self.duration.append(self.timer.getTime())
             self.trial_type.append("Stimuli")
             self.stim_file.append(toshow[count])
-            self.block_type.append(group_name)
+            self.block_type.append(index+1)
             if count != limite-1:
                 self.onset.append(self.global_timer.getTime())
                 self.cross_stim.draw()
@@ -175,6 +201,7 @@ class Localizer(Parente):
             count+=1
 
 if __name__ == "__main__":
+
     parser = argparse.ArgumentParser(description="Exécuter le paradigme Psychopy")
     parser.add_argument("--duration", type=float, required=True, help="Durée en secondes des stimuli")
     parser.add_argument("--blocks", type=int, required=True, help="Pourcentage Zoom")
@@ -196,8 +223,8 @@ if __name__ == "__main__":
     parser.add_argument("--largeur", type=float, required=True, help="Largeur du rectangle")
 
     args = parser.parse_args()
-
     localizer = Localizer(args.duration,args.betweenstimuli, args.betweenblocks, args.blocks,args.per_block, args.output_file,
                           args.port, args.baudrate, args.trigger, args.activation,
                          args.hauteur, args.largeur, args.random, args.zoom, args.launching, args.file)
     localizer.lancement()
+

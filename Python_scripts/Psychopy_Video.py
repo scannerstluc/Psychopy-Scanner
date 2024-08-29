@@ -31,7 +31,7 @@ class VideoPsycho(Parente):
         else:
             self.random = False
         self.win = visual.Window(
-            size=(800, 600),
+            size=(800,600),
             fullscr=True,
             # color = [0, 0, 1],
             # color = [1,0,0],
@@ -51,7 +51,6 @@ class VideoPsycho(Parente):
             ma_liste = [line.strip() for line in fichier]
         return ma_liste
 
-
     def play_video_psychopy(self, chemin, duration, between_stimuli, zoom, trigger):
         apparition_stimuli = []
         longueur_stimuli = []
@@ -60,65 +59,83 @@ class VideoPsycho(Parente):
         if self.random:
             random.shuffle(videos)
         file = copy.copy(videos)
-        for x in range(len(videos)):
-            videos[x] = "Input/Paradigme_video/Stimuli/" + videos[x]
+        videos = ["Input/Paradigme_video/Stimuli/" + v for v in videos]
+
+        # Ajouter la gestion de l'échappement pour fermer proprement la fenêtre
         event.globalKeys.add(key='escape', func=self.win.close)
 
         cross_stim = visual.ShapeStim(
             win=self.win,
-            vertices=((0, -0.03), (0, 0.03), (0, 0), (-0.03, 0), (0.03, 0)),  # Utilisation d'unités normalisées
+            vertices=((0, -0.03), (0, 0.03), (0, 0), (-0.03, 0), (0.03, 0)),
             lineWidth=3,
             closeShape=False,
             lineColor="white",
-            units='height'  # Utilisation d'unités basées sur la hauteur de l'écran
+            units='height'
         )
-        texts = super().inputs_texts("Input/Paradigme_video/"+self.launching)
+
+        texts = super().inputs_texts("Input/Paradigme_video/" + self.launching)
         super().launching_texts(self.win, texts, self.trigger)
         super().wait_for_trigger(self.trigger)
+
         global_timer = core.Clock()
         timer = core.Clock()
-        thezoom = 0.7 + (0.012*self.zoom)
-        for x in range(len(videos)):
-            video_path = videos[x]
+        thezoom = 0.7 + (0.012 * self.zoom)
+
+        for x, video_path in enumerate(videos):
             movie_stim = visual.MovieStim(
                 win=self.win,
                 filename=video_path,
                 pos=(0, 0),
+                size=thezoom,  # Définir la taille au moment de la création
                 opacity=1.0,
                 flipVert=False,
                 flipHoriz=False,
-                loop=True,
+                loop=False,  # Assurez-vous de ne pas boucler pour libérer les ressources
                 units='norm',
             )
+
             cross_stim.draw()
             self.win.flip()
             timer.reset()
             apparition_stimuli.append(global_timer.getTime())
-            while timer.getTime() < between_stimuli:
+
+            while timer.getTime() < random.uniform(between_stimuli - 1, between_stimuli + 1):
                 pass
+
             longueur_stimuli.append(timer.getTime())
             stimuli_liste.append("Fixation")
-            movie_stim.size = thezoom
+
             timer.reset()
             apparition_stimuli.append(global_timer.getTime())
+
             if self.activation:
-                super().send_character(self.port,self.baudrate)
+                super().send_character(self.port, self.baudrate)
+
+            movie_stim.play()
+
             while timer.getTime() < duration:
                 self.rect.draw()
                 movie_stim.draw()
                 self.win.flip()
+
+            # Assurez-vous que la vidéo s'arrête correctement et libérez les ressources
+            movie_stim.stop()
+            movie_stim.seek(0)  # Remet la vidéo au début
+            del movie_stim
+
             longueur_stimuli.append(timer.getTime())
             stimuli_liste.append(file[x])
 
         cross_stim.draw()
         self.win.flip()
-        timer.reset()
+        core.wait(random.uniform(between_stimuli - 1, between_stimuli + 1))
         apparition_stimuli.append(global_timer.getTime())
-        while timer.getTime() < between_stimuli:
-            pass
         longueur_stimuli.append(timer.getTime())
         stimuli_liste.append("Fixation")
+
+        super().the_end(self.win)
         self.win.close()
+
         return longueur_stimuli, apparition_stimuli, stimuli_liste
 
     def write_tsv(self, onset, duration, file_stimuli, trial_type, filename="output.tsv"):

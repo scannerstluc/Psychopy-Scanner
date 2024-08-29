@@ -88,7 +88,7 @@ class voices(Parente):
             self.cross_stim.draw()
             self.win.flip()
             self.onset.append(self.global_timer.getTime())
-            while self.timer.getTime() < self.betweenstimuli:
+            while self.timer.getTime() < random.uniform(self.betweenstimuli-1,self.betweenstimuli+1):
                 pass
             self.duration.append(self.timer.getTime())
             self.trial_type.append("Fixation")
@@ -114,8 +114,11 @@ class voices(Parente):
             self.trial_type.append("Stimuli")
             self.stim_file.append(x)
             self.reaction.append(clicked_time)
-
+        super().the_end(self.win)
         self.write_tsv(self.onset,self.duration,self.stim_file,self.trial_type,self.reaction,self.output)
+        self.win.close()
+        core.quit()
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Exécuter le paradigme Psychopy")

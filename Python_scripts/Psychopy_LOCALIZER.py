@@ -80,7 +80,7 @@ class Localizer(Parente):
             self.onset.append(self.global_timer.getTime())
             self.timer.reset()
             print(self.betweenblocks)
-            while self.timer.getTime() < self.betweenblocks:
+            while self.timer.getTime() < random.uniform(self.betweenblocks-1, self.betweenblocks+1):
                 pass
             self.duration.append(self.timer.getTime())
             self.trial_type.append("Fixation")
@@ -92,7 +92,7 @@ class Localizer(Parente):
             else:
                 y = x%index_of_groups
                 self.show_block(y,self.number_per_block)
-
+        super().the_end(self.win)
         self.write_tsv(self.onset,self.duration,self.block_type, self.stim_file, self.trial_type,self.output)
 
     def reading(self,filename):
@@ -181,7 +181,7 @@ class Localizer(Parente):
             if self.activation:
                 super().send_character(self.port,self.baudrate)
             self.timer.reset()  # Réinitialiser le timer à chaque nouvelle image
-            while self.timer.getTime() < self.stimuli_duration:
+            while self.timer.getTime() < random.uniform(self.stimuli_duration-1,self.stimuli_duration+1):
                 pass
             self.duration.append(self.timer.getTime())
             self.trial_type.append("Stimuli")
@@ -192,7 +192,7 @@ class Localizer(Parente):
                 self.cross_stim.draw()
                 self.win.flip()
                 self.timer.reset()  # Réinitialiser le timer à chaque nouvelle image
-                while self.timer.getTime() < self.betweenstimuli:
+                while self.timer.getTime() < random.uniform(self.betweenstimuli-1,self.betweenstimuli+1):
                     pass
                 self.duration.append(self.timer.getTime())
                 self.trial_type.append("Fixation")

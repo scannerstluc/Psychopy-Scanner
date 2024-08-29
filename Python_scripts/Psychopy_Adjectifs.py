@@ -164,7 +164,7 @@ class Adjectifs(Parente):
         response_time="None"
         timer = core.Clock()
         k="None"
-        while timer.getTime() < self.stimuli_duration:  # Limite de temps de 4 secondes
+        while timer.getTime() < random.uniform(self.stimuli_duration-1,self.stimuli_duration+1):  # Limite de temps de 4 secondes
             if k=="None":
                 key = event.getKeys()
                 #d=1, q=2, c=3, b=4
@@ -301,7 +301,7 @@ class Adjectifs(Parente):
             fixation_duration = self.betweenstimuli  # en secondes
             clock.reset()
 
-            while clock.getTime() < fixation_duration:
+            while clock.getTime() < random.uniform(fixation_duration-1, fixation_duration+1):
                 cross_stim.draw()
                 self.win.flip()
 
@@ -345,11 +345,12 @@ class Adjectifs(Parente):
             self.win.flip()
             clock.reset()
 
-            while clock.getTime() < fixation_duration:
+            while clock.getTime() < random.uniform(fixation_duration-1,fixation_duration+1):
                 cross_stim.draw()
                 self.win.flip()
 
     def fin(self):
+        super().the_end(self.win)
         self.win.close()
         self.write_tsv()
         core.quit()

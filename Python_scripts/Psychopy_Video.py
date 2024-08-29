@@ -3,6 +3,7 @@ import copy
 import csv
 import os
 import random
+import time
 from datetime import datetime
 
 from psychopy import visual, core, event
@@ -16,6 +17,8 @@ class VideoPsycho(Parente):
         self.duration = duration
         self.betweenstimuli = betweenstimuli
         self.file = file
+        self.filename, self.filename_csv = super().preprocessing_tsv_csv(output)
+
         self.zoom = zoom
         self.output = output
         self.port = port
@@ -55,98 +58,126 @@ class VideoPsycho(Parente):
         apparition_stimuli = []
         longueur_stimuli = []
         stimuli_liste = []
-        videos = self.reading(chemin)
-        if self.random:
-            random.shuffle(videos)
-        file = copy.copy(videos)
-        videos = ["Input/Paradigme_video/Stimuli/" + v for v in videos]
+        print(self.filename)
+        print(self.filename_csv)
+        self.file_init(self.filename, self.filename_csv)
+        try:
+            videos = self.reading(chemin)
+            if self.random:
+                random.shuffle(videos)
+            file = copy.copy(videos)
+            videos = ["Input/Paradigme_video/Stimuli/" + v for v in videos]
 
-        # Ajouter la gestion de l'échappement pour fermer proprement la fenêtre
-        event.globalKeys.add(key='escape', func=self.win.close)
+            # Ajouter la gestion de l'échappement pour fermer proprement la fenêtre
+            event.globalKeys.add(key='escape', func=self.win.close)
 
-        cross_stim = visual.ShapeStim(
-            win=self.win,
-            vertices=((0, -0.03), (0, 0.03), (0, 0), (-0.03, 0), (0.03, 0)),
-            lineWidth=3,
-            closeShape=False,
-            lineColor="white",
-            units='height'
-        )
-
-        texts = super().inputs_texts("Input/Paradigme_video/" + self.launching)
-        super().launching_texts(self.win, texts, self.trigger)
-        super().wait_for_trigger(self.trigger)
-
-        global_timer = core.Clock()
-        timer = core.Clock()
-        thezoom = 0.7 + (0.012 * self.zoom)
-
-        for x, video_path in enumerate(videos):
-            movie_stim = visual.MovieStim(
+            cross_stim = visual.ShapeStim(
                 win=self.win,
-                filename=video_path,
-                pos=(0, 0),
-                size=thezoom,  # Définir la taille au moment de la création
-                opacity=1.0,
-                flipVert=False,
-                flipHoriz=False,
-                loop=False,  # Assurez-vous de ne pas boucler pour libérer les ressources
-                units='norm',
+                vertices=((0, -0.03), (0, 0.03), (0, 0), (-0.03, 0), (0.03, 0)),
+                lineWidth=3,
+                closeShape=False,
+                lineColor="white",
+                units='height'
             )
 
+            texts = super().inputs_texts("Input/Paradigme_video/" + self.launching)
+            super().launching_texts(self.win, texts, self.trigger)
+            super().wait_for_trigger(self.trigger)
+
+            global_timer = core.Clock()
+            timer = core.Clock()
+            thezoom = 0.7 + (0.012 * self.zoom)
+
+            for x, video_path in enumerate(videos):
+                movie_stim = visual.MovieStim(
+                    win=self.win,
+                    filename=video_path,
+                    pos=(0, 0),
+                    size=thezoom,  # Définir la taille au moment de la création
+                    opacity=1.0,
+                    flipVert=False,
+                    flipHoriz=False,
+                    loop=False,  # Assurez-vous de ne pas boucler pour libérer les ressources
+                    units='norm',
+                )
+
+                cross_stim.draw()
+                self.win.flip()
+                timer.reset()
+                #apparition_stimuli.append(global_timer.getTime())
+                apparition = global_timer.getTime()
+
+                while timer.getTime() < random.uniform(between_stimuli - 1, between_stimuli + 1):
+                    pass
+                longueur = timer.getTime()
+                #longueur_stimuli.append(timer.getTime())
+                stimuli = "Fixation"
+                #stimuli_liste.append("Fixation")
+                self.write_tsv(self.filename, self.filename_csv, apparition, longueur, "None", stimuli)
+                timer.reset()
+
+                #apparition_stimuli.append(global_timer.getTime())
+                apparition = global_timer.getTime()
+                if self.activation:
+                    super().send_character(self.port, self.baudrate)
+
+                movie_stim.play()
+
+                while timer.getTime() < duration:
+                    self.rect.draw()
+                    movie_stim.draw()
+                    self.win.flip()
+                longueur = timer.getTime()
+                stimuli = file[x]
+                #longueur_stimuli.append(timer.getTime())
+                #stimuli_liste.append(file[x])
+                self.write_tsv(self.filename, self.filename_csv, apparition, longueur, stimuli, "Stimuli")
+
+                # Assurez-vous que la vidéo s'arrête correctement et libérez les ressources
+                if movie_stim is not None:
+                    movie_stim.stop()
+                    movie_stim.seek(0)
+                    del movie_stim
+                    self.win.flip(clearBuffer=True)
+
+
+            apparition = global_timer.getTime()
             cross_stim.draw()
             self.win.flip()
-            timer.reset()
-            apparition_stimuli.append(global_timer.getTime())
+            core.wait(random.uniform(between_stimuli - 1, between_stimuli + 1))
+            #apparition_stimuli.append(global_timer.getTime())
+            #longueur_stimuli.append(timer.getTime())
+            #stimuli_liste.append("Fixation")
+            longueur = timer.getTime()
+            stimuli = "Fixation"
+            self.write_tsv(self.filename, self.filename_csv, apparition, longueur, stimuli, "None")
 
-            while timer.getTime() < random.uniform(between_stimuli - 1, between_stimuli + 1):
-                pass
-
-            longueur_stimuli.append(timer.getTime())
-            stimuli_liste.append("Fixation")
-
-            timer.reset()
-            apparition_stimuli.append(global_timer.getTime())
-
-            if self.activation:
-                super().send_character(self.port, self.baudrate)
-
-            movie_stim.play()
-
-            while timer.getTime() < duration:
-                self.rect.draw()
-                movie_stim.draw()
-                self.win.flip()
-
-            # Assurez-vous que la vidéo s'arrête correctement et libérez les ressources
-            movie_stim.stop()
-            movie_stim.seek(0)  # Remet la vidéo au début
-            del movie_stim
-
-            longueur_stimuli.append(timer.getTime())
-            stimuli_liste.append(file[x])
-
-        cross_stim.draw()
-        self.win.flip()
-        core.wait(random.uniform(between_stimuli - 1, between_stimuli + 1))
-        apparition_stimuli.append(global_timer.getTime())
-        longueur_stimuli.append(timer.getTime())
-        stimuli_liste.append("Fixation")
-
-        super().the_end(self.win)
-        self.win.close()
+            super().the_end(self.win)
+            self.win.close()
+        except Exception as e:
+            print(e)
 
         return longueur_stimuli, apparition_stimuli, stimuli_liste
 
-    def write_tsv(self, onset, duration, file_stimuli, trial_type, filename="output.tsv"):
-        filename = super().preprocessing_tsv(filename)
+    def file_init(self, filename, filename_csv):
+        with open(filename, mode='w', newline='') as file1:
+            csv_writer = csv.writer(file1, delimiter='\t')
+            csv_writer.writerow(['onset', 'duration', 'trial_type', 'stim_file'])
+
+        with open(filename_csv, mode='w', newline='') as file1:
+            csv_writer = csv.writer(file1, delimiter='\t')
+            csv_writer.writerow(['onset', 'duration', 'trial_type', 'stim_file'])
+
+    def write_tsv(self, filename, filename_csv, onset, duration, file_stimuli, trial_type):
+        with open(filename, mode='a', newline='') as file1:
+            csv_writer = csv.writer(file1, delimiter='\t')
+            csv_writer.writerow([onset, duration, trial_type, file_stimuli])
+
+        with open(filename_csv, mode='a', newline='') as file1:
+            csv_writer = csv.writer(file1, delimiter='\t')
+            csv_writer.writerow([onset, duration, trial_type, file_stimuli])
 
 
-        with open(filename, mode='w', newline='') as file:
-                tsv_writer = csv.writer(file, delimiter='\t')
-                tsv_writer.writerow(['onset', 'duration', 'trial_type', 'stim_file'])
-                for i in range(len(onset)):
-                    tsv_writer.writerow([onset[i], duration[i], trial_type[i], file_stimuli[i]])
 
 
     def lancement(self):
@@ -154,6 +185,7 @@ class VideoPsycho(Parente):
         liste_trial = []
         liste_lm = []
         count = 0
+        """
         for x in stimuli:
             if x == "Fixation":
                 liste_lm.append(count)
@@ -163,7 +195,7 @@ class VideoPsycho(Parente):
             count += 1
         for x in liste_lm:
             stimuli[x] = "None"
-        self.write_tsv(stimulus_apparition, stimulus_times, stimuli, liste_trial, self.output)
+        self.write_tsv(stimulus_apparition, stimulus_times, stimuli, liste_trial, self.output)"""
 
 
 if __name__ == "__main__":

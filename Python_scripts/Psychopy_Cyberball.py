@@ -163,6 +163,7 @@ class launch_cyberball(Parente) :
             while self.timer.getTime() < 0.5:
                 pass
         self.game()
+        super().the_end(self.win)
 
 
     def game (self):

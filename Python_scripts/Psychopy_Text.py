@@ -59,7 +59,7 @@ class PsychoPyParadigm(Parente):
                 super().send_character(self.port,self.baudrate)
             self.stimuli_apparition.append(self.global_timer.getTime())  # Enregistrer le moment où le stimulus apparaît
             self.timer.reset()  # Réinitialiser l'horloge à chaque nouveau mot
-            while self.timer.getTime() < display_time:
+            while self.timer.getTime() < random.uniform(display_time-1,display_time+1):
                 pass  # Attendre sans bloquer d'autres processus
             self.stimuli_times.append(self.timer.getTime())
             self.stimuli.append(word)
@@ -70,11 +70,6 @@ class PsychoPyParadigm(Parente):
             ma_liste = [line.strip() for line in fichier]
         return ma_liste
 
-    def pause_for_seconds(self, seconds):
-        timer = core.Clock()
-        timer.reset()
-        while timer.getTime() < seconds:
-            pass
 
     def words_psychopy(self):
         self.rect = visual.Rect(self.win, width=self.rect_width, height=self.rect_height, fillColor='white',
@@ -95,7 +90,7 @@ class PsychoPyParadigm(Parente):
         self.win.flip()
         self.timer.reset()
         self.stimuli_apparition.append(self.global_timer.getTime())
-        while self.timer.getTime() < self.fixation:
+        while self.timer.getTime() < random.uniform(self.fixation-1,self.fixation+1):
             pass
         self.stimuli_times.append(self.timer.getTime())
         self.stimuli.append("None")
@@ -104,7 +99,7 @@ class PsychoPyParadigm(Parente):
         self.win.flip()
         self.timer.reset()
         self.stimuli_apparition.append(self.global_timer.getTime())
-        while self.timer.getTime() < self.fixation:
+        while self.timer.getTime() < random.uniform(self.fixation-1,self.fixation+1):
             pass
         self.stimuli_times.append(self.timer.getTime())
         self.stimuli.append("None")
@@ -113,7 +108,7 @@ class PsychoPyParadigm(Parente):
         self.win.flip()
         self.timer.reset()
         self.stimuli_apparition.append(self.global_timer.getTime())
-        while self.timer.getTime()<self.fixation:
+        while self.timer.getTime()<random.uniform(self.fixation-1,self.fixation+1):
             pass
         self.stimuli_times.append(self.timer.getTime())
         self.stimuli.append("None")
@@ -122,11 +117,11 @@ class PsychoPyParadigm(Parente):
         self.win.flip()
         self.timer.reset()
         self.stimuli_apparition.append(self.global_timer.getTime())
-        while self.timer.getTime() < self.fixation:
+        while self.timer.getTime() < random.uniform(self.fixation-1,self.fixation+1):
             pass
         self.stimuli_times.append(self.timer.getTime())
         self.stimuli.append("None")
-
+        super().the_end(self.win)
         self.win.close()
 
     def pas_un_stimuli(self, stimuli):

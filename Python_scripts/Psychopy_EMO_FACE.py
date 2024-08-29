@@ -114,7 +114,7 @@ class Emo_Face(Parente):
             if self.activation:
                 super().send_character(self.port,self.baudrate)
             self.onset.append(global_timer.getTime())
-            while timer.getTime() < self.betweenstimuli:
+            while timer.getTime() < random.uniform(self.betweenstimuli-1, self.betweenstimuli+1):
                 pass
             self.duration.append(timer.getTime())
             self.click_times.append("None")
@@ -128,7 +128,7 @@ class Emo_Face(Parente):
             self.win.flip()
             #super().send_character()
             self.onset.append(global_timer.getTime())
-            while timer.getTime() < self.stimuli_duration:
+            while timer.getTime() < random.uniform(self.stimuli_duration-1, self.stimuli_duration+1):
                 button = self.mouse.getPressed()  # Mise à jour de l'état des boutons de la souris
                 if any(button):
                     if not clicked:  # Vérifier si c'est le premier clic détecté
@@ -144,6 +144,7 @@ class Emo_Face(Parente):
 
 
         self.write_tsv(self.onset,self.duration,self.stimuli_file,self.trial_type, self.click_times,self.output)
+        super().the_end(self.win)
         self.win.close()
         core.quit()
 

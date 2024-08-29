@@ -101,7 +101,7 @@ class static_image(Parente):
         cross_stim.draw()
         self.win.flip()
         timer.reset()
-        while timer.getTime() < betweenstimuli:
+        while timer.getTime() < random.uniform(betweenstimuli-1,betweenstimuli+1):
             pass
 
 
@@ -115,7 +115,7 @@ class static_image(Parente):
             timer.reset()  # Réinitialiser le timer à chaque nouvelle image
             clicked = False  # Variable pour vérifier si un clic a été détecté
             clicked_time = "None"
-            while timer.getTime() < duration:
+            while timer.getTime() < random.uniform(duration-1,duration+1):
                 button = self.mouse.getPressed()  # Mise à jour de l'état des boutons de la souris
 
                 if any(button):
@@ -130,39 +130,59 @@ class static_image(Parente):
             self.click_times.append(clicked_time)
             stimulus_apparition.append(self.global_timer.getTime())
             timer.reset() # Réinitialiser le timer à chaque nouvelle image
-            while timer.getTime() < betweenstimuli:
+            while timer.getTime() < random.uniform(betweenstimuli-1, betweenstimuli+1):
                 pass
             stimulus_times.append(timer.getTime())
             self.click_times.append("None")
+        super().the_end(self.win)
         self.win.close()
         return stimulus_times, stimulus_apparition,stimuli_liste, orientation
 
-    def write_tsv(self, onset, duration, file_stimuli, orientation, trial_type, filename="output.tsv"):
+    import os
+    import csv
+    from datetime import datetime
+
+    def write_csv_and_tsv(self, onset, duration, file_stimuli, orientation, trial_type, filename="output"):
         output_dir = '../Fichiers_output'
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
+
         current_date = datetime.now().strftime("%Y-%m-%d")
         run_number = 1
-        filename_prefix = f"{current_date}_{filename.split('.')[0]}"
+        filename_prefix = f"{current_date}_{filename}"
+
         existing_files = [f for f in os.listdir(output_dir) if f.startswith(filename_prefix) and 'run' in f]
         if existing_files:
             runs = [int(f.split('run')[-1].split('.')[0]) for f in existing_files if 'run' in f]
             if runs:
                 run_number = max(runs) + 1
-        filename = os.path.join(output_dir, f"{filename_prefix}_run{run_number}.tsv")
 
+        csv_filename = os.path.join(output_dir, f"{filename_prefix}_run{run_number}.csv")
+        tsv_filename = os.path.join(output_dir, f"{filename_prefix}_run{run_number}.tsv")
 
-
-        with open(filename, mode='w', newline='') as file:
-            tsv_writer = csv.writer(file, delimiter='\t')
-            tsv_writer.writerow(['onset', 'duration', 'trial_type','angle','reaction', 'stim_file', ])
-            orientation.insert(3,0)
-            for x in range (len(trial_type)):
-                if trial_type[x]=="Fixation":
-                    orientation.insert(x,"None")
+        # Écrire en CSV
+        with open(csv_filename, mode='w', newline='') as file:
+            csv_writer = csv.writer(file)  # Par défaut, utilise la virgule comme délimiteur
+            csv_writer.writerow(['onset', 'duration', 'trial_type', 'angle', 'reaction', 'stim_file'])
+            orientation.insert(3, 0)
+            for x in range(len(trial_type)):
+                if trial_type[x] == "Fixation":
+                    orientation.insert(x, "None")
             for i in range(len(onset)):
-                tsv_writer.writerow([onset[i], duration[i], trial_type[i], orientation[i], self.click_times[i], file_stimuli[i]])
+                csv_writer.writerow(
+                    [onset[i], duration[i], trial_type[i], orientation[i], self.click_times[i], file_stimuli[i]])
 
+        # Écrire en TSV
+        with open(tsv_filename, mode='w', newline='') as file:
+            tsv_writer = csv.writer(file, delimiter='\t')  # Utilise la tabulation comme délimiteur
+            tsv_writer.writerow(['onset', 'duration', 'trial_type', 'angle', 'reaction', 'stim_file'])
+            orientation.insert(3, 0)
+            for x in range(len(trial_type)):
+                if trial_type[x] == "Fixation":
+                    orientation.insert(x, "None")
+            for i in range(len(onset)):
+                tsv_writer.writerow(
+                    [onset[i], duration[i], trial_type[i], orientation[i], self.click_times[i], file_stimuli[i]])
 
     def lancement(self):
         stimulus_times, stimulus_apparition, stimuli, orientation = self.static_images_psychopy(self.file, self.duration, self.betweenstimuli, self.zoom, self.trigger)
@@ -178,7 +198,7 @@ class static_image(Parente):
             count+=1
         for x in liste_lm:
             stimuli[x] = "None"
-        self.write_tsv(stimulus_apparition, stimulus_times, stimuli, orientation, liste_trial, self.output)
+        self.write_csv_and_tsv(stimulus_apparition, stimulus_times, stimuli, orientation, liste_trial, self.output)
 
 
 

@@ -151,7 +151,7 @@ class Colors(Parente):
             self.win.flip()
             self.onset.append(self.global_timer.getTime())
             self.timer.reset()
-            while self.timer.getTime() < self.betweenstimuli:
+            while self.timer.getTime() < random.uniform(self.betweenstimuli-1, self.betweenstimuli+1):
                 pass
             self.duration.append(self.timer.getTime())
             self.stimuli.append("Cross")
@@ -185,6 +185,7 @@ class Colors(Parente):
             count+=1
             recordings.append(recording)
         self.write_tsv(self.onset,self.duration, self.stimuli,self.trial_type, recordings, self.reaction, self.patient_id)
+        super().the_end(self.win)
         self.win.close()
         core.quit()
 

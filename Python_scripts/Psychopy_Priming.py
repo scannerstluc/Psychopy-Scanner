@@ -95,7 +95,7 @@ class Priming(Parente):
             self.win.flip()
             self.onset.append(self.global_timer.getTime())
             self.timer.reset()
-            while self.timer.getTime() < self.betweenblocks:
+            while self.timer.getTime() < random.uniform(self.betweenblocks-1,self.betweenblocks+1):
                 pass
             self.duration.append(self.timer.getTime())
             self.click_times.append("None")
@@ -107,6 +107,7 @@ class Priming(Parente):
             else:
                 y = x % index_of_groups
                 self.show_block(y, 2)
+        super().the_end(self.win)
         self.write_tsv(self.onset,self.duration,self.block_type, self.stim_file, self.trial_type,self.output)
 
     def reading(self,filename):
@@ -176,7 +177,7 @@ class Priming(Parente):
             if self.activation:
                 super().send_character(self.port,self.baudrate)
             self.timer.reset()  # Réinitialiser le timer à chaque nouvelle image
-            while self.timer.getTime() < self.stimuli_duration:
+            while self.timer.getTime() < random.uniform(self.stimuli_duration-1,self.stimuli_duration+1):
                 button = self.mouse.getPressed()  # Mise à jour de l'état des boutons de la souris
                 if any(button):
                     if not clicked:  # Vérifier si c'est le premier clic détecté
@@ -193,7 +194,7 @@ class Priming(Parente):
                 self.cross_stim.draw()
                 self.win.flip()
                 self.timer.reset()  # Réinitialiser le timer à chaque nouvelle image
-                while self.timer.getTime() < self.betweenstimuli:
+                while self.timer.getTime() < random.uniform(self.betweenstimuli-1,self.betweenstimuli+1):
                     pass
                 self.duration.append(self.timer.getTime())
                 self.click_times.append("Nonde")

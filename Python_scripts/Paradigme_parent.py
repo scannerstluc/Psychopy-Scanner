@@ -9,7 +9,7 @@ import serial
 
 
 class Parente(ABC):
-    def preprocessing_tsv(self, filename):
+    def preprocessing_tsv_csv(self, filename):
         output_dir = '../Fichiers_output'
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
@@ -22,7 +22,8 @@ class Parente(ABC):
             if runs:
                 run_number = max(runs) + 1
         filename = os.path.join(output_dir, f"{filename_prefix}_run{run_number}.tsv")
-        return filename
+        filename_csv = os.path.join(output_dir, f"{filename_prefix}_csv_run{run_number}.csv")
+        return filename, filename_csv
 
     def inputs_texts(self,chemin):
         with open(chemin, 'r', encoding='utf-8') as file:
@@ -53,6 +54,12 @@ class Parente(ABC):
         text_after= visual.TextStim(win, text=textes[x+1], alignText="center", wrapWidth=1.5, font="Arial")
         text_after.draw()
         win.flip()
+
+    def the_end (self, win):
+        texte = visual.TextStim(win, text="End/Fin/Ende", color=[1, 1, 1], alignText="center", wrapWidth=1.5, font='Arial')
+        texte.draw()
+        win.flip()
+        core.wait(4)
     def send_character(self, port, baud_rate):
         char = "t"
         try:

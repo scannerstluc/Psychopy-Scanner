@@ -164,7 +164,7 @@ class Adjectifs(Parente):
         response_time="None"
         timer = core.Clock()
         k="None"
-        while timer.getTime() < random.uniform(self.stimuli_duration-1,self.stimuli_duration+1):  # Limite de temps de 4 secondes
+        while timer.getTime() < self.stimuli_duration:  # Limite de temps de 4 secondes
             if k=="None":
                 key = event.getKeys()
                 #d=1, q=2, c=3, b=4

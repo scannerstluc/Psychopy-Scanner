@@ -25,6 +25,21 @@ class Parente(ABC):
         filename_csv = os.path.join(output_dir, f"{filename_prefix}_csv_run{run_number}.csv")
         return filename, filename_csv
 
+    def preprocessing_tsv(self, filename):
+        output_dir = '../Fichiers_output'
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+        current_date = datetime.now().strftime("%Y-%m-%d")
+        run_number = 1
+        filename_prefix = f"{current_date}_{filename.split('.')[0]}"
+        existing_files = [f for f in os.listdir(output_dir) if f.startswith(filename_prefix) and 'run' in f]
+        if existing_files:
+            runs = [int(f.split('run')[-1].split('.')[0]) for f in existing_files if 'run' in f]
+            if runs:
+                run_number = max(runs) + 1
+        filename = os.path.join(output_dir, f"{filename_prefix}_run{run_number}.tsv")
+        return filename
+
     def inputs_texts(self,chemin):
         with open(chemin, 'r', encoding='utf-8') as file:
             contenu = file.read()

@@ -128,7 +128,7 @@ class Emo_Face(Parente):
             self.win.flip()
             #super().send_character()
             self.onset.append(global_timer.getTime())
-            while timer.getTime() < random.uniform(self.stimuli_duration-1, self.stimuli_duration+1):
+            while timer.getTime() < self.stimuli_duration:
                 button = self.mouse.getPressed()  # Mise à jour de l'état des boutons de la souris
                 if any(button):
                     if not clicked:  # Vérifier si c'est le premier clic détecté

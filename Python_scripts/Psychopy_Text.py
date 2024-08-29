@@ -59,7 +59,7 @@ class PsychoPyParadigm(Parente):
                 super().send_character(self.port,self.baudrate)
             self.stimuli_apparition.append(self.global_timer.getTime())  # Enregistrer le moment où le stimulus apparaît
             self.timer.reset()  # Réinitialiser l'horloge à chaque nouveau mot
-            while self.timer.getTime() < random.uniform(display_time-1,display_time+1):
+            while self.timer.getTime() < display_time:
                 pass  # Attendre sans bloquer d'autres processus
             self.stimuli_times.append(self.timer.getTime())
             self.stimuli.append(word)

@@ -9,6 +9,8 @@ from datetime import datetime
 from psychopy import visual, core, event
 import serial
 from Paradigme_parent import Parente
+import gc  # Garbage Collector
+
 
 
 class VideoPsycho(Parente):
@@ -58,37 +60,48 @@ class VideoPsycho(Parente):
         apparition_stimuli = []
         longueur_stimuli = []
         stimuli_liste = []
-        print(self.filename)
-        print(self.filename_csv)
         self.file_init(self.filename, self.filename_csv)
-        try:
-            videos = self.reading(chemin)
-            if self.random:
-                random.shuffle(videos)
-            file = copy.copy(videos)
-            videos = ["Input/Paradigme_video/Stimuli/" + v for v in videos]
+        videos = self.reading(chemin)
+        if self.random:
+            random.shuffle(videos)
+        file = copy.copy(videos)
+        videos = ["Input/Paradigme_video/Stimuli/" + v for v in videos]
 
-            # Ajouter la gestion de l'échappement pour fermer proprement la fenêtre
-            event.globalKeys.add(key='escape', func=self.win.close)
+        # Ajouter la gestion de l'échappement pour fermer proprement la fenêtre
+        event.globalKeys.add(key='escape', func=self.win.close)
 
-            cross_stim = visual.ShapeStim(
-                win=self.win,
-                vertices=((0, -0.03), (0, 0.03), (0, 0), (-0.03, 0), (0.03, 0)),
-                lineWidth=3,
-                closeShape=False,
-                lineColor="white",
-                units='height'
-            )
+        cross_stim = visual.ShapeStim(
+            win=self.win,
+            vertices=((0, -0.03), (0, 0.03), (0, 0), (-0.03, 0), (0.03, 0)),
+            lineWidth=3,
+            closeShape=False,
+            lineColor="white",
+            units='height'
+        )
 
-            texts = super().inputs_texts("Input/Paradigme_video/" + self.launching)
-            super().launching_texts(self.win, texts, self.trigger)
-            super().wait_for_trigger(self.trigger)
+        texts = super().inputs_texts("Input/Paradigme_video/" + self.launching)
+        super().launching_texts(self.win, texts, self.trigger)
+        super().wait_for_trigger(self.trigger)
 
-            global_timer = core.Clock()
-            timer = core.Clock()
-            thezoom = 0.7 + (0.012 * self.zoom)
+        global_timer = core.Clock()
+        timer = core.Clock()
+        thezoom = 0.7 + (0.012 * self.zoom)
 
-            for x, video_path in enumerate(videos):
+        for x, video_path in enumerate(videos):
+            try:
+                cross_stim.draw()
+                self.win.flip()
+                timer.reset()
+                # apparition_stimuli.append(global_timer.getTime())
+                apparition = global_timer.getTime()
+
+                while timer.getTime() < random.uniform(between_stimuli - 1, between_stimuli + 1):
+                    pass
+                longueur = timer.getTime()
+                # longueur_stimuli.append(timer.getTime())
+                stimuli = "Fixation"
+                # stimuli_liste.append("Fixation")
+                self.write_tsv(self.filename, self.filename_csv, apparition, longueur, "None", stimuli)
                 movie_stim = visual.MovieStim(
                     win=self.win,
                     filename=video_path,
@@ -101,19 +114,6 @@ class VideoPsycho(Parente):
                     units='norm',
                 )
 
-                cross_stim.draw()
-                self.win.flip()
-                timer.reset()
-                #apparition_stimuli.append(global_timer.getTime())
-                apparition = global_timer.getTime()
-
-                while timer.getTime() < random.uniform(between_stimuli - 1, between_stimuli + 1):
-                    pass
-                longueur = timer.getTime()
-                #longueur_stimuli.append(timer.getTime())
-                stimuli = "Fixation"
-                #stimuli_liste.append("Fixation")
-                self.write_tsv(self.filename, self.filename_csv, apparition, longueur, "None", stimuli)
                 timer.reset()
 
                 #apparition_stimuli.append(global_timer.getTime())
@@ -133,29 +133,35 @@ class VideoPsycho(Parente):
                 #stimuli_liste.append(file[x])
                 self.write_tsv(self.filename, self.filename_csv, apparition, longueur, stimuli, "Stimuli")
 
+
                 # Assurez-vous que la vidéo s'arrête correctement et libérez les ressources
                 if movie_stim is not None:
                     movie_stim.stop()
                     movie_stim.seek(0)
                     del movie_stim
                     self.win.flip(clearBuffer=True)
+                    gc.collect()
+
+            except Exception as e:
+                print("#############################################")
+                print(f"Erreur rencontrée : {e}")
+                print("#############################################")
+                pass
 
 
-            apparition = global_timer.getTime()
-            cross_stim.draw()
-            self.win.flip()
-            core.wait(random.uniform(between_stimuli - 1, between_stimuli + 1))
-            #apparition_stimuli.append(global_timer.getTime())
-            #longueur_stimuli.append(timer.getTime())
-            #stimuli_liste.append("Fixation")
-            longueur = timer.getTime()
-            stimuli = "Fixation"
-            self.write_tsv(self.filename, self.filename_csv, apparition, longueur, stimuli, "None")
+        apparition = global_timer.getTime()
+        cross_stim.draw()
+        self.win.flip()
+        core.wait(random.uniform(between_stimuli - 1, between_stimuli + 1))
+        #apparition_stimuli.append(global_timer.getTime())
+        #longueur_stimuli.append(timer.getTime())
+        #stimuli_liste.append("Fixation")
+        longueur = timer.getTime()
+        stimuli = "Fixation"
+        self.write_tsv(self.filename, self.filename_csv, apparition, longueur, stimuli, "None")
 
-            super().the_end(self.win)
-            self.win.close()
-        except Exception as e:
-            print(e)
+        super().the_end(self.win)
+        self.win.close()
 
         return longueur_stimuli, apparition_stimuli, stimuli_liste
 

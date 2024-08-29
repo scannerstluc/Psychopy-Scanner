@@ -177,7 +177,7 @@ class Priming(Parente):
             if self.activation:
                 super().send_character(self.port,self.baudrate)
             self.timer.reset()  # Réinitialiser le timer à chaque nouvelle image
-            while self.timer.getTime() < random.uniform(self.stimuli_duration-1,self.stimuli_duration+1):
+            while self.timer.getTime() < self.stimuli_duration:
                 button = self.mouse.getPressed()  # Mise à jour de l'état des boutons de la souris
                 if any(button):
                     if not clicked:  # Vérifier si c'est le premier clic détecté

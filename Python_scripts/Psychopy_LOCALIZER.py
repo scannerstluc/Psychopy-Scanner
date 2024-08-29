@@ -181,7 +181,7 @@ class Localizer(Parente):
             if self.activation:
                 super().send_character(self.port,self.baudrate)
             self.timer.reset()  # Réinitialiser le timer à chaque nouvelle image
-            while self.timer.getTime() < random.uniform(self.stimuli_duration-1,self.stimuli_duration+1):
+            while self.timer.getTime() < self.stimuli_duration:
                 pass
             self.duration.append(self.timer.getTime())
             self.trial_type.append("Stimuli")

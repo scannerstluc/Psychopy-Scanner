@@ -101,7 +101,7 @@ class static_image(Parente):
         cross_stim.draw()
         self.win.flip()
         timer.reset()
-        while timer.getTime() < random.uniform(betweenstimuli-1,betweenstimuli+1):
+        while timer.getTime() < random.uniform(betweenstimuli-0.2,betweenstimuli+0.2):
             pass
 
 

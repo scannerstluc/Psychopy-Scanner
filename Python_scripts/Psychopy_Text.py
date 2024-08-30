@@ -80,7 +80,6 @@ class PsychoPyParadigm(Parente):
         super().launching_texts(self.win, texts,self.trigger)
         super().wait_for_trigger(self.trigger)
         self.global_timer.reset()
-        zoom_factor = 0
         text_stim = visual.TextStim(self.win, text='', color=[1, 1, 1],
                                     font='Arial', height = 0.1 + (0.004*self.zoom))
         nothinkinglist = [":; $+", " #^=-", ":?$µ", "###"]
@@ -90,7 +89,7 @@ class PsychoPyParadigm(Parente):
         self.win.flip()
         self.timer.reset()
         self.stimuli_apparition.append(self.global_timer.getTime())
-        while self.timer.getTime() < random.uniform(self.fixation-1,self.fixation+1):
+        while self.timer.getTime() < random.uniform(self.fixation-0.2,self.fixation+0.2):
             pass
         self.stimuli_times.append(self.timer.getTime())
         self.stimuli.append("None")
@@ -99,7 +98,7 @@ class PsychoPyParadigm(Parente):
         self.win.flip()
         self.timer.reset()
         self.stimuli_apparition.append(self.global_timer.getTime())
-        while self.timer.getTime() < random.uniform(self.fixation-1,self.fixation+1):
+        while self.timer.getTime() < random.uniform(self.fixation-0.2,self.fixation+0.2):
             pass
         self.stimuli_times.append(self.timer.getTime())
         self.stimuli.append("None")
@@ -108,7 +107,7 @@ class PsychoPyParadigm(Parente):
         self.win.flip()
         self.timer.reset()
         self.stimuli_apparition.append(self.global_timer.getTime())
-        while self.timer.getTime()<random.uniform(self.fixation-1,self.fixation+1):
+        while self.timer.getTime()<random.uniform(self.fixation-0.2,self.fixation+0.2):
             pass
         self.stimuli_times.append(self.timer.getTime())
         self.stimuli.append("None")
@@ -117,7 +116,7 @@ class PsychoPyParadigm(Parente):
         self.win.flip()
         self.timer.reset()
         self.stimuli_apparition.append(self.global_timer.getTime())
-        while self.timer.getTime() < random.uniform(self.fixation-1,self.fixation+1):
+        while self.timer.getTime() < random.uniform(self.fixation-0.2,self.fixation+0.2):
             pass
         self.stimuli_times.append(self.timer.getTime())
         self.stimuli.append("None")

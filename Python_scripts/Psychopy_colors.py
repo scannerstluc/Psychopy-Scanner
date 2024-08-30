@@ -150,7 +150,7 @@ class Colors(Parente):
             self.win.flip()
             self.onset.append(self.global_timer.getTime())
             self.timer.reset()
-            while self.timer.getTime() < random.uniform(self.betweenstimuli-1, self.betweenstimuli+1):
+            while self.timer.getTime() < random.uniform(self.betweenstimuli-0.2, self.betweenstimuli+0.2):
                 pass
             self.duration.append(self.timer.getTime())
             self.stimuli.append("Cross")

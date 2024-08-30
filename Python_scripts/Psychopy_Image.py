@@ -115,7 +115,7 @@ class static_image(Parente):
             timer.reset()  # Réinitialiser le timer à chaque nouvelle image
             clicked = False  # Variable pour vérifier si un clic a été détecté
             clicked_time = "None"
-            while timer.getTime() < random.uniform(duration-1,duration+1):
+            while timer.getTime() < duration:
                 button = self.mouse.getPressed()  # Mise à jour de l'état des boutons de la souris
 
                 if any(button):
@@ -130,7 +130,7 @@ class static_image(Parente):
             self.click_times.append(clicked_time)
             stimulus_apparition.append(self.global_timer.getTime())
             timer.reset() # Réinitialiser le timer à chaque nouvelle image
-            while timer.getTime() < random.uniform(betweenstimuli-1, betweenstimuli+1):
+            while timer.getTime() < random.uniform(betweenstimuli-0.2, betweenstimuli+0.2):
                 pass
             stimulus_times.append(timer.getTime())
             self.click_times.append("None")

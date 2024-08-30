@@ -80,7 +80,7 @@ class Localizer(Parente):
             self.onset.append(self.global_timer.getTime())
             self.timer.reset()
             print(self.betweenblocks)
-            while self.timer.getTime() < random.uniform(self.betweenblocks-1, self.betweenblocks+1):
+            while self.timer.getTime() < self.betweenblocks:
                 pass
             self.duration.append(self.timer.getTime())
             self.trial_type.append("Fixation")
@@ -192,7 +192,7 @@ class Localizer(Parente):
                 self.cross_stim.draw()
                 self.win.flip()
                 self.timer.reset()  # Réinitialiser le timer à chaque nouvelle image
-                while self.timer.getTime() < random.uniform(self.betweenstimuli-1,self.betweenstimuli+1):
+                while self.timer.getTime() <  self.betweenstimuli:
                     pass
                 self.duration.append(self.timer.getTime())
                 self.trial_type.append("Fixation")

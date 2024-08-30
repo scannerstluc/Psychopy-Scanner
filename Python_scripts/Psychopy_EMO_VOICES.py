@@ -88,7 +88,7 @@ class voices(Parente):
             self.cross_stim.draw()
             self.win.flip()
             self.onset.append(self.global_timer.getTime())
-            while self.timer.getTime() < random.uniform(self.betweenstimuli-1,self.betweenstimuli+1):
+            while self.timer.getTime() < random.uniform(self.betweenstimuli-0.2,self.betweenstimuli+0.2):
                 pass
             self.duration.append(self.timer.getTime())
             self.trial_type.append("Fixation")

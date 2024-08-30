@@ -301,7 +301,7 @@ class Adjectifs(Parente):
             fixation_duration = self.betweenstimuli  # en secondes
             clock.reset()
 
-            while clock.getTime() < random.uniform(fixation_duration-1, fixation_duration+1):
+            while clock.getTime() < random.uniform(fixation_duration-0.2, fixation_duration+0.2):
                 cross_stim.draw()
                 self.win.flip()
 
@@ -345,7 +345,7 @@ class Adjectifs(Parente):
             self.win.flip()
             clock.reset()
 
-            while clock.getTime() < random.uniform(fixation_duration-1,fixation_duration+1):
+            while clock.getTime() < random.uniform(fixation_duration-0.2,fixation_duration+0.2):
                 cross_stim.draw()
                 self.win.flip()
 

@@ -114,7 +114,7 @@ class Emo_Face(Parente):
             if self.activation:
                 super().send_character(self.port,self.baudrate)
             self.onset.append(global_timer.getTime())
-            while timer.getTime() < random.uniform(self.betweenstimuli-1, self.betweenstimuli+1):
+            while timer.getTime() < random.uniform(self.betweenstimuli-0.2, self.betweenstimuli+0.2):
                 pass
             self.duration.append(timer.getTime())
             self.click_times.append("None")

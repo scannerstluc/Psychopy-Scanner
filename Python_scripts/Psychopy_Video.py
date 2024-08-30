@@ -95,7 +95,7 @@ class VideoPsycho(Parente):
                 # apparition_stimuli.append(global_timer.getTime())
                 apparition = global_timer.getTime()
 
-                while timer.getTime() < random.uniform(between_stimuli - 1, between_stimuli + 1):
+                while timer.getTime() < random.uniform(between_stimuli - 0.2, between_stimuli + 0.2):
                     pass
                 longueur = timer.getTime()
                 # longueur_stimuli.append(timer.getTime())
@@ -116,7 +116,6 @@ class VideoPsycho(Parente):
 
                 timer.reset()
 
-                #apparition_stimuli.append(global_timer.getTime())
                 apparition = global_timer.getTime()
                 if self.activation:
                     super().send_character(self.port, self.baudrate)

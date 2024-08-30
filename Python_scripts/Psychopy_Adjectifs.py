@@ -15,7 +15,7 @@ from Paradigme_parent import Parente
 class Adjectifs(Parente):
 
     def __init__(self, duration, betweenstimuli, zoom, blocks, entrainement, per_block, filepath, output, port, baudrate,
-                 trigger, activation, hauteur, largeur, random, launching):
+                 trigger, activation, hauteur, largeur, random, launching, scanner):
         self.words = self.reading("Input/Paradigme_Adjectifs/"+filepath)
         self.entrainement_words = self.reading("Input/Paradigme_Adjectifs/entrainement.txt")
         self.me_entrainement = self.entrainement_words.copy()
@@ -42,7 +42,7 @@ class Adjectifs(Parente):
         self.entrainement_block = entrainement
         self.per_block = per_block
         self.experience_text = ""
-        self.hashmapvaleurs= {"d":"1", "q":"2", "c":"3", "b":"4"}
+        self.hashmapvaleurs= {"d":"1", "q":"2", "c":"3", "b":"4", "1":"1", "2":"2","3":"3", "4":"4", "&":"1","é":"2","#":"3","'":"4"}
         self.port = port
         self.baudrate = baudrate
         self.trigger = trigger
@@ -58,6 +58,10 @@ class Adjectifs(Parente):
             self.random = True
         else:
             self.random = False
+        if scanner == "True":
+            self.scanner = True
+        else:
+            self.scanner = False
 
         self.win = visual.Window(size=(800, 600), fullscr=True , units="norm")
         self.explication_texts = super().inputs_texts("Input/Paradigme_Adjectifs/"+self.launching)
@@ -125,7 +129,8 @@ class Adjectifs(Parente):
         texte.draw()
         self.win.flip()
         super().proper_waitkey(self.trigger)
-        super().wait_for_trigger(self.trigger)
+        if self.scanner:
+            super().wait_for_trigger(self.trigger)
         self.global_timer.reset()
 
         self.blocks()
@@ -173,7 +178,7 @@ class Adjectifs(Parente):
             if k=="None":
                 key = event.getKeys()
                 #d=1, q=2, c=3, b=4
-                if "d" in key or "q" in key or 'c' in key or "b" in key :
+                if "d" in key or "q" in key or 'c' in key or "b" in key  or "1" in key or "2" in key or "3" in key or "4" in key or "&" in key or "é" in key or "#" in key or "'" in key:
                     k = self.hashmapvaleurs.get(key[0])
                     response_time=self.timer.getTime()
                     texte_5_words.text=" "
@@ -368,6 +373,8 @@ if __name__ == "__main__":
     parser.add_argument("--per_block", type=int, required=True, help="Nombre d'adjectifs pas block")
     parser.add_argument("--activation", type=str, required=True, help="Pour le boitier avec les EEG")
     parser.add_argument("--random", type=str, required=True, help="Ordre random stimuli")
+    parser.add_argument("--scanner", type=str, required=True, help="scanner")
+
 
 
     parser.add_argument('--port', type=str, required=False, help="Port")
@@ -379,7 +386,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     paradigm = Adjectifs(args.duration, args.betweenstimuli, args.zoom, args.blocks, args.entrainement, args.per_block,
                          args.file, args.output_file, args.port, args.baudrate, args.trigger, args.activation,
-                        args.hauteur, args.largeur, args.random, args.launching)
+                        args.hauteur, args.largeur, args.random, args.launching, args.scanner)
     paradigm.lancement()
     paradigm.fin()
 

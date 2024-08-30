@@ -107,6 +107,16 @@
                 const mainContent = document.getElementById('main-content');
                 let newContent = '';
 
+                const links = document.querySelectorAll('.sidenav a');
+                links.forEach(link => {
+                    link.classList.remove('active');
+                });
+
+                const activeLink = document.querySelector(`.sidenav a[onclick="changeMainContent('${section}')"]`);
+                if (activeLink) {
+                    activeLink.classList.add('active');
+                }
+
                 switch(section) {
                     case 'home':
                         newContent = `
@@ -251,7 +261,12 @@
                                     <input  type="checkbox" id="random-adj" value="option1" style=" height: 50px">
                                 </div>
                                 <div class="input-container">
-                                    <h3></h3>
+                                    <h3> Scanner </h3>
+                                    <input  type="checkbox" id="ifscanner" value="option1" style=" height: 50px">
+                                </div>
+                            </div>
+                            <div class= "input-group">
+                                <div class="input-container">
                                     <button class="submit" onclick="submitAdjectifs()">Submit</button>
                                 </div>
                             </div>
@@ -940,6 +955,7 @@
                 let fileName = fileInput.value.split('\\').pop();  // Cela extraira uniquement le nom du fichier.
                 const activation = document.getElementById("option1").checked;
                 const random = document.getElementById("random-adj").checked;
+                const scanner = document.getElementById("ifscanner").checked;
                 const fileLaunching = document.getElementById('launching_text');
                 let launching_text =  fileLaunching.value.split('\\').pop();
 
@@ -982,6 +998,7 @@
                         launching_text: launching_text,
                         activation: activation,
                         random: random,
+                        scanner: scanner,
                         baudrate: baudrate,
                         trigger: trigger,
                         hauteur: hauteur,

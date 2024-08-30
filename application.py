@@ -199,6 +199,7 @@ def submit_adjectifs():
         trigger = data.get('trigger')
         hauteur = data.get('hauteur')
         largeur = data.get('largeur')
+        scanner = data.get('scanner')
         launching = data.get('launching_text')
         blocks = data.get('blocks')
         zoom = data.get('zoom')
@@ -214,6 +215,7 @@ def submit_adjectifs():
             '--activation', str(activation),
             '--random', str(random),
             '--baudrate', str(baudrate),
+            '--scanner', str(scanner),
             '--trigger', trigger,
             '--launching', launching,
             '--hauteur', hauteur,
@@ -251,7 +253,7 @@ def submit_stroop():
         random = data.get('random')
         print(data)
         subprocess.Popen([
-            sys.executable, 'Python_scripts/Psychopy_colors.py',
+            sys.executable, 'Python_scripts/Psychopy_Stroop.py',
             '--duration', duration,
             '--file', file,
             '--port', port,

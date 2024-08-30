@@ -158,8 +158,14 @@ body {
     display: block;
 }
 
+.sidenav a.active {
+    color: rgba(28, 59, 0, 0.58);
+    background-color: #f1f1f1; /* Facultatif : pour changer le fond de l'élément actif */
+    font-weight: bold; /* Facultatif : pour le rendre plus visible */
+}
+
 .sidenav a:hover {
-  color: #000000;
+  color: #4b4b4b;
 }
 
 .main-content {

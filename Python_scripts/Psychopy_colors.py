@@ -23,16 +23,14 @@ class Colors(Parente):
         self.zoom = zoom
         self.filepath = filepath
         self.output = output
+        self.filename, self.filename_csv = super().preprocessing_tsv_csv(self.output)
+        self.dirname = self.filename[:self.filename.find(".tsv")]
+        os.makedirs(self.dirname, exist_ok=True)
         self.threshold = 1000  # seuil pour détecter le début de la parole (à ajuster selon votre micro/environnement)
         self.timer = core.Clock()  # création de l'horloge
         self.global_timer = core.Clock()
         self.patient_id = output
         self.launching = launching
-        self.onset = []
-        self.duration = []
-        self.stimuli = []
-        self.trial_type = []
-        self.reaction = []
         self.langue = langage
         self.port = port
         self.baudrate = baudrate
@@ -93,43 +91,14 @@ class Colors(Parente):
                     text = recognizer.recognize_google(audio_data, language="da-DK")
                 return text
             except sr.UnknownValueError:
-                return "None/pas reconnu"
                 print("Google Speech Recognition n'a pas pu comprendre l'audio")
-            except sr.RequestError as e:
                 return "None/pas reconnu"
+            except sr.RequestError as e:
                 print(f"Erreur lors de la demande à Google Speech Recognition; {e}")
-
-    def write_tsv(self,onset, duration,stimuli, trial_type, recording, reaction_time, filename="output.tsv"):
-        output_dir = '../Fichiers_output'
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
-        current_date = datetime.now().strftime("%Y-%m-%d")
-        run_number = 1
-        filename_prefix = f"{current_date}_{filename.split('.')[0]}"
-        existing_files = [f for f in os.listdir(output_dir) if f.startswith(filename_prefix) and 'run' in f]
-        if existing_files:
-            runs = [int(f.split('run')[-1].split('.')[0]) for f in existing_files if 'run' in f]
-            if runs:
-                run_number = max(runs) + 1
-        filename = os.path.join(output_dir, f"{filename_prefix}_run{run_number}.tsv")
-        dirname = os.path.join(output_dir, f"{filename_prefix}_run{run_number}")
-        os.makedirs(dirname, exist_ok=True)
-        for i in range (len(recording)):
-            record = os.path.join(dirname, f"record{i}.wav")
-            sf.write(record, recording[i], self.fs)
-        special_count=0
-        with open(filename, mode='w', newline='') as file:
-            tsv_writer = csv.writer(file, delimiter='\t')
-            tsv_writer.writerow(['onset', 'duration', 'stimuli', 'trial_type', 'response','time_before_starting_to_answer', ])
-            for i in range(len(onset)):
-                if i%2!=0:
-                    tsv_writer.writerow([onset[i], duration[i],stimuli[i], trial_type[i], self.reconnaissance(dirname+"/record"+str(special_count)+".wav"), reaction_time[i] ])
-                    special_count+=1
-                else:
-                    tsv_writer.writerow([onset[i], duration[i],stimuli[i], trial_type[i], "None",reaction_time[i] ])
-
+                return "None/pas reconnu"
 
     def lancement(self):
+        super().file_init(self.filename,self.filename_csv, ['onset', 'duration', 'stimuli', 'trial_type', 'response','time_before_starting_to_answer'] )
         texts= super().inputs_texts("Input/Paradigme_Couleur/"+self.launching)
         super().launching_texts(self.win, texts,self.trigger)
         words, colors, stimuli_names=self.reading("Input/Paradigme_Couleur/"+self.filepath)
@@ -144,32 +113,33 @@ class Colors(Parente):
         count=0
         super().wait_for_trigger(self.trigger)
         self.global_timer.reset()
-        recordings=[]
         for mot in words:
             self.cross_stim.draw()
             self.win.flip()
-            self.onset.append(self.global_timer.getTime())
+            onset = self.global_timer.getTime()
             self.timer.reset()
-            while self.timer.getTime() < random.uniform(self.betweenstimuli-0.2, self.betweenstimuli+0.2):
+            while self.timer.getTime() < self.betweenstimuli:
                 pass
-            self.duration.append(self.timer.getTime())
-            self.stimuli.append("Cross")
-            self.reaction.append("None")
-            self.trial_type.append("Fixation")
+            time_long = self.timer.getTime()
+            stimuli = "Cross"
+            reaction = "None"
+            trial = "Fixation"
+            super().write_tsv_csv(self.filename, self.filename_csv,
+                                  [onset, time_long, stimuli, trial, reaction, reaction])
             text_stim.text=mot
             text_stim.color=colors[count]
             text_stim.draw()
             self.rect.draw()
             self.win.flip()
-            self.onset.append(self.global_timer.getTime())
+            onset = self.global_timer.getTime()
             self.timer.reset()
-            recording = sd.rec(int(self.stimuli_duration * self.fs), samplerate=self.fs, channels=1, dtype='int16')
+            recording = sd.rec(int(self.stimuli_duration *self.fs), samplerate=self.fs, channels=1, dtype='int16')
             if self.activation:
                 super().send_character(self.port,self.baudrate)
             sd.wait()
-            self.duration.append(self.timer.getTime())
-            self.stimuli.append(stimuli_names[count])
-            self.trial_type.append("Stimuli")
+            time_long = self.timer.getTime()
+            stimuli = stimuli_names[count]
+            trial = "Stimuli"
             start_time = None
             for i, sample in enumerate(recording):
                 if np.abs(sample) > self.threshold:
@@ -180,10 +150,13 @@ class Colors(Parente):
             else:
                 start_time="None"
                 print("Aucune parole détectée.")
-            self.reaction.append(start_time)
+            reaction = start_time
+            record = os.path.join(self.dirname, f"record{i}.wav")
+            sf.write(record, recording, self.fs)
+            super().write_tsv_csv(self.filename, self.filename_csv,
+                                  [onset, time_long, stimuli, trial, self.reconnaissance(record), reaction])
             count+=1
-            recordings.append(recording)
-        self.write_tsv(self.onset,self.duration, self.stimuli,self.trial_type, recordings, self.reaction, self.patient_id)
+
         super().the_end(self.win)
         self.win.close()
         core.quit()

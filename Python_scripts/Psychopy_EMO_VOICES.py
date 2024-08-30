@@ -39,6 +39,7 @@ class voices(Parente):
         self.port = port
         self.baudrate = baudrate
         self.trigger = trigger
+        self.filename, self.filename_csv = super().preprocessing_tsv_csv(self.output)
         if activation == "True":
             self.activation = True
         else:
@@ -70,6 +71,8 @@ class voices(Parente):
     def lancement(self):
         texts = super().inputs_texts("Input/Paradigme_EMO_VOICES/"+self.launching)
         super().launching_texts(self.win, texts, self.trigger)
+        super().file_init(self.filename, self.filename_csv,
+                          ['onset', 'duration', 'trial_type', 'reaction','stim_file' ])
         self.voices = self.reading("Input/Paradigme_EMO_VOICES/"+self.file)
         if self.random:
             random.shuffle(self.voices)
@@ -83,13 +86,15 @@ class voices(Parente):
             self.timer.reset()
             self.cross_stim.draw()
             self.win.flip()
-            self.onset.append(self.global_timer.getTime())
-            while self.timer.getTime() < random.uniform(self.betweenstimuli-0.2,self.betweenstimuli+0.2):
+            onset = self.global_timer.getTime()
+            while self.timer.getTime() < random.uniform(self.betweenstimuli-0.5,self.betweenstimuli+0.5):
                 pass
-            self.duration.append(self.timer.getTime())
-            self.trial_type.append("Fixation")
-            self.stim_file.append("None")
-            self.reaction.append("None")
+            time_long = self.timer.getTime()
+            trial_type = "Fixation"
+            stim_file = "None"
+            reaction = "None"
+            super().write_tsv_csv(self.filename, self.filename_csv, [onset, time_long, trial_type, reaction, stim_file])
+
             text_stim = visual.TextStim(self.win, wrapWidth=1.5, font="Arial", text="Audio")
             text_stim.draw()
             self.rect.draw()
@@ -98,7 +103,7 @@ class voices(Parente):
             if self.activation:
                 super().send_character(self.port,self.baudrate)
             custom_sound.play()
-            self.onset.append(self.global_timer.getTime())
+            onset = self.global_timer.getTime()
             while self.timer.getTime()<custom_sound.getDuration():
                 button = self.mouse.getPressed()
                 if any(button):
@@ -106,12 +111,12 @@ class voices(Parente):
                         clicked_time = self.timer.getTime()
                         print("Clic détecté à :", clicked_time, "secondes")
                         clicked = True
-            self.duration.append(self.timer.getTime())
-            self.trial_type.append("Stimuli")
-            self.stim_file.append(x)
-            self.reaction.append(clicked_time)
+            time_long = self.timer.getTime()
+            trial_type = "Stimuli"
+            stim_file = x
+            reaction = clicked_time
+            super().write_tsv_csv(self.filename, self.filename_csv, [onset, time_long, trial_type, reaction, stim_file])
         super().the_end(self.win)
-        self.write_tsv(self.onset,self.duration,self.stim_file,self.trial_type,self.reaction,self.output)
         self.win.close()
         core.quit()
 

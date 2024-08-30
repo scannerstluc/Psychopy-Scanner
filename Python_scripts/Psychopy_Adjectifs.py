@@ -46,6 +46,10 @@ class Adjectifs(Parente):
         self.port = port
         self.baudrate = baudrate
         self.trigger = trigger
+        self.global_timer = core.Clock()
+        self.timer = core.Clock()
+        self.filename, self.filename_csv = super().preprocessing_tsv_csv(output)
+
         if activation == "True":
             self.activation = True
         else:
@@ -116,10 +120,13 @@ class Adjectifs(Parente):
 
         self.entrainement()
         texte.text = self.experience_text
+        super().file_init(self.filename, self.filename_csv,
+                          ['onset', 'duration', 'block_type', 'word', 'key', 'response_time'])
         texte.draw()
         self.win.flip()
         super().proper_waitkey(self.trigger)
         super().wait_for_trigger(self.trigger)
+        self.global_timer.reset()
 
         self.blocks()
 
@@ -150,29 +157,30 @@ class Adjectifs(Parente):
 
 
 
-    def show_1_word(self, mot):
+    def show_1_word(self, mot , block_type):
         texte_5_words = visual.TextStim(self.win, color=[1, 1, 1], wrapWidth=1.5, font="Arial", height=0.1 + (0.004*self.zoom))
         texte_5_words.text = mot
         texte_5_words.draw()
         self.rect.draw()
         self.win.flip()
+        onset = self.global_timer.getTime()
         if self.activation:
             super().send_character(self.port, self.baudrate)
         response_time="None"
-        timer = core.Clock()
         k="None"
-        while timer.getTime() < self.stimuli_duration:  # Limite de temps de 4 secondes
+        self.timer.reset()
+        while self.timer.getTime() < self.stimuli_duration:  # Limite de temps de 4 secondes
             if k=="None":
                 key = event.getKeys()
                 #d=1, q=2, c=3, b=4
                 if "d" in key or "q" in key or 'c' in key or "b" in key :
                     k = self.hashmapvaleurs.get(key[0])
-                    response_time=timer.getTime()
+                    response_time=self.timer.getTime()
                     texte_5_words.text=" "
                     texte_5_words.draw()
                     self.win.flip()
-        self.response.append(k)
-        self.reaction_time.append(response_time)
+        time_long = self.timer.getTime()
+        super().write_tsv_csv(self.filename, self.filename_csv, [onset, time_long, block_type, mot, k, response_time])
 
 
         self.win.flip()
@@ -191,7 +199,7 @@ class Adjectifs(Parente):
                 if self.random:
                     mot=random.choice(self.friend_blocks)
                 else:
-                    mort = self.friend_blocks[0]
+                    mot = self.friend_blocks[0]
                 self.friend_blocks.remove(mot)
             if block_type == "syllabe":
                 if self.random:
@@ -199,7 +207,7 @@ class Adjectifs(Parente):
                 else:
                     mot = self.syllabe_blocks[0]
                 self.syllabe_blocks.remove(mot)
-            self.show_1_word(mot)
+            self.show_1_word(mot, block_type)
             self.shown_words.append(mot)
             self.order_blocks.append(block_type)
             self.show_words(count-1,block_type)
@@ -240,7 +248,7 @@ class Adjectifs(Parente):
                 else:
                     mot = self.syllable_entrainement[0]
                 self.syllable_entrainement.remove(mot)
-            self.show_1_word(mot)
+            self.show_1_word(mot, block_type)
             self.entrainement_show_words(count-1,block_type)
 
     def entrainement(self):
@@ -257,7 +265,6 @@ class Adjectifs(Parente):
         choice_block = ["me", "friend", "syllabe"]
         longueur = len(self.entrainement_words) // self.per_block
         hashmap = {"me": longueur, "friend": longueur, "syllabe": longueur}
-        clock = core.Clock()
 
         for x in range(number_of_blocks):
             if len(choice_block) == 0:
@@ -279,12 +286,19 @@ class Adjectifs(Parente):
 
             cross_stim.draw()
             self.win.flip()
+            onset = self.global_timer.getTime()
             fixation_duration = self.betweenstimuli
-            clock.reset()
-
-            while clock.getTime() < random.uniform(fixation_duration-0.2, fixation_duration+0.2):
+            self.timer.reset()
+            while self.timer.getTime() < fixation_duration:
                 cross_stim.draw()
                 self.win.flip()
+            time_long = self.timer.getTime()
+            block_type = "Fixation"
+            mot = "None"
+            key = "None"
+            response_time = "None"
+            super().write_tsv_csv(self.filename, self.filename_csv,
+                                  [onset, time_long, block_type, mot, key, response_time])
 
     def blocks(self):
         cross_stim = visual.ShapeStim(
@@ -300,7 +314,6 @@ class Adjectifs(Parente):
         choice_block = ["me", "friend", "syllabe"]
         longueur = len(self.words)//self.per_block
         hashmap = {"me": longueur, "friend": longueur, "syllabe": longueur}
-        clock = core.Clock()
         fixation_duration = self.betweenstimuli  # en secondes
 
         for x in range(number_of_blocks):
@@ -324,16 +337,22 @@ class Adjectifs(Parente):
             # Affichage de la croix de fixation pendant 100 secondes
             cross_stim.draw()
             self.win.flip()
-            clock.reset()
-
-            while clock.getTime() < random.uniform(fixation_duration-0.2,fixation_duration+0.2):
+            onset = self.global_timer.getTime()
+            self.timer.reset()
+            while self.timer.getTime() < fixation_duration:
                 cross_stim.draw()
                 self.win.flip()
+            time_long = self.timer.getTime()
+            block_type = "Fixation"
+            mot = "None"
+            key = "None"
+            response_time = "None"
+            super().write_tsv_csv(self.filename, self.filename_csv,
+                                  [onset, time_long, block_type, mot, key, response_time])
 
     def fin(self):
         super().the_end(self.win)
         self.win.close()
-        self.write_tsv()
         core.quit()
 
 if __name__ == "__main__":

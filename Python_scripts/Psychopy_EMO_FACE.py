@@ -29,6 +29,7 @@ class Emo_Face(Parente):
         self.zoom = zoom
         self.trigger = trigger
         self.launching = launching
+        self.filename, self.filename_csv = super().preprocessing_tsv_csv(self.output)
         self.win = visual.Window(size=(800, 600), fullscr=True, units="norm")
         if activation == "True":
             self.activation = True
@@ -65,6 +66,8 @@ class Emo_Face(Parente):
     def lancement(self):
         self.mouse = event.Mouse(win=self.win)
         event.globalKeys.add(key='escape', func=self.win.close)
+        super().file_init(self.filename, self.filename_csv,
+                          ['onset', 'duration', 'trial_type', 'reaction','stim_file' ])
 
         cross_stim = visual.ShapeStim(
             win=self.win,
@@ -103,23 +106,24 @@ class Emo_Face(Parente):
             timer.reset()
             cross_stim.draw()
             self.win.flip()
-            if self.activation:
-                super().send_character(self.port,self.baudrate)
-            self.onset.append(global_timer.getTime())
-            while timer.getTime() < random.uniform(self.betweenstimuli-0.2, self.betweenstimuli+0.2):
+            onset = global_timer.getTime()
+            while timer.getTime() < random.uniform(self.betweenstimuli-0.5, self.betweenstimuli+0.5):
                 pass
-            self.duration.append(timer.getTime())
-            self.click_times.append("None")
-            self.stimuli_file.append("None")
-            self.trial_type.append("Fixation")
+            long_time = timer.getTime()
+            click_times = "None"
+            stimuli_file = "None"
+            trial_type = "Fixation"
+            super().write_tsv_csv(self.filename, self.filename_csv,
+                                  [onset, long_time, trial_type, click_times, stimuli_file])
             clicked = False  # Variable pour vérifier si un clic a été détecté
             clicked_time = "None"
             timer.reset()
             image_stim.draw()
             self.rect.draw()
             self.win.flip()
-            #super().send_character()
-            self.onset.append(global_timer.getTime())
+            if self.activation:
+                super().send_character(self.port,self.baudrate)
+            onset = global_timer.getTime()
             while timer.getTime() < self.stimuli_duration:
                 button = self.mouse.getPressed()  # Mise à jour de l'état des boutons de la souris
                 if any(button):
@@ -127,15 +131,13 @@ class Emo_Face(Parente):
                         clicked_time = timer.getTime()
                         print("Clic détecté à :", clicked_time, "secondes")
                         clicked = True  # Empêcher l'enregistrement de clics multiple
+            click_times = clicked_time
+            long_time = timer.getTime()
+            stimuli_file = image_stim.image[40:]
+            trial_type = "Stimuli"
+            super().write_tsv_csv(self.filename, self.filename_csv,
+                                  [onset, long_time, trial_type, click_times, stimuli_file])
 
-                # Vous pouvez ajouter ici d'autres actions à exécuter pendant l'attente
-            self.click_times.append(clicked_time)
-            self.duration.append(timer.getTime())
-            self.stimuli_file.append(image_stim.image[40:])
-            self.trial_type.append("stimuli")
-
-
-        self.write_tsv(self.onset,self.duration,self.stimuli_file,self.trial_type, self.click_times,self.output)
         super().the_end(self.win)
         self.win.close()
         core.quit()

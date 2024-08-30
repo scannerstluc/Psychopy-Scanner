@@ -38,8 +38,6 @@ class VideoPsycho(Parente):
         self.win = visual.Window(
             size=(800,600),
             fullscr=True,
-            # color = [0, 0, 1],
-            # color = [1,0,0],
             color=[-0.042607843137254943, 0.0005215686274509665, -0.025607843137254943],
             units="norm",
         )
@@ -60,7 +58,7 @@ class VideoPsycho(Parente):
         apparition_stimuli = []
         longueur_stimuli = []
         stimuli_liste = []
-        self.file_init(self.filename, self.filename_csv)
+        super().file_init(self.filename, self.filename_csv,['onset', 'duration', 'trial_type', 'stim_file'])
         videos = self.reading(chemin)
         if self.random:
             random.shuffle(videos)
@@ -94,20 +92,20 @@ class VideoPsycho(Parente):
                 timer.reset()
                 apparition = global_timer.getTime()
 
-                while timer.getTime() < random.uniform(between_stimuli - 0.2, between_stimuli + 0.2):
+                while timer.getTime() < random.uniform(between_stimuli - 0.5, between_stimuli + 0.5):
                     pass
                 longueur = timer.getTime()
                 stimuli = "Fixation"
-                self.write_tsv(self.filename, self.filename_csv, apparition, longueur, "None", stimuli)
+                super().write_tsv_csv(self.filename, self.filename_csv, [apparition, longueur, stimuli, "None"])
                 movie_stim = visual.MovieStim(
                     win=self.win,
                     filename=video_path,
                     pos=(0, 0),
-                    size=thezoom,  # Définir la taille au moment de la création
+                    size=thezoom,
                     opacity=1.0,
                     flipVert=False,
                     flipHoriz=False,
-                    loop=False,  # Assurez-vous de ne pas boucler pour libérer les ressources
+                    loop=False,
                     units='norm',
                 )
 
@@ -116,7 +114,6 @@ class VideoPsycho(Parente):
                 apparition = global_timer.getTime()
                 if self.activation:
                     super().send_character(self.port, self.baudrate)
-
                 movie_stim.play()
 
                 while timer.getTime() < duration:
@@ -125,12 +122,9 @@ class VideoPsycho(Parente):
                     self.win.flip()
                 longueur = timer.getTime()
                 stimuli = file[x]
-                #longueur_stimuli.append(timer.getTime())
-                #stimuli_liste.append(file[x])
-                self.write_tsv(self.filename, self.filename_csv, apparition, longueur, stimuli, "Stimuli")
+                super().write_tsv_csv(self.filename, self.filename_csv, [apparition, longueur, "Stimuli", stimuli])
 
 
-                # Assurez-vous que la vidéo s'arrête correctement et libérez les ressources
                 if movie_stim is not None:
                     movie_stim.stop()
                     movie_stim.seek(0)
@@ -148,33 +142,17 @@ class VideoPsycho(Parente):
         apparition = global_timer.getTime()
         cross_stim.draw()
         self.win.flip()
-        core.wait(random.uniform(between_stimuli - 1, between_stimuli + 1))
+        timer.reset()
+        while timer.getTime() < between_stimuli:
+            pass
         longueur = timer.getTime()
         stimuli = "Fixation"
-        self.write_tsv(self.filename, self.filename_csv, apparition, longueur, stimuli, "None")
+        super().write_tsv_csv(self.filename, self.filename_csv, [apparition, longueur, stimuli, "None"])
 
         super().the_end(self.win)
         self.win.close()
 
         return longueur_stimuli, apparition_stimuli, stimuli_liste
-
-    def file_init(self, filename, filename_csv):
-        with open(filename, mode='w', newline='') as file1:
-            csv_writer = csv.writer(file1, delimiter='\t')
-            csv_writer.writerow(['onset', 'duration', 'trial_type', 'stim_file'])
-
-        with open(filename_csv, mode='w', newline='') as file1:
-            csv_writer = csv.writer(file1, delimiter='\t')
-            csv_writer.writerow(['onset', 'duration', 'trial_type', 'stim_file'])
-
-    def write_tsv(self, filename, filename_csv, onset, duration, file_stimuli, trial_type):
-        with open(filename, mode='a', newline='') as file1:
-            csv_writer = csv.writer(file1, delimiter='\t')
-            csv_writer.writerow([onset, duration, trial_type, file_stimuli])
-
-        with open(filename_csv, mode='a', newline='') as file1:
-            csv_writer = csv.writer(file1, delimiter='\t')
-            csv_writer.writerow([onset, duration, trial_type, file_stimuli])
 
 
     def lancement(self):

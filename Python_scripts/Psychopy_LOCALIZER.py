@@ -61,12 +61,15 @@ class Localizer(Parente):
         self.copy_real_groups = copy.deepcopy(self.real_groups)
         rect_width = largeur
         rect_height = hauteur
+        self.filename, self.filename_csv = super().preprocessing_tsv_csv(self.output)
         self.rect = visual.Rect(self.win, width=rect_width, height=rect_height, fillColor='white', lineColor='white',
                                 units='pix')
         self.rect.pos = (self.win.size[0] / 2 - rect_width / 2, self.win.size[1] / 2 - rect_height / 2)
 
     def lancement(self):
         texts = super().inputs_texts("Input/Paradigme_LOCALIZER/"+self.launching)
+        super().file_init(self.filename, self.filename_csv,
+                          ['onset', 'duration', "block_index" ,'stim_file','trial_type' ])
         super().launching_texts(self.win, texts, self.trigger)
         super().wait_for_trigger(self.trigger)
         self.global_timer.reset()
@@ -74,14 +77,15 @@ class Localizer(Parente):
         for x in range (self.number_of_blocks):
             self.cross_stim.draw()
             self.win.flip()
-            self.onset.append(self.global_timer.getTime())
+            onset = self.global_timer.getTime()
             self.timer.reset()
             while self.timer.getTime() < self.betweenblocks:
                 pass
-            self.duration.append(self.timer.getTime())
-            self.trial_type.append("Fixation")
-            self.stim_file.append("None")
-            self.block_type.append("None")
+            time_long = self.timer.getTime()
+            trial_type = "Fixation"
+            None_cross = "None"
+            super().write_tsv_csv(self.filename, self.filename_csv,
+                                  [onset, time_long, None_cross, None_cross, trial_type])
             if self.random:
 
                 self.show_block(random.randint(0,index_of_groups),self.number_per_block)
@@ -89,7 +93,6 @@ class Localizer(Parente):
                 y = x%index_of_groups
                 self.show_block(y,self.number_per_block)
         super().the_end(self.win)
-        self.write_tsv(self.onset,self.duration,self.block_type, self.stim_file, self.trial_type,self.output)
 
     def reading(self,filename):
         with open(filename, "r") as fichier:
@@ -152,12 +155,11 @@ class Localizer(Parente):
             zoom = 0.5 + (0.012*self.zoom)
             image_stim.size = (base_width * zoom, base_height * zoom)
 
-            #image_stim.size= 0.8+(0.3*self.zoom/100)
             liste_image_win.append(image_stim)
         count=0
         limite = len(liste_image_win)
         for image_stim in liste_image_win:
-            self.onset.append(self.global_timer.getTime())
+            onset = self.global_timer.getTime()
             image_stim.draw()
             self.rect.draw()
             self.win.flip()
@@ -166,21 +168,25 @@ class Localizer(Parente):
             self.timer.reset()  # Réinitialiser le timer à chaque nouvelle image
             while self.timer.getTime() < self.stimuli_duration:
                 pass
-            self.duration.append(self.timer.getTime())
-            self.trial_type.append("Stimuli")
-            self.stim_file.append(toshow[count])
-            self.block_type.append(index+1)
+            time_long = self.timer.getTime()
+            trial_type = "Stimuli"
+            stim_file = toshow[count]
+            block_type = index+1
+            super().write_tsv_csv(self.filename, self.filename_csv,
+                                  [onset, time_long, block_type, stim_file, trial_type])
             if count != limite-1:
                 self.onset.append(self.global_timer.getTime())
                 self.cross_stim.draw()
                 self.win.flip()
                 self.timer.reset()  # Réinitialiser le timer à chaque nouvelle image
+                onset = self.global_timer.getTime()
                 while self.timer.getTime() <  self.betweenstimuli:
                     pass
-                self.duration.append(self.timer.getTime())
-                self.trial_type.append("Fixation")
-                self.stim_file.append("None")
-                self.block_type.append("None")
+                time_long = self.timer.getTime()
+                trial_type = "Fixation"
+                None_cross = "None"
+                super().write_tsv_csv(self.filename, self.filename_csv,
+                                      [onset, time_long, None_cross, None_cross, trial_type])
             count+=1
 
 if __name__ == "__main__":

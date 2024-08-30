@@ -1,3 +1,4 @@
+import csv
 import os
 import re
 import time
@@ -57,6 +58,7 @@ class Parente(ABC):
                 break
 
     def launching_texts(self,win,textes,trigger):
+        y=0
         for x in range (len(textes)-1):
             self.Premier_texte = textes[x]
             texte = visual.TextStim(win, text=self.Premier_texte, color=[1, 1, 1], alignText="left", wrapWidth=1.5,
@@ -64,7 +66,8 @@ class Parente(ABC):
             texte.draw()
             win.flip()
             self.proper_waitkey(trigger)
-        text_after= visual.TextStim(win, text=textes[x+1], alignText="center", wrapWidth=1.5, font="Arial")
+            y=x+1
+        text_after= visual.TextStim(win, text=textes[y], alignText="center", wrapWidth=1.5, font="Arial")
         text_after.draw()
         win.flip()
 
@@ -87,3 +90,21 @@ class Parente(ABC):
 
         except serial.SerialException as e:
             print(f"Erreur d'ouverture ou d'utilisation du port série : {e}")
+
+    def file_init(self, filename, filename_csv, columns):
+        with open(filename, mode='w', newline='') as file1:
+            csv_writer = csv.writer(file1, delimiter='\t')
+            csv_writer.writerow(columns)
+
+        with open(filename_csv, mode='w', newline='') as file1:
+            csv_writer = csv.writer(file1, delimiter='\t')
+            csv_writer.writerow(columns)
+
+    def write_tsv_csv(self, filename, filename_csv, rows):
+        with open(filename, mode='a', newline='') as file1:
+            csv_writer = csv.writer(file1, delimiter='\t')
+            csv_writer.writerow(rows)
+
+        with open(filename_csv, mode='a', newline='') as file1:
+            csv_writer = csv.writer(file1, delimiter='\t')
+            csv_writer.writerow(rows)

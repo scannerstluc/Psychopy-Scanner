@@ -22,6 +22,7 @@ class static_image(Parente):
         self.mouse = event.Mouse(win=self.win)
         event.globalKeys.add(key='escape', func=self.win.close)
         self.output = output
+        self.filename, self.filename_csv = super().preprocessing_tsv_csv(output)
         self.port = port
         self.global_timer = core.Clock() #Horloge principale
         self.baudrate = baudrate
@@ -57,6 +58,8 @@ class static_image(Parente):
     def static_images_psychopy(self, chemin, duration, betweenstimuli):
         chemin = "Input/Paradigme_images_statiques/" + chemin
         images, orientation = self.reading(chemin)
+        super().file_init(self.filename, self.filename_csv,
+                          ['onset', 'duration', 'trial_type', 'angle', 'reaction', 'stim_file'])
         if self.random:
             random.shuffle(images)
         cross_stim = visual.ShapeStim(
@@ -101,20 +104,24 @@ class static_image(Parente):
         cross_stim.draw()
         self.win.flip()
         timer.reset()
-        while timer.getTime() < random.uniform(betweenstimuli-0.2,betweenstimuli+0.2):
+        onset = self.global_timer.getTime()
+        while timer.getTime() < random.uniform(betweenstimuli-0.5,betweenstimuli+0.5):
             pass
-
-
+        time_long = timer.getTime()
+        trial_type = "Fixation"
+        none = "None"
+        super().write_tsv_csv(self.filename, self.filename_csv, [onset, time_long, trial_type, none, none, none])
+        image_count=0
         for image_stim in liste_image_win:
             image_stim.draw()
             self.rect.draw()
             self.win.flip()
             if self.activation:
                 super().send_character(self.port,self.baudrate)
-            stimulus_apparition.append(self.global_timer.getTime())
             timer.reset()  # Réinitialiser le timer à chaque nouvelle image
             clicked = False  # Variable pour vérifier si un clic a été détecté
             clicked_time = "None"
+            onset = self.global_timer.getTime()
             while timer.getTime() < duration:
                 button = self.mouse.getPressed()  # Mise à jour de l'état des boutons de la souris
 
@@ -123,17 +130,23 @@ class static_image(Parente):
                         clicked_time = timer.getTime()
                         print("Clic détecté à :", clicked_time, "secondes")
                         clicked = True  # Empêcher l'enregistrement de clics multiple
-            stimulus_times.append(timer.getTime())
-
+            time_long = timer.getTime()
+            stimuli = images[image_count]
+            trial_type = "Stimuli"
+            super().write_tsv_csv(self.filename, self.filename_csv,
+                                  [onset, time_long, trial_type, image_stim.ori, clicked_time, stimuli])
             cross_stim.draw()
             self.win.flip()
-            self.click_times.append(clicked_time)
-            stimulus_apparition.append(self.global_timer.getTime())
-            timer.reset() # Réinitialiser le timer à chaque nouvelle image
-            while timer.getTime() < random.uniform(betweenstimuli-0.2, betweenstimuli+0.2):
+            onset = self.global_timer.getTime()
+            timer.reset()
+            while timer.getTime() < random.uniform(betweenstimuli-0.5, betweenstimuli+0.5):
                 pass
-            stimulus_times.append(timer.getTime())
-            self.click_times.append("None")
+            time_long = timer.getTime()
+            stimuli = "None"
+            trial_type = "Fixation"
+            super().write_tsv_csv(self.filename, self.filename_csv,
+                                  [onset, time_long, trial_type, "None", "None", stimuli])
+            image_count+=1
         super().the_end(self.win)
         self.win.close()
         return stimulus_times, stimulus_apparition,stimuli_liste, orientation
@@ -198,7 +211,6 @@ class static_image(Parente):
             count+=1
         for x in liste_lm:
             stimuli[x] = "None"
-        self.write_csv_and_tsv(stimulus_apparition, stimulus_times, stimuli, orientation, liste_trial, self.output)
 
 
 

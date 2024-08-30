@@ -33,6 +33,7 @@ class Priming(Parente):
         self.number_of_blocks = number_of_block
         self.betweenblocks= betweenblocks
         self.output = output
+        self.filename, self.filename_csv = super().preprocessing_tsv_csv(self.output)
         self.launching = launching
         self.zoom = zoom
         self.file = file
@@ -83,6 +84,8 @@ class Priming(Parente):
         return groupes
     def lancement(self):
         texts = super().inputs_texts("Input/Paradigme_Priming/" + self.launching)
+        super().file_init(self.filename, self.filename_csv,
+                          ['onset', 'duration', "reaction", "block_index" ,'stim_file','trial_type' ])
         super().launching_texts(self.win, texts, self.trigger)
         super().wait_for_trigger(self.trigger)
         self.global_timer.reset()
@@ -90,22 +93,21 @@ class Priming(Parente):
         for x in range (self.number_of_blocks):
             self.cross_stim.draw()
             self.win.flip()
-            self.onset.append(self.global_timer.getTime())
+            onset = self.global_timer.getTime()
             self.timer.reset()
-            while self.timer.getTime() < random.uniform(self.betweenblocks-0.2,self.betweenblocks+0.2):
+            while self.timer.getTime() < self.betweenblocks:
                 pass
-            self.duration.append(self.timer.getTime())
-            self.click_times.append("None")
-            self.trial_type.append("Fixation")
-            self.stim_file.append("None")
-            self.block_type.append("None")
+            time_long = self.timer.getTime()
+            The_None = "None"
+            trial_type = "Fixation"
+            super().write_tsv_csv(self.filename, self.filename_csv,
+                                  [onset, time_long, The_None, The_None, The_None, trial_type])
             if self.random:
                 self.show_block(random.randint(0,index_of_groups),2)
             else:
                 y = x % index_of_groups
                 self.show_block(y, 2)
         super().the_end(self.win)
-        self.write_tsv(self.onset,self.duration,self.block_type, self.stim_file, self.trial_type,self.output)
 
     def reading(self,filename):
         with open(filename, "r") as fichier:
@@ -149,12 +151,11 @@ class Priming(Parente):
             base_width, base_height = image_stim.size
             zoom = 0.5 + (0.012 * self.zoom)
             image_stim.size = (base_width * zoom, base_height * zoom)
-            #image_stim.size= 0.8+(0.3*self.zoom/100)
             liste_image_win.append(image_stim)
         count=0
         limite = len(liste_image_win)
         for image_stim in liste_image_win:
-            self.onset.append(self.global_timer.getTime())
+            onset = self.global_timer.getTime()
             image_stim.draw()
             self.rect.draw()
             self.win.flip()
@@ -169,24 +170,26 @@ class Priming(Parente):
                     if not clicked:  # Vérifier si c'est le premier clic détecté
                         clicked_time = self.timer.getTime()
                         print("Clic détecté à :", clicked_time, "secondes")
-                        clicked = True  # Empêcher l'enregistrement de clics multiple
-            self.click_times.append(clicked_time)
-            self.duration.append(self.timer.getTime())
-            self.trial_type.append("Stimuli")
-            self.stim_file.append(toshow[count])
-            self.block_type.append(index+1)
+                        clicked = True
+            click_times = clicked_time
+            time_long = self.timer.getTime()
+            trial_type = "Stimuli"
+            stim_file = toshow[count]
+            block_type = index+1
+            super().write_tsv_csv(self.filename, self.filename_csv,
+                                  [onset, time_long, click_times, block_type, stim_file, trial_type])
             if count != limite-1:
-                self.onset.append(self.global_timer.getTime())
+                onset = self.global_timer.getTime()
                 self.cross_stim.draw()
                 self.win.flip()
                 self.timer.reset()  # Réinitialiser le timer à chaque nouvelle image
-                while self.timer.getTime() < random.uniform(self.betweenstimuli-0.2,self.betweenstimuli+0.2):
+                while self.timer.getTime() < self.betweenstimuli:
                     pass
-                self.duration.append(self.timer.getTime())
-                self.click_times.append("Nonde")
-                self.trial_type.append("Fixation")
-                self.stim_file.append("None")
-                self.block_type.append("None")
+                time_long = self.timer.getTime()
+                The_None = "None"
+                trial_type = "Fixation"
+                super().write_tsv_csv(self.filename, self.filename_csv,
+                                      [onset, time_long, The_None, The_None, The_None, trial_type])
             count+=1
 
 if __name__ == "__main__":

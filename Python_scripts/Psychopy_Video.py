@@ -92,15 +92,12 @@ class VideoPsycho(Parente):
                 cross_stim.draw()
                 self.win.flip()
                 timer.reset()
-                # apparition_stimuli.append(global_timer.getTime())
                 apparition = global_timer.getTime()
 
                 while timer.getTime() < random.uniform(between_stimuli - 0.2, between_stimuli + 0.2):
                     pass
                 longueur = timer.getTime()
-                # longueur_stimuli.append(timer.getTime())
                 stimuli = "Fixation"
-                # stimuli_liste.append("Fixation")
                 self.write_tsv(self.filename, self.filename_csv, apparition, longueur, "None", stimuli)
                 movie_stim = visual.MovieStim(
                     win=self.win,
@@ -152,9 +149,6 @@ class VideoPsycho(Parente):
         cross_stim.draw()
         self.win.flip()
         core.wait(random.uniform(between_stimuli - 1, between_stimuli + 1))
-        #apparition_stimuli.append(global_timer.getTime())
-        #longueur_stimuli.append(timer.getTime())
-        #stimuli_liste.append("Fixation")
         longueur = timer.getTime()
         stimuli = "Fixation"
         self.write_tsv(self.filename, self.filename_csv, apparition, longueur, stimuli, "None")
@@ -183,24 +177,8 @@ class VideoPsycho(Parente):
             csv_writer.writerow([onset, duration, trial_type, file_stimuli])
 
 
-
-
     def lancement(self):
-        stimulus_times, stimulus_apparition, stimuli = self.play_video_psychopy(self.file, self.duration, self.betweenstimuli, self.zoom, self.trigger)
-        liste_trial = []
-        liste_lm = []
-        count = 0
-        """
-        for x in stimuli:
-            if x == "Fixation":
-                liste_lm.append(count)
-                liste_trial.append("Fixation")
-            else:
-                liste_trial.append("Stimuli")
-            count += 1
-        for x in liste_lm:
-            stimuli[x] = "None"
-        self.write_tsv(stimulus_apparition, stimulus_times, stimuli, liste_trial, self.output)"""
+        self.play_video_psychopy(self.file, self.duration, self.betweenstimuli, self.zoom, self.trigger)
 
 
 if __name__ == "__main__":

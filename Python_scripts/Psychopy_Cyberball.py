@@ -20,10 +20,6 @@ class launch_cyberball(Parente) :
 
         image = Image.open('Input/Cyberball/'+photo)
         largeur_actuelle, hauteur_actuelle = image.size
-        print(largeur_actuelle)
-        print(hauteur_actuelle)
-        print("ici")
-        print(int(hauteur_actuelle*0.1))
         hauteur, largeur = self.redimension(hauteur_actuelle, largeur_actuelle)
         image_redimensionnee = image.resize((int(largeur), int(hauteur)), Image.LANCZOS)
 
@@ -227,9 +223,6 @@ class launch_cyberball(Parente) :
             else:
                 choice = self.ordinateur(choice)
         self.duration.append(self.period_timer.getTime())
-        print(self.onset)
-        print(self.duration)
-        print(self.phase)
 
     def ordinateur (self,player):
         self.reception(player)

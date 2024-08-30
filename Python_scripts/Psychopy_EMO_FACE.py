@@ -38,7 +38,6 @@ class Emo_Face(Parente):
             self.random = True
         else:
             self.random = False
-        print(self.activation)
         rect_width = largeur
         rect_height = hauteur
         self.rect = visual.Rect(win=self.win, width=rect_width, height=rect_height, fillColor='white', lineColor='white',
@@ -77,9 +76,7 @@ class Emo_Face(Parente):
         )
 
         images = []
-        thezoom = 0.7 + (0.012*self.zoom)
         images_files = self.reading("Input/Paradigme_EMO_FACE/"+self.filepath)
-        print(images_files)
         if self.random:
             random.shuffle(images_files)
 
@@ -90,11 +87,6 @@ class Emo_Face(Parente):
                 image = "Input/Paradigme_EMO_FACE/EMO_faces_list/"+image,
                 size=None
             )
-            prefix="Input/Paradigme_EMO_FACE/EMO_faces_list/"
-            suffix = image
-            print(image)
-            image = "Input/Paradigme_EMO_FACE/EMO_faces_list/"+image
-            #image_stim.image=image
             base_width, base_height = image_stim.size  # Taille par défaut de l'image
             zoom_factor = 0.2+ (0.012 * self.zoom)  # Ajustement du facteur de zoom
 
@@ -150,7 +142,6 @@ class Emo_Face(Parente):
 
 
 if __name__ == "__main__":
-    print("ça entre")
     parser = argparse.ArgumentParser(description="Exécuter le paradigme Psychopy")
     parser.add_argument("--duration", type=float, required=True, help="Durée en secondes des stimuli")
     parser.add_argument("--file", type=str, help="Chemin vers le fichier de mots", required=False)
@@ -172,11 +163,6 @@ if __name__ == "__main__":
 
 
     args = parser.parse_args()
-    print(args.activation)
-    print(args.port)
-    print(args.baudrate)
-    print(args.trigger)
-    print("oki")
     paradigm = Emo_Face(args.duration, args.betweenstimuli, args.file,
                         args.output_file, args.port, args.baudrate, args.trigger, args.activation,
                         args.hauteur, args.largeur, args.zoom, args.random, args.launching)

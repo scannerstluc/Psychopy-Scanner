@@ -156,7 +156,6 @@ class PsychoPyParadigm(Parente):
         self.write_tsv(self.output)
 
 if __name__ == "__main__":
-    print("okkkkk")
     parser = argparse.ArgumentParser(description="Exécuter le paradigme Psychopy")
     parser.add_argument("--duration", type=float, required=True, help="Durée en secondes des stimuli")
     parser.add_argument("--fixation", type=float, required=True, help="Durée entre les blocks")

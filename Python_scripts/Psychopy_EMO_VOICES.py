@@ -47,7 +47,6 @@ class voices(Parente):
             self.random = True
         else:
             self.random=False
-        print(self.activation)
         rect_width = largeur
         rect_height = hauteur
         self.rect = visual.Rect(self.win, width=rect_width, height=rect_height, fillColor='white', lineColor='white',
@@ -55,8 +54,6 @@ class voices(Parente):
         self.rect.pos = (self.win.size[0] / 2 - rect_width / 2, self.win.size[1] / 2 - rect_height / 2)
 
     def reading(self,filename):
-        print(os.getcwd())
-        print("non ?")
         with open(filename, "r") as fichier:
             ma_liste = [line.strip() for line in fichier]
         return ma_liste
@@ -79,7 +76,6 @@ class voices(Parente):
         super().wait_for_trigger(self.trigger)
         self.global_timer.reset()
         for x in self.voices:
-            print(x)
             custom_sound = sound.Sound("Input/Paradigme_EMO_VOICES/emo_voices/"+x)
             clicked = False
             clicked_time = "None"

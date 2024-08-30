@@ -31,7 +31,7 @@ class Colors(Parente):
         self.onset = []
         self.duration = []
         self.stimuli = []
-        self.trial_type= []
+        self.trial_type = []
         self.reaction = []
         self.langue = langage
         self.port = port
@@ -134,7 +134,6 @@ class Colors(Parente):
         super().launching_texts(self.win, texts,self.trigger)
         words, colors, stimuli_names=self.reading("Input/Paradigme_Couleur/"+self.filepath)
         if self.random:
-            print("on y entre")
             combined = list(zip(words, colors, stimuli_names))
             random.shuffle(combined)
             words_shuffled, colors_shuffled, stimuli_names_shuffled = zip(*combined)
@@ -190,7 +189,6 @@ class Colors(Parente):
         core.quit()
 
 if __name__ == "__main__":
-    print("ooo?")
     parser = argparse.ArgumentParser(description="Exécuter le paradigme Psychopy")
     parser.add_argument("--duration", type=float, required=True, help="Durée en secondes des stimuli")
     parser.add_argument("--file", type=str, help="Chemin vers le fichier de mots", required=False)
@@ -210,7 +208,6 @@ if __name__ == "__main__":
     parser.add_argument("--largeur", type=float, required=True, help="Largeur du rectangle")
 
     args = parser.parse_args()
-    print(args.trigger)
     colors = Colors(args.duration, args.betweenstimuli, args.zoom, args.choice, args.file, args.output_file,
                     args.port, args.baudrate, args.trigger, args.activation,
                         args.hauteur, args.largeur, args.random, args.launching).lancement()

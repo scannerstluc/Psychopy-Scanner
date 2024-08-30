@@ -44,7 +44,6 @@ class Localizer(Parente):
         self.groups = defaultdict(list)
         self.keys = []
         self.block_type = []
-        #self.get_groups_and_keys()
         self.port = port
         self.baudrate = baudrate
         self.trigger = trigger
@@ -60,8 +59,6 @@ class Localizer(Parente):
         self.ordre=self.reading("Input/Paradigme_LOCALIZER/"+self.file)
         self.real_groups = self.real_reading("Input/Paradigme_LOCALIZER/"+self.file)
         self.copy_real_groups = copy.deepcopy(self.real_groups)
-        print(self.activation)
-        print(self.ordre)
         rect_width = largeur
         rect_height = hauteur
         self.rect = visual.Rect(self.win, width=rect_width, height=rect_height, fillColor='white', lineColor='white',
@@ -79,7 +76,6 @@ class Localizer(Parente):
             self.win.flip()
             self.onset.append(self.global_timer.getTime())
             self.timer.reset()
-            print(self.betweenblocks)
             while self.timer.getTime() < self.betweenblocks:
                 pass
             self.duration.append(self.timer.getTime())
@@ -116,7 +112,6 @@ class Localizer(Parente):
                     groupe_actuel = []
         if groupe_actuel:
             groupes.append(groupe_actuel)
-        print(groupes[0])
         return groupes
     def write_tsv(self, onset, duration, block_type, file_stimuli, trial_type, filename="output.tsv"):
         filename=super().preprocessing_tsv(filename)
@@ -126,18 +121,6 @@ class Localizer(Parente):
             tsv_writer.writerow(['onset', 'duration', "block_index" ,'stim_file','trial_type' ])
             for i in range(len(onset)):
                 tsv_writer.writerow([onset[i], duration[i], block_type[i], file_stimuli[i], trial_type[i]])
-    def get_groups_and_keys(self):
-        import os
-        print("Getting groups and keys...")
-        directory_path = 'Input/Paradigme_LOCALIZER/images'
-        for filename in os.listdir(directory_path):
-            if filename.endswith((".jpg", ".jpeg")):
-                prefix = ''.join([char for char in filename if not char.isdigit()]).rstrip('_')
-                self.groups[prefix].append(filename)
-                self.groups[prefix+"1"].append(filename)
-        for key in self.groups.keys():
-            self.keys.append(key)
-        print(self.keys)
 
 
     def show_block(self, index, number_per_block):

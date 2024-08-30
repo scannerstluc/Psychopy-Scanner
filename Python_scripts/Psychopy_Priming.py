@@ -42,10 +42,8 @@ class Priming(Parente):
         self.duration = []
         self.trial_type = []
         self.stim_file = []
-        self.groups = defaultdict(list)
         self.keys = []
         self.block_type = []
-        self.get_groups_and_keys()
         self.port = port
         self.baudrate = baudrate
         self.trigger = trigger
@@ -82,7 +80,6 @@ class Priming(Parente):
                     groupe_actuel = []
         if groupe_actuel:
             groupes.append(groupe_actuel)
-        print(groupes[0])
         return groupes
     def lancement(self):
         texts = super().inputs_texts("Input/Paradigme_Priming/" + self.launching)
@@ -122,17 +119,6 @@ class Priming(Parente):
             tsv_writer.writerow(['onset', 'duration', "reaction", "block_index" ,'stim_file','trial_type' ])
             for i in range(len(onset)):
                 tsv_writer.writerow([onset[i], duration[i], self.click_times[i], block_type[i], file_stimuli[i], trial_type[i]])
-    def get_groups_and_keys(self):
-        import os
-        print("Getting groups and keys...")
-        directory_path = 'Input/Paradigme_Priming/stim_static'
-        for filename in os.listdir(directory_path):
-            if filename.endswith((".jpg", ".jpeg")):
-                prefix = ''.join([char for char in filename if not char.isdigit()]).rstrip('_')
-                self.groups[prefix].append(filename)
-                self.groups[prefix+"1"].append(filename)
-        for key in self.groups.keys():
-            self.keys.append(key)
 
 
     def show_block(self, index, number_per_block):

@@ -54,7 +54,6 @@ class Adjectifs(Parente):
             self.random = True
         else:
             self.random = False
-        print(self.activation)
 
         self.win = visual.Window(size=(800, 600), fullscr=True , units="norm")
         self.explication_texts = super().inputs_texts("Input/Paradigme_Adjectifs/"+self.launching)
@@ -73,8 +72,6 @@ class Adjectifs(Parente):
         return ma_liste
 
     def lancement(self):
-
-
         self.Premier_texte = self.explication_texts[0]
 
         texte = visual.TextStim(self.win, text=self.Premier_texte, color=[1, 1, 1], alignText="left", wrapWidth=1.5, font='Arial')
@@ -183,8 +180,6 @@ class Adjectifs(Parente):
 
     def show_words(self,count, block_type):
         if count !=0:
-            print(count)
-
             mot=""
             if block_type == "me":
                 if self.random :
@@ -205,8 +200,6 @@ class Adjectifs(Parente):
                     mot = self.syllabe_blocks[0]
                 self.syllabe_blocks.remove(mot)
             self.show_1_word(mot)
-            print(mot)
-            print(block_type)
             self.shown_words.append(mot)
             self.order_blocks.append(block_type)
             self.show_words(count-1,block_type)
@@ -228,8 +221,6 @@ class Adjectifs(Parente):
 
     def entrainement_show_words(self, count, block_type):
         if count !=0:
-            print(count)
-
             mot=""
             if block_type == "me":
                 if self.random:
@@ -250,8 +241,6 @@ class Adjectifs(Parente):
                     mot = self.syllable_entrainement[0]
                 self.syllable_entrainement.remove(mot)
             self.show_1_word(mot)
-            print(mot)
-            print(block_type)
             self.entrainement_show_words(count-1,block_type)
 
     def entrainement(self):
@@ -274,31 +263,23 @@ class Adjectifs(Parente):
             if len(choice_block) == 0:
                 break
             block = random.choice(choice_block)
-            print(block)
             hashmap[block] -= 1
             if hashmap[block] == 0:
                 choice_block.remove(block)
 
             if block == "me":
-                print("dans me")
                 self.debut_me()
                 self.entrainement_show_words(self.per_block, block)
-                # self.show_5_words(block)
             elif block == "friend":
-                print("dans friend")
                 self.debut_friend()
                 self.entrainement_show_words(self.per_block, block)
-                # self.show_5_words(block)
             elif block == "syllabe":
-                print("dans syllabe")
                 self.debut_syllabe()
                 self.entrainement_show_words(self.per_block, block)
-                # self.show_5_words(block)
 
-            # Affichage de la croix de fixation pendant 100 secondes
             cross_stim.draw()
             self.win.flip()
-            fixation_duration = self.betweenstimuli  # en secondes
+            fixation_duration = self.betweenstimuli
             clock.reset()
 
             while clock.getTime() < random.uniform(fixation_duration-0.2, fixation_duration+0.2):

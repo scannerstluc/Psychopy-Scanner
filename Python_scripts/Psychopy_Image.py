@@ -54,7 +54,7 @@ class static_image(Parente):
                     angles.append(int(parts[1].strip()))
         return filenames, angles
 
-    def static_images_psychopy(self, chemin, duration, betweenstimuli, zoom, trigger):
+    def static_images_psychopy(self, chemin, duration, betweenstimuli):
         chemin = "Input/Paradigme_images_statiques/" + chemin
         images, orientation = self.reading(chemin)
         if self.random:
@@ -185,7 +185,7 @@ class static_image(Parente):
                     [onset[i], duration[i], trial_type[i], orientation[i], self.click_times[i], file_stimuli[i]])
 
     def lancement(self):
-        stimulus_times, stimulus_apparition, stimuli, orientation = self.static_images_psychopy(self.file, self.duration, self.betweenstimuli, self.zoom, self.trigger)
+        stimulus_times, stimulus_apparition, stimuli, orientation = self.static_images_psychopy(self.file, self.duration, self.betweenstimuli)
         liste_trial=[]
         liste_lm=[]
         count=0
@@ -203,7 +203,6 @@ class static_image(Parente):
 
 
 if __name__ == "__main__":
-    print("on rentre")
     parser = argparse.ArgumentParser(description="Exécuter le paradigme Psychopy")
     parser.add_argument("--duration", type=float, required=True, help="Durée en secondes des stimuli")
     parser.add_argument("--betweenstimuli", type=float, required=True, help="Durée en secondes entre les stimuli")
@@ -223,7 +222,6 @@ if __name__ == "__main__":
     parser.add_argument("--largeur", type=float, required=True, help="Largeur du rectangle")
 
     args = parser.parse_args()
-    print(args.hauteur)
     images = static_image(args.duration, args.betweenstimuli, args.file, args.zoom, args.output_file,
                           args.port, args.baudrate, args.trigger, args.activation, args.hauteur,
                           args.largeur, args.random, args.launching)

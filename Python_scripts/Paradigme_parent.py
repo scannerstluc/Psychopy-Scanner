@@ -57,9 +57,7 @@ class Parente(ABC):
                 break
 
     def launching_texts(self,win,textes,trigger):
-        print("???")
         for x in range (len(textes)-1):
-            print("wtf")
             self.Premier_texte = textes[x]
             texte = visual.TextStim(win, text=self.Premier_texte, color=[1, 1, 1], alignText="left", wrapWidth=1.5,
                                     font='Arial')

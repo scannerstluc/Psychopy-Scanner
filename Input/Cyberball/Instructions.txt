@@ -6,3 +6,5 @@ Lorsque la balle arrivera chez vous, vous devrez la donner à un autre joueur en
 Si vous ne faites pas la passe, la balle sera remise au centre
 
 (Appuyez sur une touche quand vous êtes prêts)*
+
+*Vous allez maintenant rejoindre la salle d'attente*

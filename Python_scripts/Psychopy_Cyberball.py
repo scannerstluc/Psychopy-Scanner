@@ -249,15 +249,17 @@ class launch_cyberball(Parente) :
         next = "None"
         self.timer.reset()
         d=0
+        key = event.getKeys()
+        key = ""
         while self.timer.getTime() < 4:
             key = event.getKeys()
-            if key == ["c"]:
+            if key == ["c"] or key == ['right']:
                 self.player1["sens"] = "droite"
                 next = self.player3
                 d=1
                 key = ""
                 break
-            elif key == ["d"]:
+            elif key == ["d"] or key == ['left']:
                 self.player1["sens"] = "gauche"
                 next = self.player2
                 d=1

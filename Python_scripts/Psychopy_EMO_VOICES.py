@@ -37,6 +37,11 @@ class voices(Parente):
         self.stim_file=[]
         self.reaction = []
         self.port = port
+        self.image_stim = visual.ImageStim(
+            win=self.win,
+            image="Input/Paradigme_EMO_VOICES/oreille.png",
+            pos=(0, 0)
+        )
         self.baudrate = baudrate
         self.trigger = trigger
         self.filename, self.filename_csv = super().preprocessing_tsv_csv(self.output)
@@ -95,8 +100,7 @@ class voices(Parente):
             reaction = "None"
             super().write_tsv_csv(self.filename, self.filename_csv, [onset, time_long, trial_type, reaction, stim_file])
 
-            text_stim = visual.TextStim(self.win, wrapWidth=1.5, font="Arial", text="Audio")
-            text_stim.draw()
+            self.image_stim.draw()
             self.rect.draw()
             self.timer.reset()
             self.win.flip()

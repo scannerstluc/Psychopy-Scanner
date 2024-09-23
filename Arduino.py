@@ -19,4 +19,5 @@ def send_character(port, baud_rate):
 
 
 if __name__ == "__main__":
+    print("changement pour voir avec github desktop")
     send_character('COM7', 115200)

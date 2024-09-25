@@ -31,6 +31,7 @@ class Audition(Parente):
         self.reaction = "None"
         self.fs = 44100
         self.threshold = 1000
+        self.sigma = 0.5
         self.launching = launching
         self.recorder = None
         self.win = visual.Window(
@@ -104,7 +105,8 @@ class Audition(Parente):
         self.win.flip()
         self.timer.reset()
         onset = self.global_timer.getTime()
-        while self.timer.getTime() < self.betweenstimuli:
+        gaussian_number = random.gauss(self.betweenstimuli, self.sigma)
+        while self.timer.getTime() < gaussian_number:
             pass
         stimulus_duration = self.timer.getTime()
         super().write_tsv_csv(self.filename, self.filename_csv,

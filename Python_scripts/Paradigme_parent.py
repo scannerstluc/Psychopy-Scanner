@@ -57,11 +57,11 @@ class Parente(ABC):
             if donottake not in keys:  # Condition pour quitter la boucle
                 break
 
-    def launching_texts(self,win,textes,trigger):
+    def launching_texts(self,win,textes,trigger, align="left"):
         y=0
         for x in range (len(textes)-1):
             self.Premier_texte = textes[x]
-            texte = visual.TextStim(win, text=self.Premier_texte, color=[1, 1, 1], alignText="left", wrapWidth=1.5,
+            texte = visual.TextStim(win, text=self.Premier_texte, color=[1, 1, 1], alignText=align, wrapWidth=1.5,
                                     font='Arial')
             texte.draw()
             win.flip()
@@ -73,6 +73,16 @@ class Parente(ABC):
 
     def the_end (self, win):
         texte = visual.TextStim(win, text="End/Fin/Ende", color=[1, 1, 1], alignText="center", wrapWidth=1.5, font='Arial')
+        texte.draw()
+        win.flip()
+        core.wait(4)
+
+    def the_end2 (self, win):
+        texte = visual.TextStim(win, text="Merci beaucoup d'avoir réalisé cette tâche \n \n Ne bougez pas, on vous parle dans quelques secondes. ",
+                                color=[1, 1, 1], alignText="center", wrapWidth=1.5,
+
+
+                                font='Arial')
         texte.draw()
         win.flip()
         core.wait(4)

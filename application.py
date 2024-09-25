@@ -456,6 +456,54 @@ def submit_videos():
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)})
 
+
+@app.route('/submit-audition', methods=['POST'])
+def submit_audition():
+    try:
+        print("working hddere?")
+        data = request.get_json()
+        print(data)
+        instruction = data.get('instruction')
+        duration = data.get('duration')
+        print("ok")
+        betweenstimuli = data.get('betweenstimuli')
+        print("non")
+        output_file = data.get('output_file')
+        activation = data.get('activation')
+        port = data.get('port')
+        baudrate = data.get('baudrate')
+        trigger = data.get('trigger')
+        hauteur = data.get('hauteur')
+        largeur = data.get('largeur')
+        launching = data.get('launching_text')
+        random = data.get('random')
+        file = data.get('fileName')
+
+
+        print(data)
+        subprocess.run([
+            sys.executable, 'Python_scripts/Psychopy_Audition.py',
+            '--instruction', instruction,
+            '--duration', duration,
+            '--port', port,
+            '--activation', str(activation),
+            '--baudrate', str(baudrate),
+            '--trigger', trigger,
+            '--hauteur', hauteur,
+            '--launching', launching,
+            '--file', file,
+            '--largeur', largeur,
+            '--random', str(random),
+            '--betweenstimuli', betweenstimuli,
+            '--output_file', output_file,
+        ])
+        print("working here?")
+
+        return jsonify({'status': 'success', 'message': 'Données reçues et script exécuté'})
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)})
+
+
     
 if __name__ == '__main__':
     #webbrowser.open('http://127.0.0.1:5000')

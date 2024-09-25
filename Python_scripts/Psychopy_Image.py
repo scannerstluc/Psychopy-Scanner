@@ -61,7 +61,11 @@ class static_image(Parente):
         super().file_init(self.filename, self.filename_csv,
                           ['onset', 'duration', 'trial_type', 'angle', 'reaction', 'stim_file'])
         if self.random:
-            random.shuffle(images)
+            combined = list(zip(images, orientation))
+            random.shuffle(combined)
+            liste1_mixed, liste2_mixed = zip(*combined)
+            images = list(liste1_mixed)
+            orientation = list(liste2_mixed)
         cross_stim = visual.ShapeStim(
             win=self.win,
             vertices=((0, -0.03), (0, 0.03), (0, 0), (-0.03, 0), (0.03, 0)),  # Utilisation d'unités normalisées

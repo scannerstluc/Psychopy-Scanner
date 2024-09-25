@@ -75,6 +75,8 @@
         <a href="#" onclick="changeMainContent('localizer')">Localizer</a>
         <a href="#" onclick="changeMainContent('cyberball')">Cyberball</a>
         <a href="#" onclick="changeMainContent('repetition_priming')">Repetition Priming</a>
+        <a href="#" onclick="changeMainContent('Audition')">Audition</a>
+
         <a> </a>
 
 
@@ -89,6 +91,8 @@
         <input type="file" id="fileinput-localizer" class="cache">
         <input type="file" id="fileinput-priming" class="cache">
         <input type="file" id="launching_text" class="cache">
+        <input type="file" id="fileinput-audition" class="cache">
+
 
 
 
@@ -511,6 +515,40 @@
                         `;
                         break;
 
+                    case 'Audition':
+                        newContent = `
+                            <h2>Paradigme utilisant les cordes vocales</h2>
+                            <div class="input-group">
+                                <div class="input-container">
+                                    <h3>Durée en secondes des instructions</h3>
+                                    <input type="text" id="instruction-audition" placeholder="par exemple: 2">
+                                </div>
+                                <div class="input-container">
+                                    <h3>Durée en secondes des stimuli</h3>
+                                    <input type="text" id="duration-audition" placeholder="par exemple: 3">
+                                </div>
+                                <div class="input-container">
+                                    <h3>Durée entre les stimuli</h3>
+                                    <input type="text" id="betweenstimuli-audition" placeholder="par exemple: 7">
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <div class="input-container">
+                                    <h3> Ordre aléatoire </h3>
+                                    <input  type="checkbox" id="random-audition" value="Option1" style=" height: 50px">
+                                </div>
+                                <div class="input-container">
+                                    <h3>Sélectionner un paradigme déjà existant</h3>
+                                    <button class="button-choice" onclick="document.getElementById('fileinput-audition').click()">Choisir un fichier</button>
+                                </div>
+                                <div class="input-container">
+                                    <h3></h3>
+                                    <button class="submit" onclick="submitAudition()">Submit</button>
+                                </div>
+                            </div>
+                        `;
+                        break;
+
 
 
                     default:
@@ -864,6 +902,65 @@
                         blocks: blocks,
                         zoom: zoom,
                         per_blocks: per_blocks,
+                        output_file: output_file,
+                        hauteur: hauteur,
+                        largeur: largeur
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+            }
+
+            function submitAudition(){
+                const instruction = document.getElementById('instruction-audition').value || 'Non spécifié';
+                const duration = document.getElementById('duration-audition').value || 'Non spécifié';
+                const betweenstimuli = document.getElementById('betweenstimuli-audition').value || 'Non spécifié';
+                const output_file = document.getElementById('patientName').textContent;
+                const fileLaunching = document.getElementById('launching_text');
+                let launching_text =  fileLaunching.value.split('\\').pop();
+                const activation = document.getElementById("option1").checked;
+                const random = document.getElementById("random-audition").checked;
+                const fileInput = document.getElementById('fileinput-audition');
+                let fileName = fileInput.value.split('\\').pop();  // Cela extraira uniquement le nom du fichier.
+
+                let port = document.getElementById('resultPort').textContent.trim();
+                let baudrate = document.getElementById('resultBaudrate').textContent;
+                let trigger = document.getElementById('resultTrigger').textContent.trim();
+                let hauteur = document.getElementById('hauteur').value || '0';
+                let largeur = document.getElementById('largeur').value || '0';
+
+                if (baudrate === "" || port === "") {
+                    baudrate = -1; // Garder les valeurs comme chaîne pour la consistance
+                    port = 'Patient'; // Remplacer 'Patient' avec une valeur appropriée
+                }
+
+                if (trigger === ""){
+                    trigger = "s"
+                }
+
+
+                // Envoyer les données au serveur
+                fetch('/submit-audition', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        instruction: instruction,
+                        duration: duration,
+                        betweenstimuli: betweenstimuli,
+                        port: port,
+                        activation: activation,
+                        launching_text: launching_text,
+                        random: random,
+                        baudrate: baudrate,
+                        fileName: fileName,
+                        trigger: trigger,
                         output_file: output_file,
                         hauteur: hauteur,
                         largeur: largeur

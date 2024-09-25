@@ -183,6 +183,8 @@ class Audition(Parente):
             image_stim.draw()
             self.win.flip()
         stimulus_duration = self.stimuli_timer.getTime()
+        if gauche == "ONParler":
+            audio_thread.join()
         super().write_tsv_csv(self.filename, self.filename_csv,
                               [onset, stimulus_duration, cond, stimulus, self.reaction, gauche, droite])
         self.reaction = "None"

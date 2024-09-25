@@ -14,14 +14,16 @@ from Paradigme_parent import Parente
 
 
 class Audition(Parente):
-    def __init__(self, duration, output, filepath, betweenstimuli, random, trigger, launching):
+    def __init__(self, duration, output, filepath, betweenstimuli, random, trigger, launching, hauteur, largeur, son):
         self.stimuli_duration = duration
         self.betweenstimuli = betweenstimuli
         self.filepath = "Input/Paradigme_Audition/"+filepath
         self.output = output
         self.filename, self.filename_csv = super().preprocessing_tsv_csv(self.output)
         self.dirname = self.filename[:self.filename.find(".tsv")]
+        os.makedirs(self.dirname, exist_ok=True)
         self.record_index=0
+        self.sound = son
         self.trigger = trigger
         self.timer = core.Clock()
         self.stimuli_timer = core.Clock()
@@ -51,7 +53,11 @@ class Audition(Parente):
             self.random = True
         else:
             self.random = False
-
+        rect_width = largeur
+        rect_height = hauteur
+        self.rect = visual.Rect(self.win, width=rect_width, height=rect_height, fillColor='white', lineColor='white',
+                                units='pix')
+        self.rect.pos = (self.win.size[0] / 2 - rect_width / 2, self.win.size[1] / 2 - rect_height / 2)
         event.globalKeys.add(key='escape', func=self.win.close)
         self.duration = []
         self.onset = []
@@ -82,7 +88,10 @@ class Audition(Parente):
         else:
             print("Aucune parole détectée.")
             self.reaction = "None"
-        record = os.path.join(self.dirname, f"remcord{self.record_index}.wav")
+        print("okk?")
+        record = os.path.join(self.dirname, f"record{self.record_index}.wav")
+        print("ici ?")
+        print(record)
         self.record_index += 1
         sf.write(record, recording, self.fs)
 
@@ -104,6 +113,7 @@ class Audition(Parente):
         self.image_gauche.image = "Input/Paradigme_Audition/images/"+gauche+".PNG"
         self.image_gauche.draw()
         self.image_droite.draw()
+        self.rect.draw()
         duration.text = "-"
         duration.height = 0.6
         duration.draw()
@@ -117,6 +127,7 @@ class Audition(Parente):
         duration.text=str(int(self.stimuli_duration))
         self.image_gauche.draw()
         self.image_droite.draw()
+        self.rect.draw()
         duration.draw()
         self.timer.reset()
         self.win.flip()
@@ -130,10 +141,11 @@ class Audition(Parente):
             duration.text = str(compteur)
             self.image_gauche.draw()
             self.image_droite.draw()
+            self.rect.draw()
             duration.draw()
             self.win.flip()
         if droite == "ONEcouter":
-            sound_path = "Input/Paradigme_Audition/images/A.wav"  # Assurez-vous de mettre le bon chemin
+            sound_path = "Input/Paradigme_Audition/"+self.sound  # Assurez-vous de mettre le bon chemin
             audio = sound.Sound(sound_path)
             audio.play()
         if gauche == "ONParler":
@@ -205,6 +217,7 @@ if __name__ == "__main__":
     parser.add_argument("--duration", type=float, required=True, help="Durée en secondes des stimuli")
     parser.add_argument("--output_file", type=str, required=True, help="Nom du fichier d'output")
     parser.add_argument("--file", type=str, required=True, help="Nom du fichier d'input")
+    parser.add_argument("--asound", type=str, required=True, help="Son du patient")
     parser.add_argument("--betweenstimuli", type=float, required=True, help="Temps entre les stimuli")
     parser.add_argument("--activation", type=str, required=True, help="Pour le boitier avec les EEG")
     parser.add_argument("--random", type=str, required=True, help="Ordre random stimuli")
@@ -218,4 +231,5 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    audition = Audition(args.duration, args.output_file, args.file, args.betweenstimuli, args.random, args.trigger, args.launching).lancement()
+    audition = Audition(args.duration, args.output_file, args.file, args.betweenstimuli,
+                        args.random, args.trigger, args.launching, args.hauteur, args.largeur, args.asound).lancement()

@@ -478,6 +478,7 @@ def submit_audition():
         launching = data.get('launching_text')
         random = data.get('random')
         file = data.get('fileName')
+        asound = data.get('ASound')
 
 
         print(data)
@@ -492,6 +493,7 @@ def submit_audition():
             '--hauteur', hauteur,
             '--launching', launching,
             '--file', file,
+            '--asound', asound,
             '--largeur', largeur,
             '--random', str(random),
             '--betweenstimuli', betweenstimuli,

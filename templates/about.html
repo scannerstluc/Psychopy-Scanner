@@ -92,6 +92,8 @@
         <input type="file" id="fileinput-priming" class="cache">
         <input type="file" id="launching_text" class="cache">
         <input type="file" id="fileinput-audition" class="cache">
+        <input type="file" id="fileinput-audition1" class="cache">
+
 
 
 
@@ -542,6 +544,10 @@
                                     <button class="button-choice" onclick="document.getElementById('fileinput-audition').click()">Choisir un fichier</button>
                                 </div>
                                 <div class="input-container">
+                                    <h3>Sélectionner le son pré-enregistré</h3>
+                                    <button class="button-choice" onclick="document.getElementById('fileinput-audition1').click()">Choisir un fichier</button>
+                                </div>
+                                <div class="input-container">
                                     <h3></h3>
                                     <button class="submit" onclick="submitAudition()">Submit</button>
                                 </div>
@@ -927,6 +933,8 @@
                 const random = document.getElementById("random-audition").checked;
                 const fileInput = document.getElementById('fileinput-audition');
                 let fileName = fileInput.value.split('\\').pop();  // Cela extraira uniquement le nom du fichier.
+                const fileInput1 = document.getElementById('fileinput-audition1');
+                let fileName1 = fileInput1.value.split('\\').pop();  // Cela extraira uniquement le nom du fichier.
 
                 let port = document.getElementById('resultPort').textContent.trim();
                 let baudrate = document.getElementById('resultBaudrate').textContent;
@@ -960,6 +968,7 @@
                         random: random,
                         baudrate: baudrate,
                         fileName: fileName,
+                        ASound: fileName1,
                         trigger: trigger,
                         output_file: output_file,
                         hauteur: hauteur,

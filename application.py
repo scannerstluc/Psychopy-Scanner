@@ -506,6 +506,6 @@ def submit_audition():
 
     
 if __name__ == '__main__':
-    #webbrowser.open('http://127.0.0.1:5000')
-    app.run(debug=True)
-    #serve(app, host='0.0.0.0', port=5000)
+    webbrowser.open('http://127.0.0.1:5000')
+    #app.run(debug=True)
+    serve(app, host='0.0.0.0', port=5000)

@@ -114,7 +114,7 @@ class Emo_Face(Parente):
             stimuli_file = "None"
             trial_type = "Fixation"
             super().write_tsv_csv(self.filename, self.filename_csv,
-                                  [onset, long_time, trial_type, click_times, stimuli_file])
+                                  [super().float_to_csv(onset), super().float_to_csv(long_time), trial_type, click_times, stimuli_file])
             clicked = False  # Variable pour vérifier si un clic a été détecté
             clicked_time = "None"
             timer.reset()
@@ -135,8 +135,10 @@ class Emo_Face(Parente):
             long_time = timer.getTime()
             stimuli_file = image_stim.image[40:]
             trial_type = "Stimuli"
+            if click_times != "None":
+                click_times = super().float_to_csv(click_times)
             super().write_tsv_csv(self.filename, self.filename_csv,
-                                  [onset, long_time, trial_type, click_times, stimuli_file])
+                                  [super().float_to_csv(onset), super().float_to_csv(long_time), trial_type, click_times, stimuli_file])
 
         super().the_end(self.win)
         self.win.close()

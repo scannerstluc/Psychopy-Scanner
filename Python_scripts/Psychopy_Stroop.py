@@ -6,6 +6,7 @@ from datetime import datetime
 import argparse
 import sounddevice as sd
 import soundfile as sf
+import threading
 import numpy as np
 import speech_recognition as sr
 from psychopy import visual, core, event
@@ -33,6 +34,7 @@ class Colors(Parente):
         self.launching = launching
         self.langue = langage
         self.port = port
+        self.record_index = 0
         self.baudrate = baudrate
         self.trigger = trigger
         if activation == "True":
@@ -58,6 +60,7 @@ class Colors(Parente):
             lineColor="white",
             units='height'  # Utilisation d'unités basées sur la hauteur de l'écran
         )
+
 
     def reading(self,filename):
         words = []
@@ -125,7 +128,7 @@ class Colors(Parente):
             reaction = "None"
             trial = "Fixation"
             super().write_tsv_csv(self.filename, self.filename_csv,
-                                  [onset, time_long, stimuli, trial, reaction, reaction])
+                                  [super().float_to_csv(onset), super().float_to_csv(time_long), stimuli, trial, reaction, reaction])
             text_stim.text=mot
             text_stim.color=colors[count]
             text_stim.draw()
@@ -151,10 +154,13 @@ class Colors(Parente):
                 start_time="None"
                 print("Aucune parole détectée.")
             reaction = start_time
-            record = os.path.join(self.dirname, f"record{i}.wav")
+            record = os.path.join(self.dirname, f"record{self.record_index}.wav")
+            self.record_index += 1
             sf.write(record, recording, self.fs)
+            if reaction != "None":
+                super().float_to_csv(reaction)
             super().write_tsv_csv(self.filename, self.filename_csv,
-                                  [onset, time_long, stimuli, trial, self.reconnaissance(record), reaction])
+                                  [super().float_to_csv(onset), super().float_to_csv(time_long), stimuli, trial, self.reconnaissance(record), reaction])
             count+=1
 
         super().the_end(self.win)

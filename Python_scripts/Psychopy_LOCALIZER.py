@@ -85,7 +85,7 @@ class Localizer(Parente):
             trial_type = "Fixation"
             None_cross = "None"
             super().write_tsv_csv(self.filename, self.filename_csv,
-                                  [onset, time_long, None_cross, None_cross, trial_type])
+                                  [super().float_to_csv(onset), super().float_to_csv(time_long), None_cross, None_cross, trial_type])
             if self.random:
 
                 self.show_block(random.randint(0,index_of_groups),self.number_per_block)
@@ -173,7 +173,7 @@ class Localizer(Parente):
             stim_file = toshow[count]
             block_type = index+1
             super().write_tsv_csv(self.filename, self.filename_csv,
-                                  [onset, time_long, block_type, stim_file, trial_type])
+                                  [super().float_to_csv(onset), super().float_to_csv(time_long), block_type, stim_file, trial_type])
             if count != limite-1:
                 self.onset.append(self.global_timer.getTime())
                 self.cross_stim.draw()
@@ -186,7 +186,7 @@ class Localizer(Parente):
                 trial_type = "Fixation"
                 None_cross = "None"
                 super().write_tsv_csv(self.filename, self.filename_csv,
-                                      [onset, time_long, None_cross, None_cross, trial_type])
+                                      [super().float_to_csv(onset), super().float_to_csv(time_long), None_cross, None_cross, trial_type])
             count+=1
 
 if __name__ == "__main__":

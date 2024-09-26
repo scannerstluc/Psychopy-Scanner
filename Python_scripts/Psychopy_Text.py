@@ -65,7 +65,7 @@ class PsychoPyParadigm(Parente):
             time_long = self.timer.getTime()
             stimuli = word
             trial_type = "Stimuli"
-            super().write_tsv_csv(self.filename, self.filename_csv, [onset, time_long, stimuli, trial_type])
+            super().write_tsv_csv(self.filename, self.filename_csv, [super().float_to_csv(onset), super().float_to_csv(time_long), stimuli, trial_type])
 
     def reading(self, filename):
         filename = "Input/Paradigme_mots/" + filename
@@ -97,7 +97,7 @@ class PsychoPyParadigm(Parente):
         time_long = self.timer.getTime()
         stimuli = "None"
         trial_type = "Fixation"
-        super().write_tsv_csv(self.filename, self.filename_csv, [onset, time_long, stimuli, trial_type])
+        super().write_tsv_csv(self.filename, self.filename_csv, [super().float_to_csv(onset), super().float_to_csv(time_long), stimuli, trial_type])
         self.affichage_mots(self.win, text_stim, nothinkinglist, self.duration)
         self.cross_stim.draw()
         self.win.flip()
@@ -106,7 +106,7 @@ class PsychoPyParadigm(Parente):
         while self.timer.getTime() < self.fixation:
             pass
         time_long = self.timer.getTime()
-        super().write_tsv_csv(self.filename, self.filename_csv, [onset, time_long, stimuli, trial_type])
+        super().write_tsv_csv(self.filename, self.filename_csv, [super().float_to_csv(onset), super().float_to_csv(time_long), stimuli, trial_type])
         self.affichage_mots(self.win, text_stim, self.words, self.duration)
         self.cross_stim.draw()
         self.win.flip()
@@ -115,7 +115,7 @@ class PsychoPyParadigm(Parente):
         while self.timer.getTime()< self.fixation:
             pass
         time_long = self.timer.getTime()
-        super().write_tsv_csv(self.filename, self.filename_csv, [onset, time_long, stimuli, trial_type])
+        super().write_tsv_csv(self.filename, self.filename_csv, [super().float_to_csv(onset), super().float_to_csv(time_long), stimuli, trial_type])
         self.affichage_mots(self.win, text_stim, nothinkinglist, self.duration)
         self.cross_stim.draw()
         self.win.flip()
@@ -124,7 +124,7 @@ class PsychoPyParadigm(Parente):
         while self.timer.getTime() < self.fixation:
             pass
         time_long = self.timer.getTime()
-        super().write_tsv_csv(self.filename, self.filename_csv, [onset, time_long, stimuli, trial_type])
+        super().write_tsv_csv(self.filename, self.filename_csv, [super().float_to_csv(onset), super().float_to_csv(time_long), stimuli, trial_type])
         super().the_end(self.win)
         self.win.close()
 

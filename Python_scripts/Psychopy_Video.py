@@ -96,7 +96,7 @@ class VideoPsycho(Parente):
                     pass
                 longueur = timer.getTime()
                 stimuli = "Fixation"
-                super().write_tsv_csv(self.filename, self.filename_csv, [apparition, longueur, stimuli, "None"])
+                super().write_tsv_csv(self.filename, self.filename_csv, [super().float_to_csv(apparition), super().float_to_csv(longueur), stimuli, "None"])
                 movie_stim = visual.MovieStim(
                     win=self.win,
                     filename=video_path,
@@ -122,7 +122,7 @@ class VideoPsycho(Parente):
                     self.win.flip()
                 longueur = timer.getTime()
                 stimuli = file[x]
-                super().write_tsv_csv(self.filename, self.filename_csv, [apparition, longueur, "Stimuli", stimuli])
+                super().write_tsv_csv(self.filename, self.filename_csv, [super().float_to_csv(apparition), super().float_to_csv(longueur), "Stimuli", stimuli])
 
 
                 if movie_stim is not None:
@@ -147,7 +147,7 @@ class VideoPsycho(Parente):
             pass
         longueur = timer.getTime()
         stimuli = "Fixation"
-        super().write_tsv_csv(self.filename, self.filename_csv, [apparition, longueur, stimuli, "None"])
+        super().write_tsv_csv(self.filename, self.filename_csv, [super().float_to_csv(apparition), super().float_to_csv(longueur), stimuli, "None"])
 
         super().the_end(self.win)
         self.win.close()

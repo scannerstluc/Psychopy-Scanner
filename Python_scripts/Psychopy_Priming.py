@@ -16,6 +16,7 @@ class Priming(Parente):
     def __init__(self, duration, betweenstimuli, betweenblocks, number_of_block, output, port, baudrate, trigger,
                  activation, hauteur, largeur, random, zoom, launching, file):
         self.win = visual.Window(size=(800, 600), fullscr=True, units="norm")
+        self.win.winHandle.activate()
         self.cross_stim = visual.ShapeStim(
             win=self.win,
             vertices=((0, -0.03), (0, 0.03), (0, 0), (-0.03, 0), (0.03, 0)),  # Utilisation d'unités normalisées
@@ -101,7 +102,7 @@ class Priming(Parente):
             The_None = "None"
             trial_type = "Fixation"
             super().write_tsv_csv(self.filename, self.filename_csv,
-                                  [onset, time_long, The_None, The_None, The_None, trial_type])
+                                  [super().float_to_csv(onset), super().float_to_csv(time_long), The_None, The_None, The_None, trial_type])
             if self.random:
                 self.show_block(random.randint(0,index_of_groups),2)
             else:
@@ -176,8 +177,10 @@ class Priming(Parente):
             trial_type = "Stimuli"
             stim_file = toshow[count]
             block_type = index+1
+            if click_times != "None":
+                click_times = super().float_to_csv(click_times)
             super().write_tsv_csv(self.filename, self.filename_csv,
-                                  [onset, time_long, click_times, block_type, stim_file, trial_type])
+                                  [super().float_to_csv(onset), super().float_to_csv(time_long), click_times, block_type, stim_file, trial_type])
             if count != limite-1:
                 onset = self.global_timer.getTime()
                 self.cross_stim.draw()
@@ -189,7 +192,7 @@ class Priming(Parente):
                 The_None = "None"
                 trial_type = "Fixation"
                 super().write_tsv_csv(self.filename, self.filename_csv,
-                                      [onset, time_long, The_None, The_None, The_None, trial_type])
+                                      [super().float_to_csv(onset), super().float_to_csv(time_long), The_None, The_None, The_None, trial_type])
             count+=1
 
 if __name__ == "__main__":

@@ -114,7 +114,7 @@ class static_image(Parente):
         time_long = timer.getTime()
         trial_type = "Fixation"
         none = "None"
-        super().write_tsv_csv(self.filename, self.filename_csv, [onset, time_long, trial_type, none, none, none])
+        super().write_tsv_csv(self.filename, self.filename_csv, [super().float_to_csv(onset), super().float_to_csv(time_long), trial_type, none, none, none])
         image_count=0
         for image_stim in liste_image_win:
             image_stim.draw()
@@ -137,8 +137,10 @@ class static_image(Parente):
             time_long = timer.getTime()
             stimuli = images[image_count]
             trial_type = "Stimuli"
+            if clicked_time != "None":
+                clicked_time = super().float_to_csv(clicked_time)
             super().write_tsv_csv(self.filename, self.filename_csv,
-                                  [onset, time_long, trial_type, image_stim.ori, clicked_time, stimuli])
+                                  [super().float_to_csv(onset), super().float_to_csv(time_long), trial_type, image_stim.ori, clicked_time, stimuli])
             cross_stim.draw()
             self.win.flip()
             onset = self.global_timer.getTime()
@@ -149,7 +151,7 @@ class static_image(Parente):
             stimuli = "None"
             trial_type = "Fixation"
             super().write_tsv_csv(self.filename, self.filename_csv,
-                                  [onset, time_long, trial_type, "None", "None", stimuli])
+                                  [super().float_to_csv(onset), super().float_to_csv(time_long), trial_type, "None", "None", stimuli])
             image_count+=1
         super().the_end(self.win)
         self.win.close()

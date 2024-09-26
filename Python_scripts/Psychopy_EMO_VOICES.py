@@ -98,7 +98,7 @@ class voices(Parente):
             trial_type = "Fixation"
             stim_file = "None"
             reaction = "None"
-            super().write_tsv_csv(self.filename, self.filename_csv, [onset, time_long, trial_type, reaction, stim_file])
+            super().write_tsv_csv(self.filename, self.filename_csv, [super().float_to_csv(onset), super().float_to_csv(time_long), trial_type, reaction, stim_file])
 
             self.image_stim.draw()
             self.rect.draw()
@@ -119,7 +119,9 @@ class voices(Parente):
             trial_type = "Stimuli"
             stim_file = x
             reaction = clicked_time
-            super().write_tsv_csv(self.filename, self.filename_csv, [onset, time_long, trial_type, reaction, stim_file])
+            if reaction != "None":
+                reaction = super().float_to_csv(reaction)
+            super().write_tsv_csv(self.filename, self.filename_csv, [super().float_to_csv(onset), super().float_to_csv(time_long), trial_type, reaction, stim_file])
         super().the_end(self.win)
         self.win.close()
         core.quit()

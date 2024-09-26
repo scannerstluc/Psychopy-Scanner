@@ -186,8 +186,10 @@ class Audition(Parente):
         if gauche == "ONParler":
             audio_thread.join()
         print(onset)
+        if self.reaction != "None":
+            self.reaction = super().float_to_csv(self.reaction)
         super().write_tsv_csv(self.filename, self.filename_csv,
-                              [super().float_to_csv(onset), super().float_to_csv(stimulus_duration), cond, stimulus, super().float_to_csv(self.reaction), gauche, droite])
+                              [super().float_to_csv(onset), super().float_to_csv(stimulus_duration), cond, stimulus, self.reaction, gauche, droite])
         self.reaction = "None"
         if droite == "ONEcouter":
             audio.stop()

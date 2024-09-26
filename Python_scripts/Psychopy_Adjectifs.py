@@ -185,7 +185,9 @@ class Adjectifs(Parente):
                     texte_5_words.draw()
                     self.win.flip()
         time_long = self.timer.getTime()
-        super().write_tsv_csv(self.filename, self.filename_csv, [onset, time_long, block_type, mot, k, response_time])
+        if response_time!="None":
+            response_time=super().float_to_csv(response_time)
+        super().write_tsv_csv(self.filename, self.filename_csv, [super().float_to_csv(onset), super().float_to_csv(time_long), block_type, mot, k, response_time])
 
 
         self.win.flip()
@@ -303,7 +305,7 @@ class Adjectifs(Parente):
             key = "None"
             response_time = "None"
             super().write_tsv_csv(self.filename, self.filename_csv,
-                                  [onset, time_long, block_type, mot, key, response_time])
+                                  [super().float_to_csv(onset), super().float_to_csv(time_long), block_type, mot, key, response_time])
 
     def blocks(self):
         cross_stim = visual.ShapeStim(
@@ -353,7 +355,7 @@ class Adjectifs(Parente):
             key = "None"
             response_time = "None"
             super().write_tsv_csv(self.filename, self.filename_csv,
-                                  [onset, time_long, block_type, mot, key, response_time])
+                                  [super().float_to_csv(onset), super().float_to_csv(time_long), block_type, mot, key, response_time])
 
     def fin(self):
         super().the_end(self.win)

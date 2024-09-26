@@ -110,7 +110,7 @@ class Audition(Parente):
             pass
         stimulus_duration = self.timer.getTime()
         super().write_tsv_csv(self.filename, self.filename_csv,
-                                  [onset, stimulus_duration, 'Fixation', 'Cross', 'None', 'None', 'None'])
+                                  [super().float_to_csv(onset), super().float_to_csv(stimulus_duration), 'Fixation', 'Cross', 'None', 'None', 'None'])
         self.image_droite.image = "Input/Paradigme_Audition/images/"+droite+".PNG"
         self.image_gauche.image = "Input/Paradigme_Audition/images/"+gauche+".PNG"
         self.image_gauche.draw()
@@ -185,8 +185,9 @@ class Audition(Parente):
         stimulus_duration = self.stimuli_timer.getTime()
         if gauche == "ONParler":
             audio_thread.join()
+        print(onset)
         super().write_tsv_csv(self.filename, self.filename_csv,
-                              [onset, stimulus_duration, cond, stimulus, self.reaction, gauche, droite])
+                              [super().float_to_csv(onset), super().float_to_csv(stimulus_duration), cond, stimulus, super().float_to_csv(self.reaction), gauche, droite])
         self.reaction = "None"
         if droite == "ONEcouter":
             audio.stop()

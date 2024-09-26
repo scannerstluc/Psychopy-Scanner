@@ -103,18 +103,20 @@ class Parente(ABC):
 
     def file_init(self, filename, filename_csv, columns):
         with open(filename, mode='w', newline='') as file1:
-            csv_writer = csv.writer(file1, delimiter='\t')
+            csv_writer = csv.writer(file1, delimiter=';')
             csv_writer.writerow(columns)
 
         with open(filename_csv, mode='w', newline='') as file1:
-            csv_writer = csv.writer(file1, delimiter='\t')
+            csv_writer = csv.writer(file1, delimiter=';')
             csv_writer.writerow(columns)
 
     def write_tsv_csv(self, filename, filename_csv, rows):
         with open(filename, mode='a', newline='') as file1:
-            csv_writer = csv.writer(file1, delimiter='\t')
+            csv_writer = csv.writer(file1, delimiter=';')
             csv_writer.writerow(rows)
 
         with open(filename_csv, mode='a', newline='') as file1:
-            csv_writer = csv.writer(file1, delimiter='\t')
+            csv_writer = csv.writer(file1, delimiter=';')
             csv_writer.writerow(rows)
+    def float_to_csv(self, value):
+        return str(value).replace('.', ',')

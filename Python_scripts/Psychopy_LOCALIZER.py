@@ -16,6 +16,7 @@ class Localizer(Parente):
     def __init__(self, duration, betweenstimuli, betweenblocks, number_of_block, number_per_block, output, port, baudrate, trigger,
                  activation, hauteur, largeur, random, zoom, launching, file):
         self.win = visual.Window(size=(800, 600), fullscr=True, units="norm")
+        self.win.winHandle.activate()
         self.cross_stim = visual.ShapeStim(
             win=self.win,
             vertices=((0, -0.03), (0, 0.03), (0, 0), (-0.03, 0), (0.03, 0)),  # Utilisation d'unités normalisées

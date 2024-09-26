@@ -64,6 +64,7 @@ class Adjectifs(Parente):
             self.scanner = False
 
         self.win = visual.Window(size=(800, 600), fullscr=True , units="norm")
+        self.win.winHandle.activate()
         self.explication_texts = super().inputs_texts("Input/Paradigme_Adjectifs/"+self.launching)
 
         event.globalKeys.add(key='escape', func=self.win.close)

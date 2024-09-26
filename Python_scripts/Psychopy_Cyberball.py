@@ -13,6 +13,7 @@ class launch_cyberball(Parente) :
     def __init__(self, phase1, transition, exclusion, minimum, maximum, patient_name, photo, launching, trigger) :
 
         self.win = visual.Window(size=(800, 600), units="norm", fullscr=True)
+        self.win.winHandle.activate()
 
         self.image1 = visual.ImageStim(win=self.win, image='Input/Cyberball/Banque_personnage/waiting.png', pos=[0, -0.5])
         self.image2 = visual.ImageStim(win=self.win, image='Input/Cyberball/Banque_personnage/waiting.png', pos=[-0.5, 0.5])

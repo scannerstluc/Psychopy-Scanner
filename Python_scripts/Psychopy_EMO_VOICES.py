@@ -13,6 +13,7 @@ class voices(Parente):
     def __init__(self, duration, betweenstimuli, file, output, port, baudrate, trigger, activation, hauteur,
                  largeur, random, launching):
         self.win = visual.Window(size=(800, 600), fullscr=True)
+        self.win.winHandle.activate()
         self.cross_stim = visual.ShapeStim(
             win=self.win,
             vertices=((0, -0.03), (0, 0.03), (0, 0), (-0.03, 0), (0.03, 0)),  # Utilisation d'unités normalisées

@@ -40,6 +40,7 @@ class Audition(Parente):
             color=[-0.042607843137254943, 0.0005215686274509665, -0.025607843137254943],
             units="norm",
         )
+        self.win.winHandle.activate()
         self.cross_stim = visual.ShapeStim(
             win=self.win,
             vertices=((0, -0.03), (0, 0.03), (0, 0), (-0.03, 0), (0.03, 0)),  # Utilisation d'unités normalisées

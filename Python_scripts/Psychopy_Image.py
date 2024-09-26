@@ -19,6 +19,7 @@ class static_image(Parente):
         self.zoom = zoom
         self.click_times = []
         self.win = visual.Window(size=(800, 600), fullscr=True, units="norm")
+        self.win.winHandle.activate()
         self.mouse = event.Mouse(win=self.win)
         event.globalKeys.add(key='escape', func=self.win.close)
         self.output = output

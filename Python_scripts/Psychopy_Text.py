@@ -29,6 +29,7 @@ class PsychoPyParadigm(Parente):
         self.trigger = trigger
         self.filename, self.filename_csv = super().preprocessing_tsv_csv(self.output)
         self.win = visual.Window(size=(800, 600), fullscr=True, color=[-1, -1, -1], units="norm")
+        self.win.winHandle.activate()
         self.cross_stim = visual.ShapeStim(
             win=self.win,
             vertices=((0, -0.03), (0, 0.03), (0, 0), (-0.03, 0), (0.03, 0)),  # Utilisation d'unités normalisées

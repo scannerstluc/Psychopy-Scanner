@@ -41,7 +41,7 @@ class VideoPsycho(Parente):
             color=[-0.042607843137254943, 0.0005215686274509665, -0.025607843137254943],
             units="norm",
         )
-
+        self.win.winHandle.activate()
         rect_width = largeur
         rect_height = hauteur
         self.rect = visual.Rect(self.win, width=rect_width, height=rect_height, fillColor='white', lineColor='white',

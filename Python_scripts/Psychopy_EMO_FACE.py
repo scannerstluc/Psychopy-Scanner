@@ -31,6 +31,7 @@ class Emo_Face(Parente):
         self.launching = launching
         self.filename, self.filename_csv = super().preprocessing_tsv_csv(self.output)
         self.win = visual.Window(size=(800, 600), fullscr=True, units="norm")
+        self.win.winHandle.activate()
         if activation == "True":
             self.activation = True
         else:

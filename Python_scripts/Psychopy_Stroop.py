@@ -17,6 +17,7 @@ class Colors(Parente):
     def __init__(self, duration, betweenstimuli, zoom, langage, filepath, output, port, baudrate, trigger, activation,
                  hauteur, largeur, random, launching):
         self.win = visual.Window(size=(800, 600), fullscr=True, color="black", units="norm")
+        self.win.winHandle.activate()
         event.globalKeys.add(key='escape', func=self.win.close)
         self.fs = 44100  # fréquence d'échantillonnage
         self.stimuli_duration = duration  # durée de l'enregistrement en secondes

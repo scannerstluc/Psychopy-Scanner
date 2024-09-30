@@ -6,7 +6,8 @@ import random
 import time
 from datetime import datetime
 
-from psychopy import visual, core, event
+from psychopy import visual, core, event, logging
+logging.console.setLevel(logging.DEBUG)
 import serial
 from Paradigme_parent import Parente
 import gc  # Garbage Collector
@@ -41,7 +42,6 @@ class VideoPsycho(Parente):
             color=[-0.042607843137254943, 0.0005215686274509665, -0.025607843137254943],
             units="norm",
         )
-        self.win.winHandle.activate()
         rect_width = largeur
         rect_height = hauteur
         self.rect = visual.Rect(self.win, width=rect_width, height=rect_height, fillColor='white', lineColor='white',
@@ -55,6 +55,7 @@ class VideoPsycho(Parente):
         return ma_liste
 
     def play_video_psychopy(self, chemin, duration, between_stimuli, zoom, trigger):
+        self.win.winHandle.activate()
         apparition_stimuli = []
         longueur_stimuli = []
         stimuli_liste = []
@@ -63,7 +64,7 @@ class VideoPsycho(Parente):
         if self.random:
             random.shuffle(videos)
         file = copy.copy(videos)
-        videos = ["Input/Paradigme_video/Stimuli/" + v for v in videos]
+        videos = ["Input/Paradigme_video/newstimuli/" + v for v in videos]
 
         # Ajouter la gestion de l'échappement pour fermer proprement la fenêtre
         event.globalKeys.add(key='escape', func=self.win.close)
@@ -87,6 +88,8 @@ class VideoPsycho(Parente):
 
         for x, video_path in enumerate(videos):
             try:
+                print(x)
+                print(video_path)
                 cross_stim.draw()
                 self.win.flip()
                 timer.reset()
@@ -127,9 +130,11 @@ class VideoPsycho(Parente):
 
                 if movie_stim is not None:
                     movie_stim.stop()
+                    movie_stim.setAutoDraw(False)
                     movie_stim.seek(0)
                     del movie_stim
                     self.win.flip(clearBuffer=True)
+                    core.wait(0.1)
                     gc.collect()
 
             except Exception as e:

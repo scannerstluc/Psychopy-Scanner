@@ -75,7 +75,7 @@ class Parente(ABC):
         texte = visual.TextStim(win, text="End/Fin/Ende", color=[1, 1, 1], alignText="center", wrapWidth=1.5, font='Arial')
         texte.draw()
         win.flip()
-        core.wait(4)
+        core.wait(30)
 
     def the_end2 (self, win):
         texte = visual.TextStim(win, text="Merci beaucoup d'avoir réalisé cette tâche \n \n Ne bougez pas, on vous parle dans quelques secondes. ",

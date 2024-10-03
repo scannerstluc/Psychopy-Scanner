@@ -1,4 +1,3 @@
-/* static/style.css */
 html, body {
     height: 100%;
     margin: 0;
@@ -71,7 +70,7 @@ select:hover {
 
 .input-overlay {
     display: flex;
-    flex-direction: column; /* Ensures vertical stacking of input containers */
+    flex-direction: column;
     width: 100%;
 }
 
@@ -81,16 +80,12 @@ select:hover {
     flex-direction: column;
 }
 
-
-
-
 .popup {
     background-color: white;
     padding: 20px;
     border: 1px solid #ddd;
     border-radius: 5px;
 }
-
 
 body {
     font-family: Arial, sans-serif;
@@ -158,12 +153,18 @@ body {
     display: block;
 }
 
+.sidenav a.active {
+    color: rgba(28, 59, 0, 0.58);
+    background-color: #f1f1f1;
+    font-weight: bold;
+}
+
 .sidenav a:hover {
-  color: #000000;
+  color: #4b4b4b;
 }
 
 .main-content {
-    margin-left: 260px; /* Ajustez la marge pour s'adapter à la largeur de la sidebar */
+    margin-left: 260px;
     padding: 20px;
     flex: 1;
 }
@@ -204,11 +205,7 @@ input {
     border-color: white;
     height: 45px;
     width: 100px;
-
 }
-
-
-
 
 .navbutton {
     background-color: rgba(79, 138, 36, 0.58);
@@ -217,7 +214,6 @@ input {
     height: 45px;
     border: none;
     cursor: pointer;
-
 }
 
 .color-green{
@@ -254,4 +250,93 @@ h2 {
     border: 2px solid #ccc;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Ajout des media queries pour les résolutions plus petites */
+@media (max-width: 1920px) {
+    .checkbox_style {
+        transform: scale(2.5); /* Réduit la taille pour les petits écrans */
+    }
+
+    .header-center {
+        font-size: 22px;
+    }
+
+    .sidenav {
+        width: 220px; /* Réduit la largeur de la sidebar */
+    }
+
+    .main-content {
+        margin-left: 230px; /* Ajuste la marge de contenu */
+    }
+
+    .button-choice, .submit, .navbutton {
+        height: 40px; /* Réduit la hauteur des boutons */
+    }
+}
+
+@media (max-width: 1366px) {
+    .checkbox_style {
+        transform: scale(2); /* Encore plus petit pour des résolutions encore plus petites */
+    }
+
+    .header-center {
+        font-size: 20px;
+    }
+
+    .sidenav {
+        width: 200px;
+    }
+
+    .main-content {
+        margin-left: 210px;
+    }
+
+    .button-choice, .submit, .navbutton {
+        height: 35px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .checkbox_style {
+        transform: scale(1.5);
+    }
+
+    .header-center {
+        font-size: 18px;
+    }
+
+    .sidenav {
+        width: 180px;
+    }
+
+    .main-content {
+        margin-left: 190px;
+    }
+
+    .button-choice, .submit, .navbutton {
+        height: 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    .checkbox_style {
+        transform: scale(1);
+    }
+
+    .header-center {
+        font-size: 16px;
+    }
+
+    .sidenav {
+        width: 160px;
+    }
+
+    .main-content {
+        margin-left: 170px;
+    }
+
+    .button-choice, .submit, .navbutton {
+        height: 25px;
+    }
 }

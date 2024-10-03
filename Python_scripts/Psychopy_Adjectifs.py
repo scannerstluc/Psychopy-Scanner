@@ -14,7 +14,8 @@ from Paradigme_parent import Parente
 
 class Adjectifs(Parente):
 
-    def __init__(self, duration, betweenstimuli, zoom, blocks, entrainement, per_block, filepath, output, port, baudrate, trigger, activation):
+    def __init__(self, duration, betweenstimuli, zoom, blocks, entrainement, per_block, filepath, output, port, baudrate,
+                 trigger, activation, hauteur, largeur, random, launching, scanner):
         self.words = self.reading("Input/Paradigme_Adjectifs/"+filepath)
         self.entrainement_words = self.reading("Input/Paradigme_Adjectifs/entrainement.txt")
         self.me_entrainement = self.entrainement_words.copy()
@@ -30,7 +31,8 @@ class Adjectifs(Parente):
         self.order_blocks = []
         self.reaction_time = []
         self.response = []
-
+        self.keys = ["c","q","d","b"]
+        self.launching = launching
         self.stimuli_duration = duration
         self.betweenstimuli = betweenstimuli
         self.zoom = zoom
@@ -40,22 +42,38 @@ class Adjectifs(Parente):
         self.entrainement_block = entrainement
         self.per_block = per_block
         self.experience_text = ""
-        self.hashmapvaleurs= {"d":"1", "q":"2", "c":"3", "b":"4"}
+        self.hashmapvaleurs= {"d":"1", "q":"2", "c":"3", "b":"4", "1":"1", "2":"2","3":"3", "4":"4", "&":"1","é":"2","#":"3","'":"4"}
         self.port = port
         self.baudrate = baudrate
         self.trigger = trigger
+        self.global_timer = core.Clock()
+        self.timer = core.Clock()
+        self.filename, self.filename_csv = super().preprocessing_tsv_csv(output)
+
         if activation == "True":
             self.activation = True
         else:
             self.activation = False
-        print(self.activation)
+        if random == "True":
+            self.random = True
+        else:
+            self.random = False
+        if scanner == "True":
+            self.scanner = True
+        else:
+            self.scanner = False
 
-        self.win = visual.Window(fullscr=True)
-        self.explication_texts = super().inputs_texts("Input/Starting_Texts/adjectifs.txt")
+        self.win = visual.Window(size=(800, 600), fullscr=True , units="norm")
+        self.win.winHandle.activate()
+        self.explication_texts = super().inputs_texts("Input/Paradigme_Adjectifs/"+self.launching)
 
         event.globalKeys.add(key='escape', func=self.win.close)
 
-
+        rect_width = largeur
+        rect_height = hauteur
+        self.rect = visual.Rect(self.win, width=rect_width, height=rect_height, fillColor='white', lineColor='white',
+                                units='pix')
+        self.rect.pos = (self.win.size[0] / 2 - rect_width / 2, self.win.size[1] / 2 - rect_height / 2)
 
     def reading(self,filename):
         with open(filename, "r", encoding="utf-8") as fichier:
@@ -63,40 +81,38 @@ class Adjectifs(Parente):
         return ma_liste
 
     def lancement(self):
-
-
         self.Premier_texte = self.explication_texts[0]
 
         texte = visual.TextStim(self.win, text=self.Premier_texte, color=[1, 1, 1], alignText="left", wrapWidth=1.5, font='Arial')
         texte.draw()
         self.win.flip()
-        event.waitKeys()
+        super().proper_waitkey(self.trigger)
         Deuxieme_texte = self.explication_texts[1]
 
         texte.text = Deuxieme_texte
         texte.draw()
         self.win.flip()
-        event.waitKeys()
+        super().proper_waitkey(self.trigger)
         troisieme_texte = self.explication_texts[2]
 
         texte.text = troisieme_texte
         texte.draw()
         self.win.flip()
-        event.waitKeys()
+        super().proper_waitkey(self.trigger)
 
         quatrieme_texte = self.explication_texts[3]
 
         texte.text = quatrieme_texte
         texte.draw()
         self.win.flip()
-        event.waitKeys()
+        super().proper_waitkey(self.trigger)
 
         cinquieme_texte = self.explication_texts[4]
 
         texte.text = cinquieme_texte
         texte.draw()
         self.win.flip()
-        event.waitKeys()
+        super().proper_waitkey(self.trigger)
 
         self.experience_text = self.explication_texts[5]
 
@@ -109,9 +125,15 @@ class Adjectifs(Parente):
 
         self.entrainement()
         texte.text = self.experience_text
+        super().file_init(self.filename, self.filename_csv,
+                          ['onset', 'duration', 'block_type', 'word', 'key', 'response_time'])
         texte.draw()
         self.win.flip()
-        event.waitKeys()
+        super().proper_waitkey(self.trigger)
+        if self.scanner:
+            super().wait_for_trigger(self.trigger)
+        self.global_timer.reset()
+
         self.blocks()
 
 
@@ -141,28 +163,32 @@ class Adjectifs(Parente):
 
 
 
-    def show_1_word(self, mot):
-        texte_5_words = visual.TextStim(self.win, color=[1, 1, 1], wrapWidth=1.5, font="Arial", height=0.1+(0.001*self.zoom))
+    def show_1_word(self, mot , block_type):
+        texte_5_words = visual.TextStim(self.win, color=[1, 1, 1], wrapWidth=1.5, font="Arial", height=0.1 + (0.004*self.zoom))
         texte_5_words.text = mot
         texte_5_words.draw()
+        self.rect.draw()
         self.win.flip()
+        onset = self.global_timer.getTime()
         if self.activation:
             super().send_character(self.port, self.baudrate)
         response_time="None"
-        timer = core.Clock()
         k="None"
-        while timer.getTime() < self.stimuli_duration:  # Limite de temps de 4 secondes
+        self.timer.reset()
+        while self.timer.getTime() < self.stimuli_duration:  # Limite de temps de 4 secondes
             if k=="None":
                 key = event.getKeys()
                 #d=1, q=2, c=3, b=4
-                if "d" in key or "q" in key or 'c' in key or "b" in key :
+                if "d" in key or "q" in key or 'c' in key or "b" in key  or "1" in key or "2" in key or "3" in key or "4" in key or "&" in key or "é" in key or "#" in key or "'" in key:
                     k = self.hashmapvaleurs.get(key[0])
-                    response_time=timer.getTime()
+                    response_time=self.timer.getTime()
                     texte_5_words.text=" "
                     texte_5_words.draw()
                     self.win.flip()
-        self.response.append(k)
-        self.reaction_time.append(response_time)
+        time_long = self.timer.getTime()
+        if response_time!="None":
+            response_time=super().float_to_csv(response_time)
+        super().write_tsv_csv(self.filename, self.filename_csv, [super().float_to_csv(onset), super().float_to_csv(time_long), block_type, mot, k, response_time])
 
 
         self.win.flip()
@@ -170,21 +196,26 @@ class Adjectifs(Parente):
 
     def show_words(self,count, block_type):
         if count !=0:
-            print(count)
-
             mot=""
             if block_type == "me":
-                mot = random.choice(self.me_blocks)
+                if self.random :
+                    mot = random.choice(self.me_blocks)
+                else:
+                    mot = self.me_blocks[0]
                 self.me_blocks.remove(mot)
             if block_type == "friend":
-                mot=random.choice(self.friend_blocks)
+                if self.random:
+                    mot=random.choice(self.friend_blocks)
+                else:
+                    mot = self.friend_blocks[0]
                 self.friend_blocks.remove(mot)
             if block_type == "syllabe":
-                mot=random.choice(self.syllabe_blocks)
+                if self.random:
+                    mot=random.choice(self.syllabe_blocks)
+                else:
+                    mot = self.syllabe_blocks[0]
                 self.syllabe_blocks.remove(mot)
-            self.show_1_word(mot)
-            print(mot)
-            print(block_type)
+            self.show_1_word(mot, block_type)
             self.shown_words.append(mot)
             self.order_blocks.append(block_type)
             self.show_words(count-1,block_type)
@@ -206,21 +237,26 @@ class Adjectifs(Parente):
 
     def entrainement_show_words(self, count, block_type):
         if count !=0:
-            print(count)
-
             mot=""
             if block_type == "me":
-                mot = random.choice(self.me_entrainement)
+                if self.random:
+                    mot = random.choice(self.me_entrainement)
+                else:
+                    mot = self.me_entrainement[0]
                 self.me_entrainement.remove(mot)
             if block_type == "friend":
-                mot=random.choice(self.friend_entrainement)
+                if self.random:
+                    mot=random.choice(self.friend_entrainement)
+                else:
+                    mot = self.friend_entrainement[0]
                 self.friend_entrainement.remove(mot)
             if block_type == "syllabe":
-                mot=random.choice(self.syllable_entrainement)
+                if self.random:
+                    mot=random.choice(self.syllable_entrainement)
+                else:
+                    mot = self.syllable_entrainement[0]
                 self.syllable_entrainement.remove(mot)
-            self.show_1_word(mot)
-            print(mot)
-            print(block_type)
+            self.show_1_word(mot, block_type)
             self.entrainement_show_words(count-1,block_type)
 
     def entrainement(self):
@@ -237,42 +273,40 @@ class Adjectifs(Parente):
         choice_block = ["me", "friend", "syllabe"]
         longueur = len(self.entrainement_words) // self.per_block
         hashmap = {"me": longueur, "friend": longueur, "syllabe": longueur}
-        clock = core.Clock()
 
         for x in range(number_of_blocks):
             if len(choice_block) == 0:
                 break
             block = random.choice(choice_block)
-            print(block)
             hashmap[block] -= 1
             if hashmap[block] == 0:
                 choice_block.remove(block)
 
             if block == "me":
-                print("dans me")
                 self.debut_me()
                 self.entrainement_show_words(self.per_block, block)
-                # self.show_5_words(block)
             elif block == "friend":
-                print("dans friend")
                 self.debut_friend()
                 self.entrainement_show_words(self.per_block, block)
-                # self.show_5_words(block)
             elif block == "syllabe":
-                print("dans syllabe")
                 self.debut_syllabe()
                 self.entrainement_show_words(self.per_block, block)
-                # self.show_5_words(block)
 
-            # Affichage de la croix de fixation pendant 100 secondes
             cross_stim.draw()
             self.win.flip()
-            fixation_duration = self.betweenstimuli  # en secondes
-            clock.reset()
-
-            while clock.getTime() < fixation_duration:
+            onset = self.global_timer.getTime()
+            fixation_duration = self.betweenstimuli
+            self.timer.reset()
+            while self.timer.getTime() < fixation_duration:
                 cross_stim.draw()
                 self.win.flip()
+            time_long = self.timer.getTime()
+            block_type = "Fixation"
+            mot = "None"
+            key = "None"
+            response_time = "None"
+            super().write_tsv_csv(self.filename, self.filename_csv,
+                                  [super().float_to_csv(onset), super().float_to_csv(time_long), block_type, mot, key, response_time])
 
     def blocks(self):
         cross_stim = visual.ShapeStim(
@@ -288,7 +322,7 @@ class Adjectifs(Parente):
         choice_block = ["me", "friend", "syllabe"]
         longueur = len(self.words)//self.per_block
         hashmap = {"me": longueur, "friend": longueur, "syllabe": longueur}
-        clock = core.Clock()
+        fixation_duration = self.betweenstimuli  # en secondes
 
         for x in range(number_of_blocks):
             if len(choice_block)==0:
@@ -311,37 +345,51 @@ class Adjectifs(Parente):
             # Affichage de la croix de fixation pendant 100 secondes
             cross_stim.draw()
             self.win.flip()
-            fixation_duration = self.betweenstimuli  # en secondes
-            clock.reset()
-
-            while clock.getTime() < fixation_duration:
+            onset = self.global_timer.getTime()
+            self.timer.reset()
+            while self.timer.getTime() < fixation_duration:
                 cross_stim.draw()
                 self.win.flip()
+            time_long = self.timer.getTime()
+            block_type = "Fixation"
+            mot = "None"
+            key = "None"
+            response_time = "None"
+            super().write_tsv_csv(self.filename, self.filename_csv,
+                                  [super().float_to_csv(onset), super().float_to_csv(time_long), block_type, mot, key, response_time])
 
     def fin(self):
+        super().the_end(self.win)
         self.win.close()
-        self.write_tsv()
         core.quit()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Exécuter le paradigme Psychopy")
     parser.add_argument("--duration", type=float, required=True, help="Durée en secondes des stimuli")
     parser.add_argument("--file", type=str, help="Chemin vers le fichier de mots", required=False)
-    parser.add_argument("--zoom", type=int, required=True, help="Le zoom sur les adjectifs")
+    parser.add_argument("--launching", type=str, help="Chemin vers le fichier de mots", required=False)
+    parser.add_argument("--zoom", type=float, required=True, help="Le zoom sur les adjectifs")
     parser.add_argument("--output_file", type=str, required=True, help="Nom du fichier d'output")
     parser.add_argument("--betweenstimuli", type=float, required=True, help="Temps entre les stimuli")
     parser.add_argument("--blocks", type=int, required=True, help="Nombre de blocks d'adjectifs")
     parser.add_argument("--entrainement", type=int, required=True, help="Nombre de blocks d'entrainement")
     parser.add_argument("--per_block", type=int, required=True, help="Nombre d'adjectifs pas block")
     parser.add_argument("--activation", type=str, required=True, help="Pour le boitier avec les EEG")
+    parser.add_argument("--random", type=str, required=True, help="Ordre random stimuli")
+    parser.add_argument("--scanner", type=str, required=True, help="scanner")
+
+
 
     parser.add_argument('--port', type=str, required=False, help="Port")
     parser.add_argument('--baudrate', type=int, required=False, help="Speed port")
     parser.add_argument('--trigger', type=str, required=False, help="caractère pour lancer le programme")
+    parser.add_argument("--hauteur", type=float, required=True, help="hauteur du rectangle")
+    parser.add_argument("--largeur", type=float, required=True, help="Largeur du rectangle")
 
     args = parser.parse_args()
     paradigm = Adjectifs(args.duration, args.betweenstimuli, args.zoom, args.blocks, args.entrainement, args.per_block,
-                         args.file, args.output_file, args.port, args.baudrate, args.trigger, args.activation)
+                         args.file, args.output_file, args.port, args.baudrate, args.trigger, args.activation,
+                        args.hauteur, args.largeur, args.random, args.launching, args.scanner)
     paradigm.lancement()
     paradigm.fin()
 

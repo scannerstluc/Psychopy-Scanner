@@ -10,9 +10,10 @@ from Paradigme_parent import Parente
 
 
 class launch_cyberball(Parente) :
-    def __init__(self, phase1, transition, exclusion, minimum, maximum, patient_name, photo) :
+    def __init__(self, phase1, transition, exclusion, minimum, maximum, patient_name, photo, launching, trigger) :
 
-        self.win = visual.Window(units="norm", fullscr=True)
+        self.win = visual.Window(size=(800, 600), units="norm", fullscr=True)
+        self.win.winHandle.activate()
 
         self.image1 = visual.ImageStim(win=self.win, image='Input/Cyberball/Banque_personnage/waiting.png', pos=[0, -0.5])
         self.image2 = visual.ImageStim(win=self.win, image='Input/Cyberball/Banque_personnage/waiting.png', pos=[-0.5, 0.5])
@@ -20,10 +21,6 @@ class launch_cyberball(Parente) :
 
         image = Image.open('Input/Cyberball/'+photo)
         largeur_actuelle, hauteur_actuelle = image.size
-        print(largeur_actuelle)
-        print(hauteur_actuelle)
-        print("ici")
-        print(int(hauteur_actuelle*0.1))
         hauteur, largeur = self.redimension(hauteur_actuelle, largeur_actuelle)
         image_redimensionnee = image.resize((int(largeur), int(hauteur)), Image.LANCZOS)
 
@@ -59,6 +56,8 @@ class launch_cyberball(Parente) :
         self.onset = []
         self.duration = []
         self.phase = []
+        self.launching = launching
+        self.trigger = trigger
 
     def redimension(self, hauteur, largeur):
         multi = 204/hauteur
@@ -126,6 +125,9 @@ class launch_cyberball(Parente) :
 
 
     def lancement(self):
+        texts = super().inputs_texts("Input/Cyberball/"+self.launching)
+        super().launching_texts(self.win, texts,self.trigger)
+        super().wait_for_trigger(self.trigger)
         texte = visual.TextStim(self.win, color=[1, 1, 1], alignText="left", wrapWidth=1.5, font='Arial')
         Sans_point = ("En attente de tous les participants")
         Premier_texte = ("En attente de tous les participants.")
@@ -158,6 +160,7 @@ class launch_cyberball(Parente) :
             while self.timer.getTime() < 0.5:
                 pass
         self.game()
+        super().the_end(self.win)
 
 
     def game (self):
@@ -221,9 +224,6 @@ class launch_cyberball(Parente) :
             else:
                 choice = self.ordinateur(choice)
         self.duration.append(self.period_timer.getTime())
-        print(self.onset)
-        print(self.duration)
-        print(self.phase)
 
     def ordinateur (self,player):
         self.reception(player)
@@ -250,15 +250,17 @@ class launch_cyberball(Parente) :
         next = "None"
         self.timer.reset()
         d=0
+        key = event.getKeys()
+        key = ""
         while self.timer.getTime() < 4:
             key = event.getKeys()
-            if key == ["c"]:
+            if key == ["c"] or key == ['right']:
                 self.player1["sens"] = "droite"
                 next = self.player3
                 d=1
                 key = ""
                 break
-            elif key == ["d"]:
+            elif key == ["d"] or key == ['left']:
                 self.player1["sens"] = "gauche"
                 next = self.player2
                 d=1
@@ -283,10 +285,12 @@ if __name__ == "__main__":
     parser.add_argument("--patient_name", type=str, required=True, help="Nom du patient")
 
     parser.add_argument("--filePath", type=str, help="Chemin vers le fichier de mots", required=False)
+    parser.add_argument("--launching", type=str, help="Chemin vers le fichier de mots", required=False)
     parser.add_argument("--output_file", type=str, required=True, help="Nom du fichier d'output")
     parser.add_argument('--trigger', type=str, required=True, help="caractère pour lancer le programme")
     args = parser.parse_args()
 
-    C=launch_cyberball(args.premiere_phase,args.transition,args.exclusion,args.minimum,args.maximum, args.patient_name, args.filePath)
+    C=launch_cyberball(args.premiere_phase,args.transition,args.exclusion,args.minimum,args.maximum,
+                       args.patient_name, args.filePath, args.launching, args.trigger)
     C.lancement()
 
